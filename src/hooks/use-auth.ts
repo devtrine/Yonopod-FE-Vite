@@ -1,0 +1,73 @@
+"use client";
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import * as authService from "../services/auth.service";
+import type {
+  RegisterPayload,
+  LoginPayload,
+  UpdateProfilePayload,
+  ChangePasswordPayload,
+} from "../types/auth";
+
+// ─── Queries ──────────────────────────────────────────────────────────────────
+
+export function useCurrentUser(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ["auth", "me"],
+    queryFn: authService.getMe,
+    retry: false,
+    ...options,
+  });
+}
+
+// ─── Mutations ────────────────────────────────────────────────────────────────
+
+export function useRegister() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: RegisterPayload) => authService.register(payload),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["auth", "me"], user);
+    },
+  });
+}
+
+export function useLogin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: LoginPayload) => authService.login(payload),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["auth", "me"], user);
+    },
+  });
+}
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: authService.logout,
+    onSuccess: () => {
+      queryClient.clear();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdateProfilePayload) => authService.updateProfile(payload),
+    onSuccess: (user) => {
+      queryClient.setQueryData(["auth", "me"], user);
+    },
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (payload: ChangePasswordPayload) =>
+      authService.changePassword(payload),
+  });
+}

@@ -1,0 +1,112 @@
+import { StorageOverview } from "@/components/dashboard/storage-overview";
+import { ActivityFeed } from "@/components/dashboard/activity-feed";
+import { RecentFiles } from "@/components/dashboard/recent-files";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useRecent } from "@/hooks/use-recent";
+import { useFiles } from "@/hooks/use-files";
+import { useFolders } from "@/hooks/use-folders";
+import { useShares } from "@/hooks/use-shares";
+import type { FileItem } from "@/components/files/file-table";
+import type { RecentFile } from "@/types/recent";
+
+function recentToFileItem(recent: RecentFile): FileItem {
+  return {
+    id: String(recent.file.id),
+    name: recent.file.name,
+    isFolder: false,
+    lastModified: new Date(recent.accessed_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+    owner: "me",
+    tags: recent.file.tags || [],
+    isStarred: recent.file.is_favorite,
+  };
+}
+
+const MOCK_ACTIVITIES = [
+  {
+    id: "1",
+    type: "upload" as const,
+    description: "Welcome to Yonopod!",
+    timeAgo: "Just now",
+  },
+];
+
+export function DashboardPage() {
+  const { data: user } = useCurrentUser();
+  const { data: recentData, isPending: recentLoading } = useRecent({ limit: 6 });
+  const { data: filesData } = useFiles({ limit: 1 });
+  const { data: foldersData } = useFolders({ limit: 1 });
+  const { data: sharesData } = useShares({ limit: 1 });
+
+  const recentItems: FileItem[] = (recentData?.data ?? []).map(recentToFileItem);
+
+  const usedGB = user?.storage_used
+    ? Number(user.storage_used) / (1024 * 1024 * 1024)
+    : 0;
+  const totalGB = 100;
+
+  const greeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const displayName =
+    user?.full_name || user?.username || "there";
+
+  return (
+    <div className="flex flex-col gap-8 p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-3xl font-bold text-[#0f172a]">
+          {greeting()}, {displayName}
+        </h1>
+        <p className="text-[#64748b]">
+          Here&apos;s an overview of your storage and recent activity.
+        </p>
+      </header>
+
+      <StorageOverview
+        usedGB={Math.round(usedGB * 100) / 100}
+        totalGB={totalGB}
+        totalFiles={String(filesData?.pagination?.total ?? "—")}
+        totalFolders={String(foldersData?.pagination?.total ?? "—")}
+        sharedItems={String(sharesData?.pagination?.total ?? "—")}
+      />
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="xl:col-span-2 flex flex-col gap-8">
+          {recentLoading ? (
+            <div className="flex flex-col gap-4">
+              <h2 className="text-lg font-semibold text-[#0f172a]">Quick Access</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-24 rounded-xl bg-[#f1f5f9] animate-pulse"
+                  />
+                ))}
+              </div>
+            </div>
+          ) : recentItems.length > 0 ? (
+            <RecentFiles items={recentItems} />
+          ) : (
+            <div className="flex flex-col gap-4">
+              <h2 className="text-lg font-semibold text-[#0f172a]">Quick Access</h2>
+              <p className="text-sm text-[#64748b]">
+                Files you access will appear here.
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="xl:col-span-1">
+          <ActivityFeed activities={MOCK_ACTIVITIES} />
+        </div>
+      </div>
+    </div>
+  );
+}
+export default DashboardPage;
