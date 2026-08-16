@@ -30,21 +30,6 @@ export function FileCard({
           <FileTypeIcon name={item.name} isFolder={item.isFolder} size={20} />
         </div>
         <div className="flex items-center gap-1">
-          {onToggleStar && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleStar(item);
-              }}
-              aria-label={`${item.isStarred ? "Remove" : "Add"} ${item.name} ${item.isStarred ? "from" : "to"} favorites`}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#f59e0b] transition-all -mr-1 -mt-1"
-            >
-              <Star
-                size={16}
-                className={item.isStarred ? "fill-[#f59e0b] text-[#f59e0b]" : ""}
-              />
-            </button>
-          )}
           {menuActions ? (
             <FileActionsMenu item={item} triggerClassName="opacity-0 group-hover:opacity-100" {...menuActions} />
           ) : (
@@ -59,6 +44,21 @@ export function FileCard({
               <MoreHorizontal size={18} />
             </button>
           )}
+          {onToggleStar && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleStar(item);
+              }}
+              aria-label={`${item.isStarred ? "Remove" : "Add"} ${item.name} ${item.isStarred ? "from" : "to"} favorites`}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#f59e0b] transition-all -mr-1 -mt-1"
+            >
+              <Star
+                size={16}
+                className={item.isStarred ? "fill-[#f59e0b] text-[#f59e0b]" : ""}
+              />
+            </button>
+          )}          
         </div>
       </div>
       <div className="mt-auto">
