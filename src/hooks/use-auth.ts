@@ -46,12 +46,19 @@ export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: authService.logout,
-    onSettled: () => {
+    onMutate: async () => {
+      // Cancel active/background queries immediately to prevent race conditions
+      await queryClient.cancelQueries();
+    },
+    onSettled: async () => {
+      // Cancel any ongoing queries
+      await queryClient.cancelQueries();
+
       // Clear React Query cache & set current user to null
       queryClient.setQueryData(["auth", "me"], null);
       queryClient.removeQueries({ queryKey: ["auth"] });
       queryClient.clear();
-      
+
       // Clear any stored local tokens/flags if present
       if (typeof window !== "undefined") {
         try {

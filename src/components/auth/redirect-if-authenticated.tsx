@@ -12,13 +12,13 @@ export function RedirectIfAuthenticated({
   children: React.ReactNode;
 }) {
   const navigate = useNavigate();
-  const { data: user, isPending, isSuccess } = useCurrentUser();
+  const { data: user, isPending, isSuccess, isError } = useCurrentUser();
 
   useEffect(() => {
-    if (isSuccess && user) {
+    if (!isPending && !isError && isSuccess && user) {
       navigate("/dashboard", { replace: true });
     }
-  }, [isSuccess, user, navigate]);
+  }, [isPending, isError, isSuccess, user, navigate]);
 
   if (isPending) {
     return (
@@ -28,7 +28,9 @@ export function RedirectIfAuthenticated({
     );
   }
 
-  if (isSuccess && user) return null;
+  if (!isPending && !isError && isSuccess && user) {
+    return null;
+  }
 
   return <>{children}</>;
 }

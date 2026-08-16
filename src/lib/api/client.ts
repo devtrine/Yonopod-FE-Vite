@@ -1,5 +1,11 @@
 import axios, { AxiosError } from "axios";
 
+declare module "axios" {
+  export interface AxiosRequestConfig {
+    skipAuthRedirect?: boolean;
+  }
+}
+
 const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:6767";
 const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, "");
 
@@ -11,28 +17,57 @@ export const api = axios.create({
   },
 });
 
+/** List of endpoints that should NEVER trigger auto-redirect to /login on 401 */
+const AUTH_EXCLUDED_ENDPOINTS = [
+  "/auth/logout",
+  "/auth/me",
+  "/auth/login",
+  "/auth/register",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/refresh",
+];
+
+// Flag to prevent multiple simultaneous redirects (race conditions)
+let isRedirecting = false;
+
 // Response interceptor for centralized error handling
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       const reqUrl = error.config?.url || "";
-      const isAuthEndpoint = 
-        reqUrl.includes("/auth/logout") ||
-        reqUrl.includes("/auth/me") ||
-        reqUrl.includes("/auth/login");
-        
-      if (typeof window !== "undefined" && !isAuthEndpoint) {
+      const shouldSkipRedirect = 
+        Boolean(error.config?.skipAuthRedirect) ||
+        AUTH_EXCLUDED_ENDPOINTS.some((endpoint) => reqUrl.includes(endpoint));
+
+      if (typeof window !== "undefined" && !shouldSkipRedirect && !isRedirecting) {
         const pathname = window.location.pathname;
-        const normalizedPath = pathname.endsWith('/') && pathname.length > 1 
-          ? pathname.slice(0, -1) 
-          : pathname;
-          
+        const normalizedPath =
+          pathname.endsWith("/") && pathname.length > 1
+            ? pathname.slice(0, -1)
+            : pathname;
+
         const isPublicShare = normalizedPath.startsWith("/share/");
-        const isAuthPage = ["/login", "/register", "/forgot-password", "/reset-password"].includes(normalizedPath);
-        
+        const isAuthPage = [
+          "/login",
+          "/register",
+          "/forgot-password",
+          "/reset-password",
+        ].includes(normalizedPath);
+
         if (!isPublicShare && !isAuthPage) {
-          window.location.href = "/login";
+          isRedirecting = true;
+          try {
+            localStorage.clear();
+            sessionStorage.clear();
+          } catch {
+            // Ignore storage errors
+          }
+          window.location.replace("/login");
+          setTimeout(() => {
+            isRedirecting = false;
+          }, 3000);
         }
       }
     }
@@ -58,3 +93,4 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return "An unexpected error occurred";
 }
+

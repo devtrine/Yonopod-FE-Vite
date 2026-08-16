@@ -1,22 +1,23 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCurrentUser } from "../../hooks/use-auth";
 
 /**
  * Wraps protected pages. Shows a loading screen while checking the session,
- * then redirects to /login if the session is invalid (401).
+ * then redirects to /login if the session is invalid (401 / unauthenticated).
  */
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: user, isPending, isError } = useCurrentUser();
 
-  const isUnauthenticated = isError || (!isPending && !user);
+  const isUnauthenticated = !isPending && (isError || !user);
 
   useEffect(() => {
     if (isUnauthenticated) {
-      navigate("/login", { replace: true });
+      navigate("/login", { replace: true, state: { from: location } });
     }
-  }, [isUnauthenticated, navigate]);
+  }, [isUnauthenticated, navigate, location]);
 
   if (isPending) {
     return (

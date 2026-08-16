@@ -21,17 +21,18 @@ export async function login(payload: LoginPayload): Promise<User> {
 }
 
 export async function logout(): Promise<void> {
-  await api.post("/auth/logout");
+  await api.post("/auth/logout", {}, { skipAuthRedirect: true });
 }
 
 export async function getMe(): Promise<User> {
   const timestamp = new Date().getTime();
   const { data } = await api.get<ApiResponse<User>>(`/auth/me?t=${timestamp}`, {
+    skipAuthRedirect: true,
     headers: {
       "Cache-Control": "no-cache, no-store, must-revalidate",
       "Pragma": "no-cache",
       "Expires": "0",
-    }
+    },
   });
   return data.data;
 }
