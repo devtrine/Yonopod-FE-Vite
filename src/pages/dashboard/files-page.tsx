@@ -45,7 +45,7 @@ export function FilesPage() {
   const navigate = useNavigate();
   const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog } = useUIStore();
 
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
   const [typeFilter, setTypeFilter] = useState("");
   const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);

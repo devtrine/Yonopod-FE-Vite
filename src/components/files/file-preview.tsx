@@ -132,7 +132,7 @@ export function FilePreview({
         </div>
       )}
 
-      {/* Sharing Section */}
+      {/* Sharing Section
       <div className="p-4 border-b border-[#e2e8f0]">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-[#0f172a]">Sharing</h4>
@@ -149,7 +149,7 @@ export function FilePreview({
             <span className="text-[#0f172a]">Team Alpha +2</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Activity Section */}
       <div className="p-4">
