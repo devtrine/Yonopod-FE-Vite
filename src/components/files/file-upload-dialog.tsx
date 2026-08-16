@@ -32,7 +32,7 @@ export function FileUploadDialog() {
   const [uploadingFile, setUploadingFile] = useState<UploadingFile | null>(
     null
   );
-  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
     state.targetFolderId
   );
   const [isDragging, setIsDragging] = useState(false);
@@ -64,7 +64,7 @@ export function FileUploadDialog() {
       prev ? { ...prev, status: "uploading", progress: 10 } : prev
     );
 
-    let presignedFileId: number | null = null;
+    let presignedFileId: string | null = null;
 
     try {
       const nameParts = item.file.name.split(".");
@@ -167,7 +167,7 @@ export function FileUploadDialog() {
             value={activeFolderId ?? ""}
             onChange={(e) =>
               setSelectedFolderId(
-                e.target.value ? Number(e.target.value) : null
+                e.target.value || null
               )
             }
             aria-label="Select destination folder"

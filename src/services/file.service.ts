@@ -21,7 +21,7 @@ export async function listFilesTrash(params?: { page?: number; limit?: number })
   return data;
 }
 
-export async function getFile(id: number): Promise<FileDetail> {
+export async function getFile(id: string): Promise<FileDetail> {
   const { data } = await api.get<ApiResponse<FileDetail>>(`/files/${id}`);
   return data.data;
 }
@@ -34,7 +34,7 @@ export async function presignUpload(payload: PresignUploadPayload): Promise<Pres
   return data.data;
 }
 
-export async function downloadFile(id: number): Promise<DownloadFileResponse> {
+export async function downloadFile(id: string): Promise<DownloadFileResponse> {
   const { data } = await api.get<ApiResponse<DownloadFileResponse>>(
     `/files/${id}/download`
   );
@@ -70,19 +70,19 @@ export async function checkFileUploadStatus(
   return { isUploaded: Boolean(isUploaded) };
 }
 
-export async function updateFile(id: number, payload: UpdateFilePayload): Promise<File> {
+export async function updateFile(id: string, payload: UpdateFilePayload): Promise<File> {
   const { data } = await api.put<ApiResponse<File>>(`/files/${id}`, payload);
   return data.data;
 }
 
-export async function softDeleteFile(id: number): Promise<void> {
+export async function softDeleteFile(id: string): Promise<void> {
   await api.delete(`/files/${id}`);
 }
 
-export async function restoreFile(id: number): Promise<void> {
+export async function restoreFile(id: string): Promise<void> {
   await api.post(`/files/${id}/restore`);
 }
 
-export async function permanentDeleteFile(id: number): Promise<void> {
+export async function permanentDeleteFile(id: string): Promise<void> {
   await api.delete(`/files/${id}/permanent`);
 }

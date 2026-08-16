@@ -12,7 +12,7 @@ import { getErrorMessage } from "../../lib/api/client";
 export function LockUnlockModal() {
   const { state, closeLockModal } = useUIStore();
   const lockModal = state.lockModal;
-  const folderId = lockModal.folderId ?? 0;
+  const folderId = lockModal.folderId ?? "";
   const isLocked = lockModal.isLocked ?? false;
 
   const lockFolder = useLockFolder(folderId);

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { X, ChevronUp, Plus, Download } from "lucide-react";
 import type { FileItem } from "./file-table";
 import { FileTypeIcon } from "./file-type-icon";
-import { Avatar } from "../ui/avatar";
 import { TagChip } from "../tags/tag-chip";
 import { TagPickerModal } from "../tags/tag-picker-modal";
 import { Button } from "../ui/button";
@@ -21,15 +20,13 @@ export function FilePreview({
   onClose: () => void;
 }) {
   const [tagOpen, setTagOpen] = useState(false);
-  const fileId = item && !item.isFolder ? Number(item.id) : null;
-  const { data: file } = useFile(
-    fileId !== null && Number.isFinite(fileId) ? fileId : undefined
-  );
+  const fileId = item && !item.isFolder ? item.id : null;
+  const { data: file } = useFile(fileId ?? undefined);
   const { openDownloadDialog } = useUIStore();
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
     if (item.isFolder) return;
-    openDownloadDialog(Number(item.id), item.name);
+    openDownloadDialog(item.id, item.name);
   };
 
   if (!item) return null;
@@ -184,7 +181,7 @@ export function FilePreview({
       {!item.isFolder && (
         <TagPickerModal
           open={tagOpen}
-          fileId={fileId ?? 0}
+          fileId={fileId ?? ""}
           onClose={() => setTagOpen(false)}
         />
       )}

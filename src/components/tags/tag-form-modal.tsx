@@ -31,7 +31,7 @@ export function TagFormModal({
 }) {
   const isEdit = Boolean(tag);
   const createTag = useCreateTag();
-  const updateTag = useUpdateTag(tag?.id ?? 0);
+  const updateTag = useUpdateTag(tag?.id ?? "");
   const [name, setName] = useState(tag?.name ?? "");
   const [color, setColor] = useState<string>(tag?.color ?? TAG_COLORS[3]);
 

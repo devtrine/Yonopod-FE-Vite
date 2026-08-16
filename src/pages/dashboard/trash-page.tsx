@@ -87,9 +87,9 @@ export function TrashPage() {
 
     const promises = activeSelectedIds.map((id) => {
       if (id.startsWith("file-")) {
-        return restoreFile.mutateAsync(parseInt(id.replace("file-", ""), 10));
+        return restoreFile.mutateAsync(id.replace("file-", ""));
       } else {
-        return restoreFolder.mutateAsync(parseInt(id.replace("folder-", ""), 10));
+        return restoreFolder.mutateAsync(id.replace("folder-", ""));
       }
     });
 
@@ -104,8 +104,8 @@ export function TrashPage() {
   // Handler Restore item tunggal dari menu
   const handleRestoreItem = (item: FileItem) => {
     const op = item.id.startsWith("file-")
-      ? restoreFile.mutateAsync(parseInt(item.id.replace("file-", ""), 10))
-      : restoreFolder.mutateAsync(parseInt(item.id.replace("folder-", ""), 10));
+      ? restoreFile.mutateAsync(item.id.replace("file-", ""))
+      : restoreFolder.mutateAsync(item.id.replace("folder-", ""));
 
     op.then(() => toast("success", "Item restored"))
       .catch((err) => toast("error", getErrorMessage(err)));
@@ -120,8 +120,8 @@ export function TrashPage() {
   const confirmPermanentDelete = () => {
     if (!confirmDelete) return;
     const op = confirmDelete.startsWith("file-")
-      ? permanentDeleteFile.mutateAsync(parseInt(confirmDelete.replace("file-", ""), 10))
-      : permanentDeleteFolder.mutateAsync(parseInt(confirmDelete.replace("folder-", ""), 10));
+      ? permanentDeleteFile.mutateAsync(confirmDelete.replace("file-", ""))
+      : permanentDeleteFolder.mutateAsync(confirmDelete.replace("folder-", ""));
 
     op.then(() => {
       toast("success", "Item permanently deleted");
@@ -139,9 +139,9 @@ export function TrashPage() {
 
     const promises = idsToDelete.map((id) => {
       if (id.startsWith("file-")) {
-        return permanentDeleteFile.mutateAsync(parseInt(id.replace("file-", ""), 10));
+        return permanentDeleteFile.mutateAsync(id.replace("file-", ""));
       } else {
-        return permanentDeleteFolder.mutateAsync(parseInt(id.replace("folder-", ""), 10));
+        return permanentDeleteFolder.mutateAsync(id.replace("folder-", ""));
       }
     });
 

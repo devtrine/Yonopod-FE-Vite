@@ -18,8 +18,8 @@ export function useFavorites(params?: ListFavoritesParams) {
 export function useFavoriteMaps(limit = 100) {
   const { data, ...rest } = useFavorites({ limit });
   const maps = useMemo(() => {
-    const fileMap = new Map<number, Favorite>();
-    const folderMap = new Map<number, Favorite>();
+    const fileMap = new Map<string, Favorite>();
+    const folderMap = new Map<string, Favorite>();
     for (const fav of data?.data ?? []) {
       if (fav.file_id != null) fileMap.set(fav.file_id, fav);
       if (fav.folder_id != null) folderMap.set(fav.folder_id, fav);
@@ -48,7 +48,7 @@ export function useAddFavorite() {
 export function useRemoveFavorite() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => favoritesService.removeFavorite(id),
+    mutationFn: (id: string) => favoritesService.removeFavorite(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["files"] });

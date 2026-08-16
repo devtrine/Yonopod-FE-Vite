@@ -19,7 +19,7 @@ export async function listFoldersTrash(params?: { page?: number; limit?: number 
   return data;
 }
 
-export async function getFolder(id: number): Promise<Folder> {
+export async function getFolder(id: string): Promise<Folder> {
   const { data } = await api.get<ApiResponse<Folder>>(`/folders/${id}`);
   return data.data;
 }
@@ -29,28 +29,28 @@ export async function createFolder(payload: CreateFolderPayload): Promise<Folder
   return data.data;
 }
 
-export async function updateFolder(id: number, payload: UpdateFolderPayload): Promise<Folder> {
+export async function updateFolder(id: string, payload: UpdateFolderPayload): Promise<Folder> {
   const { data } = await api.put<ApiResponse<Folder>>(`/folders/${id}`, payload);
   return data.data;
 }
 
-export async function softDeleteFolder(id: number): Promise<void> {
+export async function softDeleteFolder(id: string): Promise<void> {
   await api.delete(`/folders/${id}`);
 }
 
-export async function restoreFolder(id: number): Promise<void> {
+export async function restoreFolder(id: string): Promise<void> {
   await api.post(`/folders/${id}/restore`);
 }
 
-export async function permanentDeleteFolder(id: number): Promise<void> {
+export async function permanentDeleteFolder(id: string): Promise<void> {
   await api.delete(`/folders/${id}/permanent`);
 }
 
-export async function lockFolder(id: number, payload: LockFolderPayload): Promise<void> {
+export async function lockFolder(id: string, payload: LockFolderPayload): Promise<void> {
   await api.post(`/folders/${id}/lock`, payload);
 }
 
-export async function unlockFolder(id: number, payload: UnlockFolderPayload): Promise<Folder> {
+export async function unlockFolder(id: string, payload: UnlockFolderPayload): Promise<Folder> {
   const { data } = await api.post<ApiResponse<Folder>>(`/folders/${id}/unlock`, payload);
   return data.data;
 }

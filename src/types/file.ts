@@ -4,9 +4,9 @@ import type { Folder } from "./folder";
 // ─── Entity types ────────────────────────────────────────────────────────────
 
 export interface File {
-  id: number;
-  user_id: number;
-  folder_id: number | null;
+  id: string;
+  user_id: string;
+  folder_id: string | null;
   name: string;
   extension: string;
   size: number | null;
@@ -51,7 +51,7 @@ export interface FileDetail extends File {
 export interface ListFilesParams {
   page?: number;
   limit?: number;
-  folder_id?: number | null;
+  folder_id?: string | null;
   extension?: string;
   search?: string;
   sort_by?: "name" | "created_at";
@@ -63,8 +63,8 @@ export interface ListFilesParams {
 export interface PresignUploadPayload {
   name: string;
   extension: string;
-  folder_id?: number | null;
-  size: number
+  folder_id?: string | null;
+  size: number;
 }
 
 export interface PresignUploadResponse {
@@ -74,7 +74,7 @@ export interface PresignUploadResponse {
 
 export interface UpdateFilePayload {
   name?: string;
-  folder_id?: number | null;
+  folder_id?: string | null;
   is_favorite?: boolean;
 }
 

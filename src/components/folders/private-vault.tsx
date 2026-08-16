@@ -33,7 +33,7 @@ export function PrivateVault() {
   const { data: foldersData, isPending: foldersLoading } = useFolders({ limit: 50 });
   const createFolder = useCreateFolder();
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [pin, setPin] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
@@ -163,7 +163,7 @@ export function PrivateVault() {
               </label>
               <select
                 value={activeFolderId ?? ""}
-                onChange={(e) => setSelectedFolderId(Number(e.target.value))}
+                onChange={(e) => setSelectedFolderId(e.target.value || null)}
                 className="w-full px-3 py-2 rounded-lg border border-[#e2e8f0] text-sm text-[#0f172a]"
               >
                 {lockedFolders.map((f) => (
