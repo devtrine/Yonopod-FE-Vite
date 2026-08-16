@@ -8,9 +8,9 @@ import { useCurrentUser } from "../../hooks/use-auth";
  */
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const { isPending, error } = useCurrentUser();
+  const { data: user, isPending, isError } = useCurrentUser();
 
-  const isUnauthenticated = !!error;
+  const isUnauthenticated = isError || (!isPending && !user);
 
   useEffect(() => {
     if (isUnauthenticated) {

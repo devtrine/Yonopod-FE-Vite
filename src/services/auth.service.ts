@@ -25,7 +25,14 @@ export async function logout(): Promise<void> {
 }
 
 export async function getMe(): Promise<User> {
-  const { data } = await api.get<ApiResponse<User>>("/auth/me");
+  const timestamp = new Date().getTime();
+  const { data } = await api.get<ApiResponse<User>>(`/auth/me?t=${timestamp}`, {
+    headers: {
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    }
+  });
   return data.data;
 }
 

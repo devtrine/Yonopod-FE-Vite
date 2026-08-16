@@ -46,10 +46,21 @@ export function useLogout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: authService.logout,
-    onSuccess: () => {
+    onSettled: () => {
+      // Clear React Query cache & set current user to null
+      queryClient.setQueryData(["auth", "me"], null);
+      queryClient.removeQueries({ queryKey: ["auth"] });
       queryClient.clear();
+      
+      // Clear any stored local tokens/flags if present
       if (typeof window !== "undefined") {
-        window.location.href = "/login";
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+        } catch {
+          // Ignore localStorage errors
+        }
+        window.location.replace("/login");
       }
     },
   });

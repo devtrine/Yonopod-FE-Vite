@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:6767";
+const RAW_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:6767";
+const API_BASE_URL = RAW_API_BASE_URL.replace(/\/+$/, "");
 
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api/v1`,
@@ -15,12 +16,21 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Avoid redirecting on public share pages or when already on an auth page
-      // (prevents a reload loop, e.g. auth pages checking /auth/me while logged out)
-      if (typeof window !== "undefined") {
+      const reqUrl = error.config?.url || "";
+      const isAuthEndpoint = 
+        reqUrl.includes("/auth/logout") ||
+        reqUrl.includes("/auth/me") ||
+        reqUrl.includes("/auth/login");
+        
+      if (typeof window !== "undefined" && !isAuthEndpoint) {
         const pathname = window.location.pathname;
-        const isPublicShare = pathname.startsWith("/share/");
-        const isAuthPage = ["/login", "/register", "/forgot-password", "/reset-password"].includes(pathname);
+        const normalizedPath = pathname.endsWith('/') && pathname.length > 1 
+          ? pathname.slice(0, -1) 
+          : pathname;
+          
+        const isPublicShare = normalizedPath.startsWith("/share/");
+        const isAuthPage = ["/login", "/register", "/forgot-password", "/reset-password"].includes(normalizedPath);
+        
         if (!isPublicShare && !isAuthPage) {
           window.location.href = "/login";
         }
