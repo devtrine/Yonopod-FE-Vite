@@ -75,7 +75,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
   const removeFavorite = useRemoveFavorite();
   const { fileMap, folderMap } = useFavoriteMaps();
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
-  const [tagFileId, setTagFileId] = useState<number | null>(null);
+  const [tagFileId, setTagFileId] = useState<string | null>(null);
 
   const { data, isPending, isError } = useSearch({
     q: debouncedQuery || undefined,
@@ -97,7 +97,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
 
   const handleToggleStar = (item: FileItem) => {
     if (item.isFolder) {
-      const realId = Number(item.id.replace("folder-", ""));
+      const realId = item.id.replace("folder-", "");
       const favorite = folderMap.get(realId);
       if (favorite) {
         removeFavorite.mutate(favorite.id, {
@@ -114,7 +114,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
         );
       }
     } else {
-      const fileId = Number(item.id);
+      const fileId = item.id;
       const favorite = fileMap.get(fileId);
       if (favorite) {
         removeFavorite.mutate(favorite.id, {
@@ -135,20 +135,20 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
 
   const handleRename = (item: FileItem) => {
     if (item.isFolder) {
-      openRenameModal(Number(item.id.replace("folder-", "")), item.name, true);
+      openRenameModal(item.id.replace("folder-", ""), item.name, true);
     } else {
-      openRenameModal(Number(item.id), item.name, false);
+      openRenameModal(item.id, item.name, false);
     }
   };
 
   const handleDownload = (item: FileItem) => {
     if (!item) return;
-    openDownloadDialog(Number(item.id), item.name);
+    openDownloadDialog(item.id, item.name);
   };
 
   const handleTags = (item: FileItem) => {
     if (item.isFolder) return;
-    setTagFileId(Number(item.id));
+    setTagFileId(item.id);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
@@ -158,7 +158,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
   const confirmDelete = () => {
     if (!fileToDelete) return;
     if (fileToDelete.isFolder) {
-      deleteFolder.mutate(Number(fileToDelete.id.replace("folder-", "")), {
+      deleteFolder.mutate(fileToDelete.id.replace("folder-", ""), {
         onSuccess: () => {
           toast("success", "Folder moved to trash");
           setFileToDelete(null);
@@ -169,7 +169,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
         },
       });
     } else {
-      deleteFile.mutate(Number(fileToDelete.id), {
+      deleteFile.mutate(fileToDelete.id, {
         onSuccess: () => {
           toast("success", "File moved to trash");
           setFileToDelete(null);
@@ -285,7 +285,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
       <TagPickerModal
         open={tagFileId !== null}
         onClose={() => setTagFileId(null)}
-        fileId={tagFileId ?? 0}
+        fileId={tagFileId ?? ""}
       />
     </div>
   );

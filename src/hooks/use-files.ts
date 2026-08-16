@@ -20,11 +20,11 @@ export function useFilesTrash(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useFile(id: number | undefined) {
+export function useFile(id: string | undefined) {
   return useQuery({
     queryKey: ["files", id],
     queryFn: () => fileService.getFile(id!),
-    enabled: id !== undefined && id !== null,
+    enabled: Boolean(id),
   });
 }
 
@@ -35,15 +35,14 @@ export function useFile(id: number | undefined) {
  * keyed by file id so re-renders don't trigger duplicate requests.
  */
 export function useCheckFileStatus(
-  id: number | undefined,
+  id: string | undefined,
   checkStatusUrl: string | null | undefined
 ) {
   return useQuery({
     queryKey: ["files", id, "check-status"],
     queryFn: () => fileService.checkFileUploadStatus(checkStatusUrl!),
     enabled:
-      id !== undefined &&
-      id !== null &&
+      Boolean(id) &&
       Boolean(checkStatusUrl),
   });
 }
@@ -62,11 +61,11 @@ export function usePresignUpload() {
 
 export function useDownloadFile() {
   return useMutation({
-    mutationFn: (id: number) => fileService.downloadFile(id),
+    mutationFn: (id: string) => fileService.downloadFile(id),
   });
 }
 
-export function useUpdateFile(fileId: number) {
+export function useUpdateFile(fileId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: UpdateFilePayload) => fileService.updateFile(fileId, payload),
@@ -81,7 +80,7 @@ export function useUpdateFile(fileId: number) {
 export function useSoftDeleteFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => fileService.softDeleteFile(id),
+    mutationFn: (id: string) => fileService.softDeleteFile(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["files", "trash"] });
@@ -95,7 +94,7 @@ export function useSoftDeleteFile() {
 export function useRestoreFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => fileService.restoreFile(id),
+    mutationFn: (id: string) => fileService.restoreFile(id),
     onSuccess: () => {
       // Menghapus cache semua query yang diawali ["files"] (termasuk ["files", "trash", ...])
       queryClient.invalidateQueries({ queryKey: ["files"] });
@@ -106,7 +105,7 @@ export function useRestoreFile() {
 export function usePermanentDeleteFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => fileService.permanentDeleteFile(id),
+    mutationFn: (id: string) => fileService.permanentDeleteFile(id),
     onSuccess: (_, id) => {
       // Invalidate semua query terkait files
       queryClient.invalidateQueries({ queryKey: ["files"] });

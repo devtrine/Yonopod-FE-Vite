@@ -1,8 +1,8 @@
 // ─── Entity types ────────────────────────────────────────────────────────────
 
 export interface Tag {
-  id: number;
-  user_id: number;
+  id: string;
+  user_id: string;
   name: string;
   color: string | null;
   created_at: string;

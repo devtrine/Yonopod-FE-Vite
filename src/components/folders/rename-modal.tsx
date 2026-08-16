@@ -13,7 +13,7 @@ import { getErrorMessage } from "../../lib/api/client";
 export function RenameModal() {
   const { state, closeRenameModal } = useUIStore();
   const renameModal = state.renameModal;
-  const id = renameModal.id ?? 0;
+  const id = renameModal.id ?? "";
   const isFolder = renameModal.isFolder ?? true;
 
   const updateFolder = useUpdateFolder(id);

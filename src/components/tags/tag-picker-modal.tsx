@@ -21,7 +21,7 @@ export function TagPickerModal({
   onClose,
 }: {
   open: boolean;
-  fileId: number;
+  fileId: string;
   onClose: () => void;
 }) {
   const { data: file, isPending: fileLoading } = useFile(open ? fileId : undefined);

@@ -17,7 +17,7 @@ function FileDownloadDialogContent({
   fileName,
   onClose,
 }: {
-  fileId: number;
+  fileId: string;
   fileName?: string;
   onClose: () => void;
 }) {

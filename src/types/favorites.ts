@@ -4,10 +4,10 @@ import type { Folder } from "./folder";
 // ─── Entity types ────────────────────────────────────────────────────────────
 
 export interface Favorite {
-  id: number;
-  user_id: number;
-  file_id: number | null;
-  folder_id: number | null;
+  id: string;
+  user_id: string;
+  file_id: string | null;
+  folder_id: string | null;
   created_at: string;
   file?: File | null;
   folder?: Folder | null;
@@ -25,5 +25,5 @@ export interface ListFavoritesParams {
 
 /** Exactly one of file_id or folder_id must be provided */
 export type AddFavoritePayload =
-  | { file_id: number; folder_id?: never }
-  | { folder_id: number; file_id?: never };
+  | { file_id: string; folder_id?: never }
+  | { folder_id: string; file_id?: never };

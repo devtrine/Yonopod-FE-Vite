@@ -17,7 +17,7 @@ export function useRecent(params?: { page?: number; limit?: number }) {
 export function useRecordAccess() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (fileId: number) => recentService.recordAccess({ file_id: fileId }),
+    mutationFn: (fileId: string) => recentService.recordAccess({ file_id: fileId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recent"] });
     },

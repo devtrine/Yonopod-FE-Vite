@@ -38,7 +38,7 @@ export function SharedPage() {
   const shares: FileItem[] = (data?.data ?? []).map(shareToFileItem);
 
   const shareById = useMemo(() => {
-    const map = new Map<number, Share>();
+    const map = new Map<string, Share>();
     for (const share of data?.data ?? []) map.set(share.id, share);
     return map;
   }, [data]);
@@ -51,14 +51,14 @@ export function SharedPage() {
   };
 
   const handleDelete = (id: string) => {
-    deleteShare.mutate(parseInt(id, 10), {
+    deleteShare.mutate(id, {
       onSuccess: () => toast("success", "Share link revoked"),
       onError: (err) => toast("error", getErrorMessage(err)),
     });
   };
 
   const handleCopyFromItem = (item: FileItem) => {
-    const share = shareById.get(parseInt(item.id, 10));
+    const share = shareById.get(item.id);
     if (share) handleCopyLink(share);
   };
 

@@ -50,7 +50,7 @@ function favoriteToFileItem(fav: Favorite): FileItem {
   };
 }
 
-type PendingDelete = { kind: "file" | "folder"; id: number; name: string };
+type PendingDelete = { kind: "file" | "folder"; id: string; name: string };
 
 export function FavoritesPage() {
   const { data, isPending, isError } = useFavorites({ limit: 50 });
@@ -60,10 +60,10 @@ export function FavoritesPage() {
   const { openRenameModal, openDownloadDialog } = useUIStore();
 
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
-  const [tagFileId, setTagFileId] = useState<number | null>(null);
+  const [tagFileId, setTagFileId] = useState<string | null>(null);
 
   const favoriteById = useMemo(() => {
-    const map = new Map<number, Favorite>();
+    const map = new Map<string, Favorite>();
     for (const fav of data?.data ?? []) map.set(fav.id, fav);
     return map;
   }, [data]);
@@ -71,7 +71,7 @@ export function FavoritesPage() {
   const favorites: FileItem[] = (data?.data ?? []).map(favoriteToFileItem);
 
   const handleUnfavorite = (item: FileItem) => {
-    const fav = favoriteById.get(Number(item.id));
+    const fav = favoriteById.get(item.id);
     if (!fav) return;
     removeFavorite.mutate(fav.id, {
       onSuccess: () => toast("success", "Removed from favorites"),
@@ -81,20 +81,20 @@ export function FavoritesPage() {
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
     if (item.isFolder) return;
-    const fav = favoriteById.get(Number(item.id));
+    const fav = favoriteById.get(item.id);
     if (!fav?.file) return;
     openDownloadDialog(fav.file.id, fav.file.name);
   };
 
   const handleRename = (item: FileItem) => {
-    const fav = favoriteById.get(Number(item.id));
+    const fav = favoriteById.get(item.id);
     if (!fav) return;
     if (fav.file) openRenameModal(fav.file.id, fav.file.name, false);
     else if (fav.folder) openRenameModal(fav.folder.id, fav.folder.name, true);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
-    const fav = favoriteById.get(Number(item.id));
+    const fav = favoriteById.get(item.id);
     if (!fav) return;
     if (fav.file) setPendingDelete({ kind: "file", id: fav.file.id, name: fav.file.name });
     else if (fav.folder) setPendingDelete({ kind: "folder", id: fav.folder.id, name: fav.folder.name });
@@ -102,7 +102,7 @@ export function FavoritesPage() {
 
   const handleTags = (item: FileItem) => {
     if (item.isFolder) return;
-    const fav = favoriteById.get(Number(item.id));
+    const fav = favoriteById.get(item.id);
     if (!fav?.file) return;
     setTagFileId(fav.file.id);
   };
@@ -182,7 +182,7 @@ export function FavoritesPage() {
       {/* Tags Modal */}
       <TagPickerModal
         open={tagFileId !== null}
-        fileId={tagFileId ?? 0}
+        fileId={tagFileId ?? ""}
         onClose={() => setTagFileId(null)}
       />
     </div>

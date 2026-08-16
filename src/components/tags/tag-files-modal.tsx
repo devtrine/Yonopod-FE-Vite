@@ -43,7 +43,7 @@ export function TagFilesModal({
   onClose: () => void;
 }) {
   const [showFilePicker, setShowFilePicker] = useState(false);
-  const [selectedFileIds, setSelectedFileIds] = useState<number[]>([]);
+  const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
   const listRef = useRef<HTMLDivElement>(null);
 
   const { data, isPending, isError } = useFilesByTag(tag?.id, { limit: 50 });
@@ -69,7 +69,7 @@ export function TagFilesModal({
   const hex = tagColorHex(tag.color);
   const adding = addTagToFile.isPending;
 
-  const toggleFile = (id: number) => {
+  const toggleFile = (id: string) => {
     setSelectedFileIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
@@ -90,7 +90,7 @@ export function TagFilesModal({
     }
   };
 
-  const handleRemoveFile = (fileId: number) => {
+  const handleRemoveFile = (fileId: string) => {
     if (!tag) return;
     removeTagFromFile.mutate(
       { tagId: tag.id, fileId },

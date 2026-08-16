@@ -3,9 +3,9 @@ import type { File } from "./file";
 // ─── Entity types ────────────────────────────────────────────────────────────
 
 export interface Folder {
-  id: number;
-  user_id: number;
-  parent_id: number | null;
+  id: string;
+  user_id: string;
+  parent_id: string | null;
   name: string;
   path: string;
   is_locked: boolean;
@@ -21,7 +21,7 @@ export interface Folder {
 // ─── Query param types ────────────────────────────────────────────────────────
 
 export interface ListFoldersParams {
-  parent_id?: number | null;
+  parent_id?: string | null;
   page?: number;
   limit?: number;
 }
@@ -30,12 +30,12 @@ export interface ListFoldersParams {
 
 export interface CreateFolderPayload {
   name: string;
-  parent_id?: number | null;
+  parent_id?: string | null;
 }
 
 export interface UpdateFolderPayload {
   name?: string;
-  parent_id?: number | null;
+  parent_id?: string | null;
 }
 
 export interface LockFolderPayload {

@@ -4,29 +4,29 @@ import { useSyncExternalStore } from "react";
 
 export interface RenameModalState {
   open: boolean;
-  id?: number;
+  id?: string;
   name?: string;
   isFolder?: boolean;
 }
 
 export interface LockModalState {
   open: boolean;
-  folderId?: number;
+  folderId?: string;
   folderName?: string;
   isLocked?: boolean;
 }
 
 export interface DownloadDialogState {
   open: boolean;
-  fileId?: number;
+  fileId?: string;
   fileName?: string;
 }
 
 export interface UIStoreState {
   uploadModalOpen: boolean;
-  targetFolderId: number | null;
+  targetFolderId: string | null;
   createFolderModalOpen: boolean;
-  createFolderParentId: number | null;  
+  createFolderParentId: string | null;  
   renameModal: RenameModalState;
   lockModal: LockModalState;
   downloadDialog: DownloadDialogState;
@@ -62,7 +62,7 @@ export const uiStore = {
       listeners.delete(listener);
     };
   },
-  openUploadModal: (folderId: number | null = null) => {
+  openUploadModal: (folderId: string | null = null) => {
     currentState = { ...currentState, uploadModalOpen: true, targetFolderId: folderId };
     notify();
   },
@@ -70,7 +70,7 @@ export const uiStore = {
     currentState = { ...currentState, uploadModalOpen: false };
     notify();
   },
-  openCreateFolderModal: (parentId: number | null = null) => {
+  openCreateFolderModal: (parentId: string | null = null) => {
     currentState = { ...currentState, createFolderModalOpen: true, createFolderParentId: parentId };
     notify();
   },
@@ -78,7 +78,7 @@ export const uiStore = {
     currentState = { ...currentState, createFolderModalOpen: false };
     notify();
   },
-  openRenameModal: (id: number, name: string, isFolder: boolean) => {
+  openRenameModal: (id: string, name: string, isFolder: boolean) => {
     currentState = { ...currentState, renameModal: { open: true, id, name, isFolder } };
     notify();
   },
@@ -86,7 +86,7 @@ export const uiStore = {
     currentState = { ...currentState, renameModal: { open: false } };
     notify();
   },
-  openLockModal: (folderId: number, folderName: string, isLocked: boolean) => {
+  openLockModal: (folderId: string, folderName: string, isLocked: boolean) => {
     currentState = { ...currentState, lockModal: { open: true, folderId, folderName, isLocked } };
     notify();
   },
@@ -94,7 +94,7 @@ export const uiStore = {
     currentState = { ...currentState, lockModal: { open: false } };
     notify();
   },
-  openDownloadDialog: (fileId: number, fileName: string) => {
+  openDownloadDialog: (fileId: string, fileName: string) => {
     currentState = { ...currentState, downloadDialog: { open: true, fileId, fileName } };
     notify();
   },

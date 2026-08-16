@@ -53,19 +53,19 @@ export async function createShare(payload: CreateSharePayload): Promise<Share> {
   return data.data;
 }
 
-export async function getShare(id: number): Promise<Share> {
+export async function getShare(id: string): Promise<Share> {
   const { data } = await api.get<ApiResponse<Share>>(`/shares/${id}`);
   return data.data;
 }
 
 export async function updateShare(
-  id: number,
+  id: string,
   payload: UpdateSharePayload
 ): Promise<Share> {
   const { data } = await api.put<ApiResponse<Share>>(`/shares/${id}`, payload);
   return data.data;
 }
 
-export async function deleteShare(id: number): Promise<void> {
+export async function deleteShare(id: string): Promise<void> {
   await api.delete(`/shares/${id}`);
 }

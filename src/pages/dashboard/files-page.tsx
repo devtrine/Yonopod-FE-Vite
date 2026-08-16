@@ -52,7 +52,7 @@ export function FilesPage() {
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
-  const [tagFileId, setTagFileId] = useState<number | null>(null);
+  const [tagFileId, setTagFileId] = useState<string | null>(null);
 
   const { data: filesData, isPending: filesLoading } = useFiles({
     sort_by: sortBy as "name" | "created_at",
@@ -82,7 +82,7 @@ export function FilesPage() {
   };
 
   const handleToggleStar = (item: FileItem) => {
-    const fileId = Number(item.id);
+    const fileId = item.id;
     const favorite = fileMap.get(fileId);
     if (favorite) {
       removeFavorite.mutate(favorite.id, {
@@ -102,7 +102,7 @@ export function FilesPage() {
 
   const handleRename = (item: FileItem) => {
     if (item.isFolder) return;
-    openRenameModal(Number(item.id), item.name, false);
+    openRenameModal(item.id, item.name, false);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
@@ -112,17 +112,17 @@ export function FilesPage() {
 
   const handleTags = (item: FileItem) => {
     if (item.isFolder) return;
-    setTagFileId(Number(item.id));
+    setTagFileId(item.id);
   };
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
     if (item.isFolder) return;
-    openDownloadDialog(Number(item.id), item.name);
+    openDownloadDialog(item.id, item.name);
   };
 
   const confirmDelete = () => {
     if (!fileToDelete) return;
-    deleteFile.mutate(Number(fileToDelete.id), {
+    deleteFile.mutate(fileToDelete.id, {
       onSuccess: () => {
         toast("success", "File moved to trash");
         setFileToDelete(null);
@@ -169,7 +169,7 @@ export function FilesPage() {
       const item = files.find((f) => f.id === id);
       if (item && !item.isStarred) {
         addFavorite.mutate(
-          { file_id: Number(item.id) },
+          { file_id: item.id },
           {
             onError: (err) => toast("error", getErrorMessage(err)),
           }
@@ -183,7 +183,7 @@ export function FilesPage() {
   const confirmBulkDeleteAction = () => {
     if (activeSelectedIds.length === 0) return;
     const promises = activeSelectedIds.map((id) =>
-      deleteFile.mutateAsync(Number(id))
+      deleteFile.mutateAsync(id)
     );
 
     Promise.all(promises)
@@ -395,7 +395,7 @@ export function FilesPage() {
       {/* Tags Modal */}
       <TagPickerModal
         open={tagFileId !== null}
-        fileId={tagFileId ?? 0}
+        fileId={tagFileId ?? ""}
         onClose={() => setTagFileId(null)}
       />
     </div>

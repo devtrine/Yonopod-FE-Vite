@@ -33,8 +33,8 @@ const ITEMS_PER_PAGE = 20;
 
 export function RecentPage() {
   const [page, setPage] = useState(1);
-  const [fileToDelete, setFileToDelete] = useState<{ id: number; name: string } | null>(null);
-  const [tagFileId, setTagFileId] = useState<number | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [tagFileId, setTagFileId] = useState<string | null>(null);
   const { data, isPending, isError } = useRecent({ page, limit: ITEMS_PER_PAGE });
   const clearHistory = useClearRecentHistory();
   const deleteFile = useSoftDeleteFile();
@@ -48,7 +48,7 @@ export function RecentPage() {
   const total = data?.pagination?.total ?? 0;
 
   const recentById = useMemo(() => {
-    const map = new Map<number, RecentFile>();
+    const map = new Map<string, RecentFile>();
     for (const r of data?.data ?? []) map.set(r.id, r);
     return map;
   }, [data]);
@@ -61,13 +61,13 @@ export function RecentPage() {
   };
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
-    const recent = recentById.get(Number(item.id));
+    const recent = recentById.get(item.id);
     if (!recent) return;
     openDownloadDialog(recent.file.id, recent.file.name);
   };
 
   const handleFavorite = (item: FileItem) => {
-    const recent = recentById.get(Number(item.id));
+    const recent = recentById.get(item.id);
     if (!recent) return;
     const fileId = recent.file.id;
     const favorite = fileMap.get(fileId);
@@ -88,19 +88,19 @@ export function RecentPage() {
   };
 
   const handleRename = (item: FileItem) => {
-    const recent = recentById.get(Number(item.id));
+    const recent = recentById.get(item.id);
     if (!recent) return;
     openRenameModal(recent.file.id, recent.file.name, false);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
-    const recent = recentById.get(Number(item.id));
+    const recent = recentById.get(item.id);
     if (!recent) return;
     setFileToDelete({ id: recent.file.id, name: recent.file.name });
   };
 
   const handleTags = (item: FileItem) => {
-    const recent = recentById.get(Number(item.id));
+    const recent = recentById.get(item.id);
     if (!recent) return;
     setTagFileId(recent.file.id);
   };
@@ -199,7 +199,7 @@ export function RecentPage() {
       {/* Tags Modal */}
       <TagPickerModal
         open={tagFileId !== null}
-        fileId={tagFileId ?? 0}
+        fileId={tagFileId ?? ""}
         onClose={() => setTagFileId(null)}
       />
     </div>

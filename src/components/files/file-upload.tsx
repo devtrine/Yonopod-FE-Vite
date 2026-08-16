@@ -9,7 +9,7 @@ export function FileUploadButton({
   className,
   children,
 }: {
-  folderId?: number | null;
+  folderId?: string | null;
   className?: string;
   children?: React.ReactNode;
 }) {

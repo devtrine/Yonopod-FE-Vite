@@ -18,6 +18,6 @@ export async function addFavorite(payload: AddFavoritePayload): Promise<Favorite
   return data.data;
 }
 
-export async function removeFavorite(id: number): Promise<void> {
+export async function removeFavorite(id: string): Promise<void> {
   await api.delete(`/favorites/${id}`);
 }

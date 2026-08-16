@@ -4,10 +4,10 @@ import type { Folder } from "./folder";
 // ─── Entity types ────────────────────────────────────────────────────────────
 
 export interface Share {
-  id: number;
-  user_id: number;
-  file_id: number | null;
-  folder_id: number | null;
+  id: string;
+  user_id: string;
+  file_id: string | null;
+  folder_id: string | null;
   share_token: string;
   share_type: "link" | "form";
   permission: "read_only" | "read_write";
@@ -29,7 +29,7 @@ export type PublicShareResponse =
 /** Exactly one of file_id or folder_id must be provided */
 export type CreateSharePayload =
   | {
-      file_id: number;
+      file_id: string;
       folder_id?: never;
       share_type?: "link" | "form";
       password?: string | null;
@@ -38,7 +38,7 @@ export type CreateSharePayload =
       expires_at?: string | null;
     }
   | {
-      folder_id: number;
+      folder_id: string;
       file_id?: never;
       share_type?: "link" | "form";
       password?: string | null;

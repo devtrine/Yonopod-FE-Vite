@@ -43,7 +43,7 @@ export function useShares(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useShare(id: number | undefined) {
+export function useShare(id: string | undefined) {
   return useQuery({
     queryKey: ["shares", id],
     queryFn: () => shareService.getShare(id!),
@@ -63,7 +63,7 @@ export function useCreateShare() {
   });
 }
 
-export function useUpdateShare(shareId: number) {
+export function useUpdateShare(shareId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: UpdateSharePayload) =>
@@ -78,7 +78,7 @@ export function useUpdateShare(shareId: number) {
 export function useDeleteShare() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => shareService.deleteShare(id),
+    mutationFn: (id: string) => shareService.deleteShare(id),
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: ["shares", id] });
       queryClient.invalidateQueries({ queryKey: ["shares"] });

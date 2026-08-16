@@ -17,7 +17,7 @@ export function useTags(params?: ListTagsParams) {
   });
 }
 
-export function useFilesByTag(tagId: number | undefined, params?: { page?: number; limit?: number }) {
+export function useFilesByTag(tagId: string | undefined, params?: { page?: number; limit?: number }) {
   return useQuery({
     queryKey: ["tags", tagId, "files", params ?? {}],
     queryFn: () => tagsService.getFilesByTag(tagId!, params),
@@ -37,7 +37,7 @@ export function useCreateTag() {
   });
 }
 
-export function useUpdateTag(tagId: number) {
+export function useUpdateTag(tagId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: UpdateTagPayload) => tagsService.updateTag(tagId, payload),
@@ -50,7 +50,7 @@ export function useUpdateTag(tagId: number) {
 export function useDeleteTag() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => tagsService.deleteTag(id),
+    mutationFn: (id: string) => tagsService.deleteTag(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
@@ -61,7 +61,7 @@ export function useDeleteTag() {
 export function useAddTagToFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ tagId, fileId }: { tagId: number; fileId: number }) =>
+    mutationFn: ({ tagId, fileId }: { tagId: string; fileId: string }) =>
       tagsService.addTagToFile(tagId, fileId),
     onSuccess: (_, { tagId, fileId }) => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
@@ -75,7 +75,7 @@ export function useAddTagToFile() {
 export function useRemoveTagFromFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ tagId, fileId }: { tagId: number; fileId: number }) =>
+    mutationFn: ({ tagId, fileId }: { tagId: string; fileId: string }) =>
       tagsService.removeTagFromFile(tagId, fileId),
     onSuccess: (_, { tagId, fileId }) => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });

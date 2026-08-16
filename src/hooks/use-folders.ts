@@ -31,11 +31,11 @@ export function useFoldersTrash(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useFolder(id: number | undefined) {
+export function useFolder(id: string | undefined) {
   return useQuery({
     queryKey: ["folders", id],
     queryFn: () => folderService.getFolder(id!),
-    enabled: id !== undefined && id !== null,
+    enabled: Boolean(id),
   });
 }
 
@@ -51,7 +51,7 @@ export function useCreateFolder() {
   });
 }
 
-export function useUpdateFolder(folderId: number) {
+export function useUpdateFolder(folderId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: UpdateFolderPayload) =>
@@ -66,7 +66,7 @@ export function useUpdateFolder(folderId: number) {
 export function useSoftDeleteFolder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => folderService.softDeleteFolder(id),
+    mutationFn: (id: string) => folderService.softDeleteFolder(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
@@ -79,7 +79,7 @@ export function useSoftDeleteFolder() {
 export function useRestoreFolder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => folderService.restoreFolder(id),
+    mutationFn: (id: string) => folderService.restoreFolder(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
@@ -90,7 +90,7 @@ export function useRestoreFolder() {
 export function usePermanentDeleteFolder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => folderService.permanentDeleteFolder(id),
+    mutationFn: (id: string) => folderService.permanentDeleteFolder(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
@@ -99,7 +99,7 @@ export function usePermanentDeleteFolder() {
   });
 }
 
-export function useLockFolder(folderId: number) {
+export function useLockFolder(folderId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: LockFolderPayload) =>
@@ -111,7 +111,7 @@ export function useLockFolder(folderId: number) {
   });
 }
 
-export function useUnlockFolder(folderId: number) {
+export function useUnlockFolder(folderId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: UnlockFolderPayload) =>

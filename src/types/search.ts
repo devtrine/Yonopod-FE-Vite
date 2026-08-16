@@ -6,7 +6,7 @@ import type { Folder } from "./folder";
 export interface SearchParams {
   q?: string;
   type?: string;        // maps to file.extension in BE
-  folderId?: number;
+  folderId?: string;
   favorite?: boolean;
   from?: string;        // ISO date
   to?: string;          // ISO date
