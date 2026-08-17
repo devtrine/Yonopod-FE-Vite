@@ -90,7 +90,7 @@ export function FolderDetailPage() {
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
 
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
   const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);

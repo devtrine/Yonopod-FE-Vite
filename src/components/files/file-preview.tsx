@@ -55,10 +55,10 @@ export function FilePreview({
       {/* Preview Area */}
       <div className="p-4 border-b border-[#e2e8f0]">
         <div className="w-full aspect-4/3 rounded-lg bg-[#f1f5f9] border border-[#e2e8f0] flex items-center justify-center mb-3">
-          <FileTypeIcon name={item.name} isFolder={item.isFolder} size={64} />
+          <FileTypeIcon name={item.name + "." + item.extension} isFolder={item.isFolder} size={64} />
         </div>
         <div className="flex items-center gap-2">
-          <FileTypeIcon name={item.name} isFolder={item.isFolder} size={16} />
+          <FileTypeIcon name={item.name + "." + item.extension    } isFolder={item.isFolder} size={16} />
           <p className="font-semibold text-[#0f172a] truncate" title={item.name}>
             {item.name}
           </p>
@@ -128,25 +128,6 @@ export function FilePreview({
           </div>
         </div>
       )}
-
-      {/* Sharing Section
-      <div className="p-4 border-b border-[#e2e8f0]">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-semibold text-[#0f172a]">Sharing</h4>
-          <ChevronUp size={16} className="text-[#64748b]" />
-        </div>
-        
-        <div className="text-sm">
-          <p className="text-[#64748b] mb-2">Shared with</p>
-          <div className="flex items-center gap-2">
-            <div className="flex -space-x-2">
-              <Avatar name="Sarah Jenkins" size="sm" className="border-2 border-white" />
-              <Avatar name="David Chen" size="sm" className="border-2 border-white" />
-            </div>
-            <span className="text-[#0f172a]">Team Alpha +2</span>
-          </div>
-        </div>
-      </div> */}
 
       {/* Activity Section */}
       <div className="p-4">

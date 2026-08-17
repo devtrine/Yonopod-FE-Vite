@@ -27,7 +27,7 @@ export function FileCard({
     >
       <div className="flex items-start justify-between mb-4">
         <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#eff1fb]">
-          <FileTypeIcon name={item.name} isFolder={item.isFolder} size={20} />
+          <FileTypeIcon name={item.name + "." + item.extension} isFolder={item.isFolder} size={20} />
         </div>
         <div className="flex items-center gap-1">
           {menuActions ? (
@@ -63,7 +63,7 @@ export function FileCard({
       </div>
       <div className="mt-auto">
         <h3 className="text-sm font-semibold text-[#0f172a] mb-2 truncate" title={item.name}>
-          {item.name}
+          {item.name + (item.extension ? "." + item.extension : "")}
         </h3>
         {item.tags && item.tags.length > 0 && (
           <div className="flex gap-1 flex-wrap mb-2">

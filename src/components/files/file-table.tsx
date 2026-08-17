@@ -148,7 +148,7 @@ export function FileTable({
                               isSelected ? "text-[#1c3fc4]" : "text-[#0f172a]",
                             ].join(" ")}
                           >
-                            {file.name}
+                            {file.name + (file.extension ? "." + file.extension : "")}
                           </span>
                         </div>
                       )}
