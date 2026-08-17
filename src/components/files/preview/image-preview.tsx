@@ -7,9 +7,10 @@ interface ImagePreviewProps {
   src: string;
   fileName: string;
   extension?: string;
+  onError?: () => void;
 }
 
-export function ImagePreview({ src, fileName }: ImagePreviewProps) {
+export function ImagePreview({ src, fileName, onError }: ImagePreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [scale, setScale] = useState(1);
@@ -23,9 +24,6 @@ export function ImagePreview({ src, fileName }: ImagePreviewProps) {
       {/* Buffer / Image Loader */}
       {loading && !error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
-          <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-black/50 backdrop-blur-md border border-white/10 mb-3">
-            <Loader2 size={28} className="text-blue-400 animate-spin" />
-          </div>
           <p className="text-xs text-white/60">Buffering image…</p>
         </div>
       )}
@@ -48,6 +46,7 @@ export function ImagePreview({ src, fileName }: ImagePreviewProps) {
             onError={() => {
               setLoading(false);
               setError(true);
+              onError?.();
             }}
             style={{ transform: `scale(${scale})` }}
             className={`max-w-full max-h-[82vh] object-contain transition-all duration-200 rounded shadow-2xl drop-shadow-2xl ${

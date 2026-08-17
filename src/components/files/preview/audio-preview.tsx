@@ -7,9 +7,10 @@ interface AudioPreviewProps {
   src: string;
   fileName: string;
   extension?: string;
+  onError?: () => void;
 }
 
-export function AudioPreview({ src, fileName, extension }: AudioPreviewProps) {
+export function AudioPreview({ src, fileName, extension, onError }: AudioPreviewProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
@@ -22,6 +23,13 @@ export function AudioPreview({ src, fileName, extension }: AudioPreviewProps) {
     setIsBuffering(true);
     setIsPlaying(false);
     setCurrentTime(0);
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        setIsPlaying(false);
+      });
+    }
   }, [src]);
 
   const togglePlay = () => {
@@ -29,7 +37,7 @@ export function AudioPreview({ src, fileName, extension }: AudioPreviewProps) {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {});
     }
   };
 
@@ -82,14 +90,26 @@ export function AudioPreview({ src, fileName, extension }: AudioPreviewProps) {
         ref={audioRef}
         src={src}
         preload="auto"
+        autoPlay
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onWaiting={() => setIsBuffering(true)}
-        onCanPlay={() => setIsBuffering(false)}
+        onCanPlay={() => {
+          setIsBuffering(false);
+          if (audioRef.current && audioRef.current.paused) {
+            audioRef.current.play().then(() => {
+              setIsPlaying(true);
+            }).catch(() => {});
+          }
+        }}
         onPlaying={() => setIsBuffering(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
+        onError={() => {
+          setIsBuffering(false);
+          onError?.();
+        }}
       />
 
       {/* Audio Icon / Spinning Vinyl Disc Visual */}

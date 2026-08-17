@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { usePreviewStore } from "@/stores/preview-store";
 import { useUIStore } from "@/stores/ui-store";
 import { useFile, useCheckFileStatus } from "@/hooks/use-files";
+import {
+  getCachedDownloadUrl,
+  setCachedDownloadUrl,
+  removeCachedDownloadUrl,
+} from "@/lib/file-preview-cache";
 import { PreviewHeader } from "./preview-header";
 import { PreviewNav } from "./preview-nav";
 import { PreviewStatus } from "./preview-status";
@@ -70,6 +76,7 @@ export function FilePreviewModal() {
     prevFile,
   } = usePreviewStore();
   const { openDownloadDialog } = useUIStore();
+  const queryClient = useQueryClient();
 
   const activeItem: FileItem | undefined = useMemo(() => {
     if (!previewFileId) return undefined;
@@ -81,8 +88,34 @@ export function FilePreviewModal() {
   const fileId = activeItem?.id;
   const { data: file, isPending: filePending, isError: fileError } = useFile(fileId);
 
+  // Cached download URL state
+  const [cachedUrl, setCachedUrl] = useState<string | null>(() => getCachedDownloadUrl(fileId));
+
+  // Sync cached URL when active fileId changes
+  useEffect(() => {
+    setCachedUrl(getCachedDownloadUrl(fileId));
+  }, [fileId]);
+
+  // When useFile returns download URL and there's NO valid cache, save to cache
+  useEffect(() => {
+    if (!fileId || !file?.url?.download) return;
+    const existingCache = getCachedDownloadUrl(fileId);
+    if (!existingCache) {
+      setCachedDownloadUrl(fileId, file.url.download);
+      setCachedUrl(file.url.download);
+    }
+  }, [fileId, file?.url?.download]);
+
+  // Auto-evict cache on media load error and refetch fresh URL from API
+  const handleMediaError = useCallback(() => {
+    if (!fileId) return;
+    removeCachedDownloadUrl(fileId);
+    setCachedUrl(null);
+    queryClient.invalidateQueries({ queryKey: ["files", fileId] });
+  }, [fileId, queryClient]);
+
   const checkStatusUrl = file?.url?.check_status ?? null;
-  const downloadUrl = file?.url?.download ?? null;
+  const effectiveDownloadUrl = cachedUrl || file?.url?.download || null;
 
   const {
     data: checkStatus,
@@ -171,7 +204,7 @@ export function FilePreviewModal() {
             onRetry={() => refetchStatus()}
             isChecking={statusChecking}
           />
-        ) : !downloadUrl ? (
+        ) : !effectiveDownloadUrl ? (
           <PreviewStatus
             state="unready"
             onRetry={() => refetchStatus()}
@@ -181,25 +214,28 @@ export function FilePreviewModal() {
           <>
             {previewGroup === "image" && (
               <ImagePreview
-                src={downloadUrl}
+                src={effectiveDownloadUrl}
                 fileName={activeItem.name}
                 extension={effectiveExtension}
+                onError={handleMediaError}
               />
             )}
 
             {previewGroup === "audio" && (
               <AudioPreview
-                src={downloadUrl}
+                src={effectiveDownloadUrl}
                 fileName={activeItem.name}
                 extension={effectiveExtension}
+                onError={handleMediaError}
               />
             )}
 
             {previewGroup === "video" && (
               <VideoPreview
-                src={downloadUrl}
+                src={effectiveDownloadUrl}
                 fileName={activeItem.name}
                 extension={effectiveExtension}
+                onError={handleMediaError}
               />
             )}
 

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 interface VideoPreviewProps {
   src: string;
   fileName: string;
   extension?: string;
+  onError?: () => void;
 }
 
 function getMimeType(extension?: string): string {
@@ -30,8 +31,20 @@ function getMimeType(extension?: string): string {
   }
 }
 
-export function VideoPreview({ src, fileName, extension }: VideoPreviewProps) {
+export function VideoPreview({ src, fileName, extension, onError }: VideoPreviewProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "VIDEO_PLAYER_ERROR") {
+        onError?.();
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [onError]);
 
   const playerUrl = useMemo(() => {
     const mime = getMimeType(extension);
