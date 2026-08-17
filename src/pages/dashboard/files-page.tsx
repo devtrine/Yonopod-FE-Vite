@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FolderPlus, Upload, Folder as FolderIcon, FileText, Star, Trash2, X } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
@@ -6,7 +6,6 @@ import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
 import { FileActions } from "@/components/files/file-actions";
 import { FileTypeFilter } from "@/components/files/file-type-filter";
-import { FilePreview } from "@/components/files/file-preview";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { FolderCard } from "@/components/folders/folder-card";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -15,6 +14,7 @@ import { useFiles, useSoftDeleteFile } from "@/hooks/use-files";
 import { useFolders } from "@/hooks/use-folders";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
 import type { File as ApiFile } from "@/types/file";
@@ -44,11 +44,11 @@ const sortOptions = [
 export function FilesPage() {
   const navigate = useNavigate();
   const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
   const [typeFilter, setTypeFilter] = useState("");
-  const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
@@ -72,12 +72,17 @@ export function FilesPage() {
 
   const isLoading = filesLoading || foldersLoading;
 
+  // Register files in active list store for in-memory preview validation & hash sync
+  useEffect(() => {
+    setActiveFiles(files, !filesLoading);
+  }, [filesData, filesLoading, setActiveFiles]);
+
   const handleItemClick = (item: FileItem) => {
     if (item.isFolder) {
       const folderId = item.id.replace("folder-", "");
       navigate(`/folders/${folderId}`);
     } else {
-      setSelectedItem(item);
+      openPreview(item.id);
     }
   };
 
@@ -364,11 +369,6 @@ export function FilesPage() {
           )}
         </div>
       </div>
-
-      {/* Right Side Panel */}
-      {selectedItem && (
-        <FilePreview item={selectedItem} onClose={() => setSelectedItem(null)} />
-      )}
 
       {/* Delete Confirmation */}
       <ConfirmModal

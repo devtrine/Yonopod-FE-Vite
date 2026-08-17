@@ -19,6 +19,7 @@ import {
   useFavoriteMaps,
 } from "../../hooks/use-favorites";
 import { useUIStore } from "../../stores/ui-store";
+import { usePreviewStore } from "../../stores/preview-store";
 import { tagColorHex, tagSoftBackground } from "./tag-chip";
 import { FileActionsMenu } from "../files/file-actions-menu";
 import type { FileItem } from "../files/file-table";
@@ -29,6 +30,7 @@ function fileToFileItem(file: ApiFile, isStarred?: boolean): FileItem {
   return {
     id: String(file.id),
     name: file.name,
+    extension: file.extension,
     isFolder: false,
     tags: file.tags || [],
     isStarred,
@@ -55,6 +57,7 @@ export function TagFilesModal({
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
   const { openRenameModal } = useUIStore();
+  const { openPreview } = usePreviewStore();
   const queryClient = useQueryClient();
 
   const tagFiles = useMemo(() => data?.data ?? [], [data]);
@@ -272,7 +275,8 @@ export function TagFilesModal({
           {tagFiles.map((file) => (
             <div
               key={file.id}
-              className="group flex items-center gap-3 px-4 py-2.5 hover:bg-[#f8fafc] transition-colors"
+              onClick={() => openPreview(file.id)}
+              className="group flex items-center gap-3 px-4 py-2.5 hover:bg-[#f8fafc] transition-colors cursor-pointer"
             >
               <FileText size={16} className="text-[#64748b] flex-shrink-0" />
               <div className="flex-1 min-w-0">

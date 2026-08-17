@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { Pagination } from "@/components/ui/pagination";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -6,6 +6,7 @@ import { useRecent, useClearRecentHistory } from "@/hooks/use-recent";
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
@@ -15,8 +16,9 @@ import type { FileMenuActions } from "@/components/files/file-actions-menu";
 
 function recentToFileItem(recent: RecentFile): FileItem {
   return {
-    id: String(recent.id),
+    id: String(recent.file.id),
     name: recent.file.name,
+    extension: recent.file.extension,
     isFolder: false,
     lastModified: new Date(recent.accessed_at).toLocaleDateString("en-US", {
       month: "short",
@@ -42,14 +44,19 @@ export function RecentPage() {
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
   const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const items: FileItem[] = (data?.data ?? []).map(recentToFileItem);
   const totalPages = data?.pagination?.totalPages ?? 1;
   const total = data?.pagination?.total ?? 0;
 
-  const recentById = useMemo(() => {
+  useEffect(() => {
+    setActiveFiles(items, !isPending);
+  }, [data, isPending, setActiveFiles]);
+
+  const recentByFileId = useMemo(() => {
     const map = new Map<string, RecentFile>();
-    for (const r of data?.data ?? []) map.set(r.id, r);
+    for (const r of data?.data ?? []) map.set(String(r.file.id), r);
     return map;
   }, [data]);
 
@@ -61,13 +68,13 @@ export function RecentPage() {
   };
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
-    const recent = recentById.get(item.id);
+    const recent = recentByFileId.get(item.id);
     if (!recent) return;
     openDownloadDialog(recent.file.id, recent.file.name);
   };
 
   const handleFavorite = (item: FileItem) => {
-    const recent = recentById.get(item.id);
+    const recent = recentByFileId.get(item.id);
     if (!recent) return;
     const fileId = recent.file.id;
     const favorite = fileMap.get(fileId);
@@ -88,21 +95,25 @@ export function RecentPage() {
   };
 
   const handleRename = (item: FileItem) => {
-    const recent = recentById.get(item.id);
+    const recent = recentByFileId.get(item.id);
     if (!recent) return;
     openRenameModal(recent.file.id, recent.file.name, false);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
-    const recent = recentById.get(item.id);
+    const recent = recentByFileId.get(item.id);
     if (!recent) return;
     setFileToDelete({ id: recent.file.id, name: recent.file.name });
   };
 
   const handleTags = (item: FileItem) => {
-    const recent = recentById.get(item.id);
+    const recent = recentByFileId.get(item.id);
     if (!recent) return;
     setTagFileId(recent.file.id);
+  };
+
+  const handleRowClick = (item: FileItem) => {
+    openPreview(item.id);
   };
 
   const confirmDelete = () => {
@@ -166,6 +177,7 @@ export function RecentPage() {
                 <FileTable
                   files={items}
                   columns={["name", "location", "lastModified", "owner"]}
+                  onRowClick={handleRowClick}
                   menuActions={fileMenuActions}
                 />
                 {totalPages > 1 && (
