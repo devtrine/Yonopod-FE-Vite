@@ -16,6 +16,7 @@ export type FileItem = {
   location?: string;
   isStarred?: boolean;
   isSelected?: boolean;
+  size?: number | null;
 };
 
 export type Column = "name" | "lastModified" | "owner" | "location" | "dateDeleted" | "originalLocation" | "starred" | "tags";
