@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { StorageOverview } from "@/components/dashboard/storage-overview";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { RecentFiles } from "@/components/dashboard/recent-files";
-import { useCurrentUser } from "@/hooks/use-auth";
+import { useCurrentUser, useUserStats } from "@/hooks/use-auth";
 import { useRecent } from "@/hooks/use-recent";
-import { useFiles } from "@/hooks/use-files";
-import { useFolders } from "@/hooks/use-folders";
 import { useShares } from "@/hooks/use-shares";
 import { usePreviewStore } from "@/stores/preview-store";
 import type { FileItem } from "@/components/files/file-table";
@@ -41,10 +39,9 @@ const MOCK_ACTIVITIES = [
 export function DashboardPage() {
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
+  const { data: statsData, isPending: statsLoading } = useUserStats();
   const { data: recentData, isPending: recentLoading } = useRecent({ limit: 6 });
-  const { data: filesData } = useFiles({ limit: 1 });
-  const { data: foldersData } = useFolders({ limit: 1 });
-  const { data: sharesData } = useShares({ limit: 1 });
+  const { data: sharesData, isPending: sharesLoading } = useShares({ limit: 1 });
   const { setActiveFiles, openPreview } = usePreviewStore();
 
   const recentItems: FileItem[] = (recentData?.data ?? []).map(recentToFileItem);
@@ -82,9 +79,11 @@ export function DashboardPage() {
       <StorageOverview
         usedGB={Math.round(usedGB * 100) / 100}
         totalGB={totalGB}
-        totalFiles={String(filesData?.pagination?.total ?? "—")}
-        totalFolders={String(foldersData?.pagination?.total ?? "—")}
+        totalFiles={statsData?.files != null ? String(statsData.files) : "—"}
+        totalFolders={statsData?.folders != null ? String(statsData.folders) : "—"}
         sharedItems={String(sharesData?.pagination?.total ?? "—")}
+        isLoadingStats={statsLoading}
+        isLoadingShares={sharesLoading}
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
