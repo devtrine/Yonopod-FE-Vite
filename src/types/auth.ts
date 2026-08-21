@@ -6,8 +6,11 @@ export interface User {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
+  storage_quota?: string | number;
+  storage_used: string | number;
+  role?: string;
   is_active: boolean;
-  storage_used: number;
+  two_factor_enabled?: boolean;
   created_at: string;
   updated_at: string | null;
 }

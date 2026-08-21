@@ -7,6 +7,7 @@ import { useCurrentUser, useUserStats } from "@/hooks/use-auth";
 import { useRecent } from "@/hooks/use-recent";
 import { useShares } from "@/hooks/use-shares";
 import { usePreviewStore } from "@/stores/preview-store";
+import { bytesToGB } from "@/lib/formatters";
 import type { FileItem } from "@/components/files/file-table";
 import type { RecentFile } from "@/types/recent";
 
@@ -50,10 +51,11 @@ export function DashboardPage() {
     setActiveFiles(recentItems, !recentLoading);
   }, [recentData, recentLoading, setActiveFiles]);
 
-  const usedGB = user?.storage_used
-    ? Number(user.storage_used) / (1024 * 1024 * 1024)
-    : 0;
-  const totalGB = 100;
+  const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
+
+  const usedGB = bytesToGB(usedBytes);
+  const totalGB = quotaBytes > 0 ? bytesToGB(quotaBytes) : 100;
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -77,7 +79,7 @@ export function DashboardPage() {
       </header>
 
       <StorageOverview
-        usedGB={Math.round(usedGB * 100) / 100}
+        usedGB={usedGB}
         totalGB={totalGB}
         totalFiles={statsData?.files != null ? String(statsData.files) : "—"}
         totalFolders={statsData?.folders != null ? String(statsData.folders) : "—"}
