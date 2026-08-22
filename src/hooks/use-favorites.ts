@@ -37,9 +37,35 @@ export function useAddFavorite() {
   return useMutation({
     mutationFn: (payload: AddFavoritePayload) =>
       favoritesService.addFavorite(payload),
-    onSuccess: () => {
+    onMutate: async (newFav) => {
+      await queryClient.cancelQueries({ queryKey: ["favorites"] });
+
+      const previousFavorites = queryClient.getQueryData(["favorites"]);
+
+      // Optimistically update file detail query if cached
+      if (newFav.file_id) {
+        queryClient.setQueryData(["files", newFav.file_id], (old: Record<string, unknown> | undefined) => {
+          if (!old) return old;
+          return { ...old, is_favorite: true };
+        });
+      }
+
+      return { previousFavorites, fileId: newFav.file_id };
+    },
+    onError: (_err, _newFav, context) => {
+      if (context?.previousFavorites) {
+        queryClient.setQueryData(["favorites"], context.previousFavorites);
+      }
+      if (context?.fileId) {
+        queryClient.setQueryData(["files", context.fileId], (old: Record<string, unknown> | undefined) => {
+          if (!old) return old;
+          return { ...old, is_favorite: false };
+        });
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
-      queryClient.invalidateQueries({ queryKey: ["folders"]});
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
     },
   });
@@ -49,9 +75,20 @@ export function useRemoveFavorite() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => favoritesService.removeFavorite(id),
-    onSuccess: () => {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["favorites"] });
+      const previousFavorites = queryClient.getQueryData(["favorites"]);
+      return { previousFavorites };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousFavorites) {
+        queryClient.setQueryData(["favorites"], context.previousFavorites);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
     },
   });
 }
+

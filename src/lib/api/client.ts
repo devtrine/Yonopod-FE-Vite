@@ -1,8 +1,18 @@
 import axios, { AxiosError } from "axios";
+import {
+  isHubyUrl,
+  generateCacheKey,
+  getApiCache,
+  setApiCache,
+  clearApiCache,
+} from "./api-cache";
+
+export { clearApiCache, isHubyUrl, getApiCache, setApiCache, removeApiCache, removeApiCacheByPattern } from "./api-cache";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
     skipAuthRedirect?: boolean;
+    skipCache?: boolean;
   }
 }
 
@@ -19,6 +29,45 @@ export const api = axios.create({
   },
 });
 
+/**
+ * Request Interceptor for Caching:
+ * - Method GET: If cached and not Huby URL, respond from cache immediately via custom adapter.
+ * - Non-GET (POST, PUT, PATCH, DELETE, etc.): Clear the entire API GET cache.
+ */
+api.interceptors.request.use((config) => {
+  const method = (config.method || "GET").toUpperCase();
+
+  if (method !== "GET") {
+    // Invalidate entire cache on any Non-GET request
+    clearApiCache();
+    return config;
+  }
+
+  // Check if this GET request should bypass cache (e.g. Huby URL or skipCache flag)
+  if (isHubyUrl(config.url) || Boolean(config.skipCache)) {
+    return config;
+  }
+
+  const cacheKey = generateCacheKey(config);
+  const cached = getApiCache(cacheKey);
+
+  if (cached) {
+    // Serve from cache without making a network request
+    config.adapter = () => {
+      return Promise.resolve({
+        data: cached.data,
+        status: cached.status,
+        statusText: cached.statusText,
+        headers: cached.headers,
+        config,
+        request: {},
+      });
+    };
+  }
+
+  return config;
+});
+
 /** List of endpoints that should NEVER trigger auto-redirect to /login on 401 */
 const AUTH_EXCLUDED_ENDPOINTS = [
   "/auth/logout",
@@ -33,10 +82,35 @@ const AUTH_EXCLUDED_ENDPOINTS = [
 // Flag to prevent multiple simultaneous redirects (race conditions)
 let isRedirecting = false;
 
-// Response interceptor for centralized error handling
+// Response interceptor for caching and centralized error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const method = (response.config.method || "GET").toUpperCase();
+
+    if (method === "GET") {
+      // Cache response for GET requests (except Huby URLs and skipCache)
+      if (
+        !isHubyUrl(response.config.url) &&
+        !response.config.skipCache &&
+        response.status >= 200 &&
+        response.status < 300
+      ) {
+        const cacheKey = generateCacheKey(response.config);
+        setApiCache(cacheKey, response);
+      }
+    } else {
+      // Invalidate cache on non-GET responses as well
+      clearApiCache();
+    }
+
+    return response;
+  },
   (error: AxiosError) => {
+    const method = (error.config?.method || "").toUpperCase();
+    if (method && method !== "GET") {
+      clearApiCache();
+    }
+
     if (error.response?.status === 401) {
       const reqUrl = error.config?.url || "";
       const shouldSkipRedirect = 
@@ -95,4 +169,5 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return "An unexpected error occurred";
 }
+
 

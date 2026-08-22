@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useCallback, useState } from "react";
+import { useEffect, useMemo, useCallback, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { usePreviewStore } from "@/stores/preview-store";
@@ -10,12 +10,13 @@ import {
   useAddFavorite,
   useRemoveFavorite,
 } from "@/hooks/use-favorites";
-import { getErrorMessage } from "@/lib/api/client";
+import { getErrorMessage, removeApiCacheByPattern } from "@/lib/api/client";
 import { toast } from "@/components/ui/toaster";
 import {
   getCachedDownloadUrl,
   setCachedDownloadUrl,
   removeCachedDownloadUrl,
+  isUrlExpired,
 } from "@/lib/file-preview-cache";
 import { PreviewHeader } from "./preview-header";
 import { PreviewNav } from "./preview-nav";
@@ -102,29 +103,86 @@ export function FilePreviewModal() {
   const removeFavorite = useRemoveFavorite();
 
   const favoriteRecord = fileId ? fileMap.get(fileId) : undefined;
-  const isStarred = Boolean(
+  const lastKnownFavoriteIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (favoriteRecord?.id) {
+      lastKnownFavoriteIdRef.current = favoriteRecord.id;
+    }
+  }, [favoriteRecord]);
+
+  // Local optimistic state for Star / Unstar
+  const [optimisticStarred, setOptimisticStarred] = useState<boolean | null>(null);
+
+  // Reset optimistic state when active fileId changes
+  useEffect(() => {
+    setOptimisticStarred(null);
+  }, [fileId]);
+
+  const serverStarred = Boolean(
     favoriteRecord || file?.is_favorite || activeItem?.isStarred
   );
+  const isStarred = optimisticStarred !== null ? optimisticStarred : serverStarred;
   const isStarPending = addFavorite.isPending || removeFavorite.isPending;
 
-  const handleToggleStar = useCallback(() => {
+  // Optimistic Star / Unstar handler
+  const handleToggleStar = useCallback(async () => {
     if (!fileId || isStarPending) return;
 
-    if (favoriteRecord) {
-      removeFavorite.mutate(favoriteRecord.id, {
-        onSuccess: () => toast("success", "Removed from favorites"),
-        onError: (err) => toast("error", getErrorMessage(err)),
-      });
-    } else {
-      addFavorite.mutate(
-        { file_id: fileId },
-        {
-          onSuccess: () => toast("success", "Added to favorites"),
-          onError: (err) => toast("error", getErrorMessage(err)),
+    const previousStarred = isStarred;
+    const nextStarred = !previousStarred;
+
+    // 1. Optimistic update immediately
+    setOptimisticStarred(nextStarred);
+
+    if (nextStarred) {
+      try {
+        const res = await addFavorite.mutateAsync({ file_id: fileId });
+        if (res?.id) {
+          lastKnownFavoriteIdRef.current = res.id;
         }
-      );
+        toast("success", "Added to favorites");
+      } catch (err) {
+        // Rollback on failure
+        setOptimisticStarred(previousStarred);
+        toast("error", getErrorMessage(err));
+      }
+    } else {
+      const favId = lastKnownFavoriteIdRef.current || favoriteRecord?.id;
+      if (favId) {
+        try {
+          await removeFavorite.mutateAsync(favId);
+          lastKnownFavoriteIdRef.current = null;
+          toast("success", "Removed from favorites");
+        } catch (err) {
+          // Rollback on failure
+          setOptimisticStarred(previousStarred);
+          toast("error", getErrorMessage(err));
+        }
+      } else {
+        // Search cache for favorite ID if lookup map was not ready
+        try {
+          const favData =
+            queryClient.getQueryData<{ data?: Array<{ id: string; file_id?: string; file?: { id: string } }> }>(["favorites", { limit: 100 }]) ||
+            queryClient.getQueryData<{ data?: Array<{ id: string; file_id?: string; file?: { id: string } }> }>(["favorites", {}]);
+          const match = favData?.data?.find(
+            (f) => String(f.file_id) === String(fileId) || String(f.file?.id) === String(fileId)
+          );
+          if (match?.id) {
+            await removeFavorite.mutateAsync(match.id);
+            lastKnownFavoriteIdRef.current = null;
+            toast("success", "Removed from favorites");
+          } else {
+            setOptimisticStarred(previousStarred);
+            toast("error", "Unable to remove favorite record");
+          }
+        } catch (err) {
+          setOptimisticStarred(previousStarred);
+          toast("error", getErrorMessage(err));
+        }
+      }
     }
-  }, [fileId, isStarPending, favoriteRecord, removeFavorite, addFavorite]);
+  }, [fileId, isStarPending, isStarred, favoriteRecord, addFavorite, removeFavorite, queryClient]);
 
   // Cached download URL state
   const [cachedUrl, setCachedUrl] = useState<string | null>(() => getCachedDownloadUrl(fileId));
@@ -134,9 +192,15 @@ export function FilePreviewModal() {
     setCachedUrl(getCachedDownloadUrl(fileId));
   }, [fileId]);
 
-  // When useFile returns download URL and there's NO valid cache, save to cache
+  // When useFile returns download URL and there's NO valid cache, save to cache if not expired
   useEffect(() => {
     if (!fileId || !file?.url?.download) return;
+    if (isUrlExpired(file.url.download)) {
+      // Server returned expired URL or cache was stale -> invalidate and fetch fresh
+      removeCachedDownloadUrl(fileId);
+      removeApiCacheByPattern(`/files/${fileId}`);
+      return;
+    }
     const existingCache = getCachedDownloadUrl(fileId);
     if (!existingCache) {
       setCachedDownloadUrl(fileId, file.url.download);
@@ -144,16 +208,30 @@ export function FilePreviewModal() {
     }
   }, [fileId, file?.url?.download]);
 
+  // Retry tracker to prevent infinite reload loops
+  const mediaRetryCountRef = useRef(0);
+
+  useEffect(() => {
+    mediaRetryCountRef.current = 0;
+  }, [fileId]);
+
   // Auto-evict cache on media load error and refetch fresh URL from API
   const handleMediaError = useCallback(() => {
     if (!fileId) return;
     removeCachedDownloadUrl(fileId);
     setCachedUrl(null);
-    queryClient.invalidateQueries({ queryKey: ["files", fileId] });
+    removeApiCacheByPattern(`/files/${fileId}`);
+
+    if (mediaRetryCountRef.current < 2) {
+      mediaRetryCountRef.current += 1;
+      queryClient.invalidateQueries({ queryKey: ["files", fileId] });
+    }
   }, [fileId, queryClient]);
 
   const checkStatusUrl = file?.url?.check_status ?? null;
-  const effectiveDownloadUrl = cachedUrl || file?.url?.download || null;
+  const validCachedUrl = cachedUrl && !isUrlExpired(cachedUrl) ? cachedUrl : null;
+  const validServerUrl = file?.url?.download && !isUrlExpired(file.url.download) ? file.url.download : null;
+  const effectiveDownloadUrl = validCachedUrl || validServerUrl || null;
 
   const {
     data: checkStatus,
@@ -161,16 +239,9 @@ export function FilePreviewModal() {
     refetch: refetchStatus,
   } = useCheckFileStatus(fileId, checkStatusUrl);
 
-  const isReady = checkStatus?.isUploaded === true;
+  const isReady = checkStatus?.isUploaded === true || Boolean(effectiveDownloadUrl);
   const isFilesList = activeFiles.filter((f) => !f.isFolder);
   const hasMultiple = isFilesList.length > 1;
-
-  // Refetch status direct on mount / file change
-  useEffect(() => {
-    if (checkStatusUrl) {
-      refetchStatus();
-    }
-  }, [checkStatusUrl, refetchStatus]);
 
   // Keyboard navigation & shortcuts
   const handleKeyDown = useCallback(
@@ -248,6 +319,9 @@ export function FilePreviewModal() {
     }
   };
 
+  // Determine non-flashing loading state
+  const isInitialLoading = (filePending && !file && !cachedUrl) || (statusChecking && !checkStatus && !effectiveDownloadUrl);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden animate-in fade-in duration-200"
@@ -279,7 +353,7 @@ export function FilePreviewModal() {
         className="relative z-10 w-full h-full flex items-center justify-center p-4 pt-16 pb-8"
         onClick={(e) => e.stopPropagation()}
       >
-        {filePending || statusChecking ? (
+        {isInitialLoading ? (
           <PreviewStatus state="loading" message="Loading file preview…" />
         ) : fileError ? (
           <PreviewStatus
@@ -287,13 +361,7 @@ export function FilePreviewModal() {
             message="Failed to load file information. Please try again."
             onRetry={() => refetchStatus()}
           />
-        ) : !isReady ? (
-          <PreviewStatus
-            state="unready"
-            onRetry={() => refetchStatus()}
-            isChecking={statusChecking}
-          />
-        ) : !effectiveDownloadUrl ? (
+        ) : !isReady || !effectiveDownloadUrl ? (
           <PreviewStatus
             state="unready"
             onRetry={() => refetchStatus()}
@@ -342,3 +410,4 @@ export function FilePreviewModal() {
     </div>
   );
 }
+
