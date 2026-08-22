@@ -4,6 +4,7 @@ import { api } from "../lib/api/client";
 import type { ApiResponse } from "../types/api";
 import type {
   User,
+  UserStats,
   RegisterPayload,
   LoginPayload,
   UpdateProfilePayload,
@@ -52,3 +53,9 @@ export async function updateProfile(payload: UpdateProfilePayload): Promise<User
 export async function changePassword(payload: ChangePasswordPayload): Promise<void> {
   await api.put("/auth/me/password", payload);
 }
+
+export async function getStats(): Promise<UserStats> {
+  const { data } = await api.get<ApiResponse<UserStats>>("/auth/stats");
+  return data.data;
+}
+

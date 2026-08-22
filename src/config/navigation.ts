@@ -13,7 +13,6 @@ import {
 export const mainNavItems = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "My Drive", href: "/files", icon: FolderOpen },
-  { label: "Shared", href: "/shared", icon: Users },
   { label: "Recent", href: "/recent", icon: Clock },
   { label: "Favorites", href: "/favorites", icon: Star },
   { label: "Tags", href: "/tags", icon: Tag },

@@ -56,6 +56,7 @@ export function usePresignUpload() {
     mutationFn: (payload: PresignUploadPayload) => fileService.presignUpload(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
 }
@@ -88,6 +89,7 @@ export function useSoftDeleteFile() {
       queryClient.removeQueries({ queryKey: ["files", id] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
 }
@@ -99,6 +101,7 @@ export function useRestoreFile() {
     onSuccess: () => {
       // Menghapus cache semua query yang diawali ["files"] (termasuk ["files", "trash", ...])
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
 }
@@ -113,6 +116,7 @@ export function usePermanentDeleteFile() {
       queryClient.invalidateQueries({ queryKey: ["files", "trash"] });
       queryClient.removeQueries({ queryKey: ["files", id] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
 }
