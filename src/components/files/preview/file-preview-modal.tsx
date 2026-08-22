@@ -2,9 +2,16 @@
 
 import { useEffect, useMemo, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { usePreviewStore } from "@/stores/preview-store";
-import { useUIStore } from "@/stores/ui-store";
 import { useFile, useCheckFileStatus } from "@/hooks/use-files";
+import {
+  useFavoriteMaps,
+  useAddFavorite,
+  useRemoveFavorite,
+} from "@/hooks/use-favorites";
+import { getErrorMessage } from "@/lib/api/client";
+import { toast } from "@/components/ui/toaster";
 import {
   getCachedDownloadUrl,
   setCachedDownloadUrl,
@@ -75,8 +82,9 @@ export function FilePreviewModal() {
     nextFile,
     prevFile,
   } = usePreviewStore();
-  const { openDownloadDialog } = useUIStore();
   const queryClient = useQueryClient();
+
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const activeItem: FileItem | undefined = useMemo(() => {
     if (!previewFileId) return undefined;
@@ -87,6 +95,36 @@ export function FilePreviewModal() {
 
   const fileId = activeItem?.id;
   const { data: file, isPending: filePending, isError: fileError } = useFile(fileId);
+
+  // Favorite / Star state & mutations
+  const { fileMap } = useFavoriteMaps();
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
+
+  const favoriteRecord = fileId ? fileMap.get(fileId) : undefined;
+  const isStarred = Boolean(
+    favoriteRecord || file?.is_favorite || activeItem?.isStarred
+  );
+  const isStarPending = addFavorite.isPending || removeFavorite.isPending;
+
+  const handleToggleStar = useCallback(() => {
+    if (!fileId || isStarPending) return;
+
+    if (favoriteRecord) {
+      removeFavorite.mutate(favoriteRecord.id, {
+        onSuccess: () => toast("success", "Removed from favorites"),
+        onError: (err) => toast("error", getErrorMessage(err)),
+      });
+    } else {
+      addFavorite.mutate(
+        { file_id: fileId },
+        {
+          onSuccess: () => toast("success", "Added to favorites"),
+          onError: (err) => toast("error", getErrorMessage(err)),
+        }
+      );
+    }
+  }, [fileId, isStarPending, favoriteRecord, removeFavorite, addFavorite]);
 
   // Cached download URL state
   const [cachedUrl, setCachedUrl] = useState<string | null>(() => getCachedDownloadUrl(fileId));
@@ -161,8 +199,53 @@ export function FilePreviewModal() {
   const effectiveExtension = file?.extension || activeItem.extension || "";
   const previewGroup = getPreviewGroup(effectiveExtension);
 
-  const handleDownload = () => {
-    openDownloadDialog(activeItem.id, activeItem.name);
+  const lastModified = file?.updated_at || file?.created_at || activeItem.lastModified || null;
+  const fileSize = file?.size ?? (typeof activeItem.size === "number" ? activeItem.size : null);
+
+  const handleDownload = async () => {
+    if (!effectiveDownloadUrl) {
+      toast("error", "This file is not available for download yet.");
+      return;
+    }
+
+    const fullName = effectiveExtension && !activeItem.name.endsWith(`.${effectiveExtension}`)
+      ? `${activeItem.name}.${effectiveExtension}`
+      : activeItem.name;
+
+    try {
+      setIsDownloading(true);
+
+      const response = await axios.get<Blob>(effectiveDownloadUrl, {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data]);
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", fullName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+
+      toast("success", `Downloaded ${fullName}`);
+    } catch {
+      // Fallback direct anchor download if blob streaming fails
+      try {
+        const link = document.createElement("a");
+        link.href = effectiveDownloadUrl;
+        link.download = fullName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        toast("success", `Downloaded ${fullName}`);
+      } catch (err) {
+        toast("error", getErrorMessage(err));
+      }
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -174,7 +257,13 @@ export function FilePreviewModal() {
       <PreviewHeader
         fileName={activeItem.name}
         extension={effectiveExtension}
+        fileSize={fileSize}
+        lastModified={lastModified}
+        isStarred={isStarred}
+        onToggleStar={handleToggleStar}
+        isStarPending={isStarPending}
         onDownload={handleDownload}
+        isDownloading={isDownloading}
         onClose={closePreview}
       />
 
@@ -244,6 +333,7 @@ export function FilePreviewModal() {
                 item={activeItem}
                 file={file}
                 onDownload={handleDownload}
+                isDownloading={isDownloading}
               />
             )}
           </>

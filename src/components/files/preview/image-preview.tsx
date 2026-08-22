@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, ZoomIn, ZoomOut, RotateCcw, AlertCircle } from "lucide-react";
+import { ZoomIn, ZoomOut, RotateCcw, AlertCircle } from "lucide-react";
 
 interface ImagePreviewProps {
   src: string;
