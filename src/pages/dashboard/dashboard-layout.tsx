@@ -4,8 +4,11 @@ import { Header } from "@/components/layout/header";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { DashboardModals } from "@/components/dashboard/dashboard-modals";
 import { RequireAuth } from "@/components/auth/require-auth";
+import { usePreviewHashSync } from "@/stores/preview-store";
 
 export function DashboardLayout() {
+  usePreviewHashSync();
+
   return (
     <RequireAuth>
       <SidebarProvider>

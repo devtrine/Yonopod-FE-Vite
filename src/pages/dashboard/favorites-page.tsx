@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useFavorites, useRemoveFavorite } from "@/hooks/use-favorites";
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useSoftDeleteFolder } from "@/hooks/use-folders";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
@@ -14,14 +16,21 @@ import type { FileMenuActions } from "@/components/files/file-actions-menu";
 function favoriteToFileItem(fav: Favorite): FileItem {
   if (fav.file) {
     return {
-      id: String(fav.id),
+      id: String(fav.file.id),
       name: fav.file.name,
+      extension: fav.file.extension,
       isFolder: false,
-      lastModified: new Date(fav.created_at).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
+      lastModified: fav.file.updated_at
+        ? new Date(fav.file.updated_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : new Date(fav.file.created_at || fav.created_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
       owner: "me",
       tags: fav.file.tags || [],
       isStarred: true,
@@ -29,10 +38,10 @@ function favoriteToFileItem(fav: Favorite): FileItem {
   }
   if (fav.folder) {
     return {
-      id: String(fav.id),
+      id: `folder-${fav.folder.id}`,
       name: fav.folder.name,
       isFolder: true,
-      lastModified: new Date(fav.created_at).toLocaleDateString("en-US", {
+      lastModified: new Date(fav.folder.created_at || fav.created_at).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -53,25 +62,34 @@ function favoriteToFileItem(fav: Favorite): FileItem {
 type PendingDelete = { kind: "file" | "folder"; id: string; name: string };
 
 export function FavoritesPage() {
+  const navigate = useNavigate();
   const { data, isPending, isError } = useFavorites({ limit: 50 });
   const removeFavorite = useRemoveFavorite();
   const deleteFile = useSoftDeleteFile();
   const deleteFolder = useSoftDeleteFolder();
   const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [tagFileId, setTagFileId] = useState<string | null>(null);
 
-  const favoriteById = useMemo(() => {
+  const favoriteByEntityId = useMemo(() => {
     const map = new Map<string, Favorite>();
-    for (const fav of data?.data ?? []) map.set(fav.id, fav);
+    for (const fav of data?.data ?? []) {
+      if (fav.file) map.set(String(fav.file.id), fav);
+      if (fav.folder) map.set(`folder-${fav.folder.id}`, fav);
+    }
     return map;
   }, [data]);
 
   const favorites: FileItem[] = (data?.data ?? []).map(favoriteToFileItem);
 
+  useEffect(() => {
+    setActiveFiles(favorites, !isPending);
+  }, [data, isPending, setActiveFiles]);
+
   const handleUnfavorite = (item: FileItem) => {
-    const fav = favoriteById.get(item.id);
+    const fav = favoriteByEntityId.get(item.id);
     if (!fav) return;
     removeFavorite.mutate(fav.id, {
       onSuccess: () => toast("success", "Removed from favorites"),
@@ -81,20 +99,20 @@ export function FavoritesPage() {
 
   const handleDownload: FileMenuActions["onDownload"] = (item) => {
     if (item.isFolder) return;
-    const fav = favoriteById.get(item.id);
+    const fav = favoriteByEntityId.get(item.id);
     if (!fav?.file) return;
     openDownloadDialog(fav.file.id, fav.file.name);
   };
 
   const handleRename = (item: FileItem) => {
-    const fav = favoriteById.get(item.id);
+    const fav = favoriteByEntityId.get(item.id);
     if (!fav) return;
     if (fav.file) openRenameModal(fav.file.id, fav.file.name, false);
     else if (fav.folder) openRenameModal(fav.folder.id, fav.folder.name, true);
   };
 
   const handleDeleteRequest = (item: FileItem) => {
-    const fav = favoriteById.get(item.id);
+    const fav = favoriteByEntityId.get(item.id);
     if (!fav) return;
     if (fav.file) setPendingDelete({ kind: "file", id: fav.file.id, name: fav.file.name });
     else if (fav.folder) setPendingDelete({ kind: "folder", id: fav.folder.id, name: fav.folder.name });
@@ -102,9 +120,17 @@ export function FavoritesPage() {
 
   const handleTags = (item: FileItem) => {
     if (item.isFolder) return;
-    const fav = favoriteById.get(item.id);
+    const fav = favoriteByEntityId.get(item.id);
     if (!fav?.file) return;
     setTagFileId(fav.file.id);
+  };
+
+  const handleRowClick = (item: FileItem) => {
+    if (item.isFolder) {
+      navigate(`/folders/${item.id.replace("folder-", "")}`);
+    } else {
+      openPreview(item.id);
+    }
   };
 
   const confirmDelete = () => {
@@ -162,6 +188,7 @@ export function FavoritesPage() {
                 files={favorites}
                 columns={["name", "starred", "lastModified", "owner"]}
                 onToggleStar={handleUnfavorite}
+                onRowClick={handleRowClick}
                 menuActions={fileMenuActions}
               />
             )}
