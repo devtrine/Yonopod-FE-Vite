@@ -1,6 +1,6 @@
 import { useCurrentUser } from "@/hooks/use-auth";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { formatFileSize } from "@/lib/formatters";
+import { formatFileSize, bytesToGB } from "@/lib/formatters";
 import { Cloud, Trash2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -8,10 +8,10 @@ export function StorageSettingsPage() {
   const { data: user, isPending } = useCurrentUser();
 
   const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
-  const totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB
-  const usedGB = Math.round((usedBytes / (1024 * 1024 * 1024)) * 100) / 100;
-  const totalGB = 100;
-  const percentage = Math.min(100, Math.round((usedBytes / totalBytes) * 100));
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 100 * 1024 * 1024 * 1024;
+  const usedGB = bytesToGB(usedBytes);
+  const totalGB = bytesToGB(quotaBytes);
+  const percentage = quotaBytes > 0 ? Math.min(100, Math.round((usedBytes / quotaBytes) * 100)) : 0;
 
   if (isPending) {
     return (
@@ -39,7 +39,7 @@ export function StorageSettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-[#0f172a]">Your Storage Plan</h2>
-              <p className="text-sm text-[#64748b]">100 GB Engineered Cloud Quota</p>
+              <p className="text-sm text-[#64748b]">{totalGB} GB Engineered Cloud Quota</p>
             </div>
           </div>
 

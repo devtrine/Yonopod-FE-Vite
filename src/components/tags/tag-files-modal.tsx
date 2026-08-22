@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Tag as TagIcon, FileText, Plus, Check, Loader2 } from "lucide-react";
 import { Modal } from "../ui/modal";
@@ -57,7 +57,7 @@ export function TagFilesModal({
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
   const { openRenameModal } = useUIStore();
-  const { openPreview } = usePreviewStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
   const queryClient = useQueryClient();
 
   const tagFiles = useMemo(() => data?.data ?? [], [data]);
@@ -66,6 +66,17 @@ export function TagFilesModal({
     () => (allFilesData?.data ?? []).filter((f) => !tagFileIds.has(f.id)),
     [allFilesData, tagFileIds]
   );
+
+  const tagFileItems: FileItem[] = useMemo(
+    () => tagFiles.map((f) => fileToFileItem(f, Boolean(fileMap.get(f.id)))),
+    [tagFiles, fileMap]
+  );
+
+  useEffect(() => {
+    if (tag) {
+      setActiveFiles(tagFileItems, !isPending);
+    }
+  }, [tag, tagFileItems, isPending, setActiveFiles]);
 
   if (!tag) return null;
 
@@ -81,7 +92,7 @@ export function TagFilesModal({
   const handleAddFiles = async () => {
     if (!tag || selectedFileIds.length === 0) return;
     const ids = [...selectedFileIds];
-    try {
+    try { 
       for (const fileId of ids) {
         await addTagToFile.mutateAsync({ tagId: tag.id, fileId });
       }
@@ -172,10 +183,7 @@ export function TagFilesModal({
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              onClick={() => {
-                setShowFilePicker(false);
-                setSelectedFileIds([]);
-              }}
+              onClick={onClose}
             >
               Cancel
             </Button>

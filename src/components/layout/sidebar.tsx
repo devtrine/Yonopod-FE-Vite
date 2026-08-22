@@ -8,6 +8,7 @@ import { ProgressBar } from "../ui/progress-bar";
 import { useSidebar } from "./sidebar-context";
 import { mainNavItems } from "@/config/navigation";
 import { useCurrentUser } from "../../hooks/use-auth";
+import { bytesToGB } from "@/lib/formatters";
 
 export function Sidebar() {
   const location = useLocation();
@@ -15,10 +16,10 @@ export function Sidebar() {
   const { isOpen, setIsOpen } = useSidebar();
   const { data: user } = useCurrentUser();
 
-  const usedGB = user?.storage_used
-    ? Math.round((Number(user.storage_used) / (1024 * 1024 * 1024)) * 100) / 100
-    : 0;
-  const totalGB = 100;
+  const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
+  const usedGB = bytesToGB(usedBytes);
+  const totalGB = quotaBytes > 0 ? bytesToGB(quotaBytes) : 100;
 
   return (
     <>

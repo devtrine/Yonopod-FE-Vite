@@ -20,6 +20,14 @@ export function useCurrentUser(options?: { enabled?: boolean }) {
   });
 }
 
+export function useUserStats(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ["auth", "stats"],
+    queryFn: authService.getStats,
+    ...options,
+  });
+}
+
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 export function useRegister() {

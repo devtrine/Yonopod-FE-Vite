@@ -55,18 +55,6 @@ export const previewStore = {
     previewStore.syncFromHash();
   },
   openPreview: (fileId: string) => {
-    // Only open if the file actually exists in activeFiles when loaded
-    const exists = currentState.activeFiles.some(
-      (f) => !f.isFolder && String(f.id) === String(fileId)
-    );
-
-    if (currentState.isListLoaded && !exists) {
-      cleanHashInUrl();
-      currentState = { ...currentState, previewFileId: null };
-      notify();
-      return;
-    }
-
     setHashInUrl(fileId);
     currentState = { ...currentState, previewFileId: fileId };
     notify();
@@ -88,24 +76,9 @@ export const previewStore = {
       return;
     }
 
-    // If active files list has loaded, check if the file exists in current directory ls
-    if (currentState.isListLoaded) {
-      const match = currentState.activeFiles.find(
-        (f) => !f.isFolder && String(f.id) === rawHash
-      );
-      if (match) {
-        if (currentState.previewFileId !== rawHash) {
-          currentState = { ...currentState, previewFileId: rawHash };
-          notify();
-        }
-      } else {
-        // Not in current list -> clean hash and do not open preview (avoids double BE request)
-        cleanHashInUrl();
-        if (currentState.previewFileId !== null) {
-          currentState = { ...currentState, previewFileId: null };
-          notify();
-        }
-      }
+    if (currentState.previewFileId !== rawHash) {
+      currentState = { ...currentState, previewFileId: rawHash };
+      notify();
     }
   },
   nextFile: () => {

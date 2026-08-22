@@ -36,8 +36,19 @@ export function formatDate(dateString: string | null | undefined): string {
 }
 
 /**
+ * Convert bytes to GB as a number.
+ * e.g. 5368709120 → 5
+ */
+export function bytesToGB(bytes: number, decimals: number = 2): number {
+  if (bytes <= 0) return 0;
+  const gb = bytes / (1024 * 1024 * 1024);
+  const factor = Math.pow(10, decimals);
+  return Math.round(gb * factor) / factor;
+}
+
+/**
  * Format bytes as a GB string e.g. "1.23 GB"
  */
 export function formatGB(bytes: number): string {
-  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  return `${bytesToGB(bytes)} GB`;
 }

@@ -84,18 +84,31 @@ export function FilePreviewModal() {
     prevFile,
   } = usePreviewStore();
   const queryClient = useQueryClient();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const fileId = previewFileId ?? undefined;
+  const { data: file, isPending: filePending, isError: fileError } = useFile(fileId);
 
   const [isDownloading, setIsDownloading] = useState(false);
 
   const activeItem: FileItem | undefined = useMemo(() => {
     if (!previewFileId) return undefined;
-    return activeFiles.find(
+    const found = activeFiles.find(
       (f) => !f.isFolder && String(f.id) === String(previewFileId)
     );
-  }, [previewFileId, activeFiles]);
-
-  const fileId = activeItem?.id;
-  const { data: file, isPending: filePending, isError: fileError } = useFile(fileId);
+    if (found) return found;
+    if (file) {
+      return {
+        id: String(file.id),
+        name: file.name,
+        extension: file.extension,
+        isFolder: false,
+        tags: file.tags || [],
+        isStarred: file.is_favorite,
+      };
+    }
+    return undefined;
+  }, [previewFileId, activeFiles, file]);
 
   // Favorite / Star state & mutations
   const { fileMap } = useFavoriteMaps();
@@ -243,6 +256,42 @@ export function FilePreviewModal() {
   const isFilesList = activeFiles.filter((f) => !f.isFolder);
   const hasMultiple = isFilesList.length > 1;
 
+  // Refetch status direct on mount / file change
+  useEffect(() => {
+    if (checkStatusUrl) {
+      refetchStatus();
+    }
+  }, [checkStatusUrl, refetchStatus]);
+
+  // Native dialog showModal/close
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (previewFileId) {
+      if (!dialog.open) {
+        dialog.showModal();
+      }
+    } else {
+      if (dialog.open) {
+        dialog.close();
+      }
+    }
+  }, [previewFileId]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const handleClose = () => {
+      closePreview();
+    };
+    dialog.addEventListener("close", handleClose);
+    dialog.addEventListener("cancel", handleClose);
+    return () => {
+      dialog.removeEventListener("close", handleClose);
+      dialog.removeEventListener("cancel", handleClose);
+    };
+  }, [closePreview]);
+    
   // Keyboard navigation & shortcuts
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -265,10 +314,11 @@ export function FilePreviewModal() {
     };
   }, [previewFileId, handleKeyDown]);
 
-  if (!previewFileId || !activeItem) return null;
+  if (!previewFileId) return null;
 
-  const effectiveExtension = file?.extension || activeItem.extension || "";
+  const effectiveExtension = file?.extension || activeItem?.extension || "";
   const previewGroup = getPreviewGroup(effectiveExtension);
+  const fileName = activeItem?.name || file?.name || "";
 
   const lastModified = file?.updated_at || file?.created_at || activeItem.lastModified || null;
   const fileSize = file?.size ?? (typeof activeItem.size === "number" ? activeItem.size : null);
@@ -323,13 +373,14 @@ export function FilePreviewModal() {
   const isInitialLoading = (filePending && !file && !cachedUrl) || (statusChecking && !checkStatus && !effectiveDownloadUrl);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden animate-in fade-in duration-200"
-      onClick={closePreview}
+    <dialog
+      ref={dialogRef}
+      onClick={handleBackdropClick}
+      className="fixed inset-0 m-0 p-0 max-w-none max-h-none w-screen h-screen bg-black/90 backdrop-blur-md border-0 outline-none overflow-hidden z-50 flex items-center justify-center backdrop:bg-black/90 backdrop:backdrop-blur-md animate-in fade-in duration-200"
     >
       {/* Top Header */}
       <PreviewHeader
-        fileName={activeItem.name}
+        fileName={fileName}
         extension={effectiveExtension}
         fileSize={fileSize}
         lastModified={lastModified}
@@ -339,6 +390,7 @@ export function FilePreviewModal() {
         onDownload={handleDownload}
         isDownloading={isDownloading}
         onClose={closePreview}
+        downloadDisabled={!fileId || filePending}
       />
 
       {/* Floating Prev/Next Navigation */}
@@ -353,9 +405,9 @@ export function FilePreviewModal() {
         className="relative z-10 w-full h-full flex items-center justify-center p-4 pt-16 pb-8"
         onClick={(e) => e.stopPropagation()}
       >
-        {isInitialLoading ? (
+        {filePending || statusChecking || (!activeItem && !fileError) ? (
           <PreviewStatus state="loading" message="Loading file preview…" />
-        ) : fileError ? (
+        ) : fileError || !activeItem ? (
           <PreviewStatus
             state="error"
             message="Failed to load file information. Please try again."
@@ -407,7 +459,7 @@ export function FilePreviewModal() {
           </>
         )}
       </div>
-    </div>
+    </dialog>
   );
 }
 
