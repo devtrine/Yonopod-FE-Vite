@@ -10,6 +10,7 @@ import { useFilesByTag, useRemoveTagFromFile } from "@/hooks/use-tags";
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
 import type { Tag } from "@/types/tags";
@@ -57,6 +58,7 @@ export function TagSection({
 }) {
   const navigate = useNavigate();
   const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const { data, isPending, isError } = useFilesByTag(tag.id, { limit: 3 });
   const deleteFile = useSoftDeleteFile();
@@ -104,6 +106,15 @@ export function TagSection({
       onSuccess: () => toast("success", "File moved to trash"),
       onError: (err) => toast("error", getErrorMessage(err)),
     });
+  };
+
+  const handleFileClick = (item: FileItem) => {
+    if (onFileClick) {
+      onFileClick(item);
+    } else {
+      setActiveFiles(fileItems, !isPending);
+      openPreview(item.id);
+    }
   };
 
   const getMenuActions = (item: FileItem): FileMenuActions => ({
@@ -215,7 +226,7 @@ export function TagSection({
             <FileCard
               key={item.id}
               item={item}
-              onClick={onFileClick}
+              onClick={handleFileClick}
               onToggleStar={handleToggleStar}
               menuActions={getMenuActions(item)}
             />

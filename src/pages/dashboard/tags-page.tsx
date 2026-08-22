@@ -5,13 +5,11 @@ import { TagSection } from "@/components/tags/tag-section";
 import { TagFormModal } from "@/components/tags/tag-form-modal";
 import { AddFilesToTagModal } from "@/components/tags/add-files-to-tag-modal";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
-import { FilePreview } from "@/components/files/file-preview";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { useTags, useDeleteTag } from "@/hooks/use-tags";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
 import type { Tag } from "@/types/tags";
-import type { FileItem } from "@/components/files/file-table";
 
 export function TagsPage() {
   const { data, isPending, isError } = useTags({ limit: 50 });
@@ -22,7 +20,6 @@ export function TagsPage() {
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [addFilesTag, setAddFilesTag] = useState<Tag | null>(null);
   const [tagToDelete, setTagToDelete] = useState<Tag | null>(null);
-  const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
   const [manageTagsFileId, setManageTagsFileId] = useState<string | null>(null);
 
   const tags = data?.data ?? [];
@@ -113,7 +110,6 @@ export function TagsPage() {
                   onEditTag={openEditTag}
                   onDeleteTag={handleDelete}
                   onAddFiles={(t) => setAddFilesTag(t)}
-                  onFileClick={(file) => setSelectedFile(file)}
                   onManageTags={(fileId) => setManageTagsFileId(fileId)}
                 />
               ))}
@@ -121,14 +117,6 @@ export function TagsPage() {
           )}
         </div>
       </div>
-
-      {/* File Preview Drawer */}
-      {selectedFile && (
-        <FilePreview
-          item={selectedFile}
-          onClose={() => setSelectedFile(null)}
-        />
-      )}
 
       {/* Tag Create/Edit Modal */}
       <TagFormModal

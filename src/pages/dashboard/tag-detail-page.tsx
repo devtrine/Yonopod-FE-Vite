@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
-import { FilePreview } from "@/components/files/file-preview";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { TagChip, tagColorHex, tagSoftBackground } from "@/components/tags/tag-chip";
 import { TagFormModal } from "@/components/tags/tag-form-modal";
@@ -26,6 +25,7 @@ import { useTags, useDeleteTag, useFilesByTag, useRemoveTagFromFile } from "@/ho
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
 import type { File as ApiFile } from "@/types/file";
@@ -66,6 +66,7 @@ export function TagDetailPage() {
   const navigate = useNavigate();
 
   const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const { data: tagsData, isPending: tagsLoading } = useTags({ limit: 100 });
   const { data: filesData, isPending: filesLoading, isError } = useFilesByTag(id, { limit: 100 });
@@ -79,7 +80,6 @@ export function TagDetailPage() {
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
-  const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [tagPickerFileId, setTagPickerFileId] = useState<string | null>(null);
   const [addFilesOpen, setAddFilesOpen] = useState(false);
@@ -104,7 +104,11 @@ export function TagDetailPage() {
       }
       return 0;
     });
-  }, [rawFiles, fileMap, sortBy]);
+  }, [filesData?.data, fileMap, sortBy]);
+
+  useEffect(() => {
+    setActiveFiles(files, !filesLoading);
+  }, [filesData, filesLoading, setActiveFiles]);
 
   const handleToggleStar = (item: FileItem) => {
     const favorite = fileMap.get(item.id);
@@ -130,9 +134,6 @@ export function TagDetailPage() {
       {
         onSuccess: () => {
           toast("success", "Tag removed from file");
-          if (selectedItem?.id === fileId) {
-            setSelectedItem(null);
-          }
         },
         onError: (err) => toast("error", getErrorMessage(err)),
       }
@@ -144,9 +145,6 @@ export function TagDetailPage() {
       onSuccess: () => {
         toast("success", "File moved to trash");
         setFileToDelete(null);
-        if (selectedItem?.id === item.id) {
-          setSelectedItem(null);
-        }
       },
       onError: (err) => toast("error", getErrorMessage(err)),
     });
@@ -161,6 +159,10 @@ export function TagDetailPage() {
       },
       onError: (err) => toast("error", getErrorMessage(err)),
     });
+  };
+
+  const handleItemClick = (item: FileItem) => {
+    openPreview(item.id);
   };
 
   const menuActions: FileMenuActions = {
@@ -334,7 +336,7 @@ export function TagDetailPage() {
           ) : viewMode === "grid" ? (
             <FileGrid
               items={files}
-              onItemClick={(item) => setSelectedItem(item)}
+              onItemClick={handleItemClick}
               onToggleStar={handleToggleStar}
               menuActions={menuActions}
             />
@@ -342,21 +344,13 @@ export function TagDetailPage() {
             <FileTable
               files={files}
               columns={["name", "lastModified", "owner", "tags", "starred"]}
-              onRowClick={(item) => setSelectedItem(item)}
+              onRowClick={handleItemClick}
               onToggleStar={handleToggleStar}
               menuActions={menuActions}
             />
           )}
         </div>
       </div>
-
-      {/* File Preview Drawer */}
-      {selectedItem && (
-        <FilePreview
-          item={selectedItem}
-          onClose={() => setSelectedItem(null)}
-        />
-      )}
 
       {/* Modals */}
       {tag && (
