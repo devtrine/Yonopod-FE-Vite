@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PreviewNavProps {
@@ -8,7 +9,7 @@ interface PreviewNavProps {
   hasMultiple: boolean;
 }
 
-export function PreviewNav({ onPrev, onNext, hasMultiple }: PreviewNavProps) {
+export const PreviewNav = memo(function PreviewNav({ onPrev, onNext, hasMultiple }: PreviewNavProps) {
   if (!hasMultiple) return null;
 
   return (
@@ -42,4 +43,4 @@ export function PreviewNav({ onPrev, onNext, hasMultiple }: PreviewNavProps) {
       </button>
     </>
   );
-}
+});

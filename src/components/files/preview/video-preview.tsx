@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { Loader2 } from "lucide-react";
 
 interface VideoPreviewProps {
@@ -31,7 +31,7 @@ function getMimeType(extension?: string): string {
   }
 }
 
-export function VideoPreview({ src, fileName, extension, onError }: VideoPreviewProps) {
+export const VideoPreview = memo(function VideoPreview({ src, fileName, extension, onError }: VideoPreviewProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
 
   useEffect(() => {
@@ -82,4 +82,4 @@ export function VideoPreview({ src, fileName, extension, onError }: VideoPreview
       </div>
     </div>
   );
-}
+});

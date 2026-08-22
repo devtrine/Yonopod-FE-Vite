@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ArrowLeft, Download, X, Star, Loader2 } from "lucide-react";
 import { FileTypeIcon } from "../file-type-icon";
 import { Button } from "../../ui/button";
@@ -19,7 +20,7 @@ interface PreviewHeaderProps {
   isDownloading?: boolean;
 }
 
-export function PreviewHeader({
+export const PreviewHeader = memo(function PreviewHeader({
   fileName,
   extension,
   fileSize,
@@ -159,4 +160,4 @@ export function PreviewHeader({
       </div>
     </header>
   );
-}
+});

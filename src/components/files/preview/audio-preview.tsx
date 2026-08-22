@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { Music, Play, Pause, Volume2, VolumeX, Loader2, RotateCcw } from "lucide-react";
 
 interface AudioPreviewProps {
@@ -10,7 +10,7 @@ interface AudioPreviewProps {
   onError?: () => void;
 }
 
-export function AudioPreview({ src, fileName, extension, onError }: AudioPreviewProps) {
+export const AudioPreview = memo(function AudioPreview({ src, fileName, extension, onError }: AudioPreviewProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
@@ -220,4 +220,4 @@ export function AudioPreview({ src, fileName, extension, onError }: AudioPreview
       </div>
     </div>
   );
-}
+});

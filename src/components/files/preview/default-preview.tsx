@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { FileTypeIcon } from "../file-type-icon";
 import { Button } from "../../ui/button";
@@ -15,7 +16,7 @@ interface DefaultPreviewProps {
   isDownloading?: boolean;
 }
 
-export function DefaultPreview({
+export const DefaultPreview = memo(function DefaultPreview({
   item,
   file,
   onDownload,
@@ -82,4 +83,4 @@ export function DefaultPreview({
       </Button>
     </div>
   );
-}
+});
