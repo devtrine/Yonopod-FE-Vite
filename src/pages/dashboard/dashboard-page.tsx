@@ -1,11 +1,12 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { StorageOverview } from "@/components/dashboard/storage-overview";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { RecentFiles } from "@/components/dashboard/recent-files";
-import { useCurrentUser } from "@/hooks/use-auth";
+import { useCurrentUser, useUserStats } from "@/hooks/use-auth";
 import { useRecent } from "@/hooks/use-recent";
-import { useFiles } from "@/hooks/use-files";
-import { useFolders } from "@/hooks/use-folders";
 import { useShares } from "@/hooks/use-shares";
+import { usePreviewStore } from "@/stores/preview-store";
 import type { FileItem } from "@/components/files/file-table";
 import type { RecentFile } from "@/types/recent";
 
@@ -13,6 +14,7 @@ function recentToFileItem(recent: RecentFile): FileItem {
   return {
     id: String(recent.file.id),
     name: recent.file.name,
+    extension: recent.file.extension,
     isFolder: false,
     lastModified: new Date(recent.accessed_at).toLocaleDateString("en-US", {
       month: "short",
@@ -35,13 +37,18 @@ const MOCK_ACTIVITIES = [
 ];
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const { data: user } = useCurrentUser();
+  const { data: statsData, isPending: statsLoading } = useUserStats();
   const { data: recentData, isPending: recentLoading } = useRecent({ limit: 6 });
-  const { data: filesData } = useFiles({ limit: 1 });
-  const { data: foldersData } = useFolders({ limit: 1 });
-  const { data: sharesData } = useShares({ limit: 1 });
+  const { data: sharesData, isPending: sharesLoading } = useShares({ limit: 1 });
+  const { setActiveFiles, openPreview } = usePreviewStore();
 
   const recentItems: FileItem[] = (recentData?.data ?? []).map(recentToFileItem);
+
+  useEffect(() => {
+    setActiveFiles(recentItems, !recentLoading);
+  }, [recentData, recentLoading, setActiveFiles]);
 
   const usedGB = user?.storage_used
     ? Number(user.storage_used) / (1024 * 1024 * 1024)
@@ -72,9 +79,11 @@ export function DashboardPage() {
       <StorageOverview
         usedGB={Math.round(usedGB * 100) / 100}
         totalGB={totalGB}
-        totalFiles={String(filesData?.pagination?.total ?? "—")}
-        totalFolders={String(foldersData?.pagination?.total ?? "—")}
+        totalFiles={statsData?.files != null ? String(statsData.files) : "—"}
+        totalFolders={statsData?.folders != null ? String(statsData.folders) : "—"}
         sharedItems={String(sharesData?.pagination?.total ?? "—")}
+        isLoadingStats={statsLoading}
+        isLoadingShares={sharesLoading}
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -92,7 +101,11 @@ export function DashboardPage() {
               </div>
             </div>
           ) : recentItems.length > 0 ? (
-            <RecentFiles items={recentItems} />
+            <RecentFiles
+              items={recentItems}
+              onItemClick={(item) => openPreview(item.id)}
+              onViewAll={() => navigate("/recent")}
+            />
           ) : (
             <div className="flex flex-col gap-4">
               <h2 className="text-lg font-semibold text-[#0f172a]">Quick Access</h2>

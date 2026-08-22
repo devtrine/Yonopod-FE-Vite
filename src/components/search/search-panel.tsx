@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, FileText } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileTypeFilter } from "@/components/files/file-type-filter";
@@ -10,6 +10,7 @@ import type { Folder as ApiFolder } from "@/types/folder";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { useUIStore } from "@/stores/ui-store";
+import { usePreviewStore } from "@/stores/preview-store";
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useSoftDeleteFolder } from "@/hooks/use-folders";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
@@ -22,6 +23,7 @@ function fileToItem(file: ApiFile): FileItem {
   return {
     id: String(file.id),
     name: file.name,
+    extension: file.extension,
     isFolder: false,
     lastModified: new Date(file.created_at).toLocaleDateString("en-US", {
       month: "short",
@@ -69,6 +71,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
   const debouncedQuery = useDebounce(query, 400);
 
   const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { setActiveFiles, openPreview } = usePreviewStore();
   const deleteFile = useSoftDeleteFile();
   const deleteFolder = useSoftDeleteFolder();
   const addFavorite = useAddFavorite();
@@ -94,6 +97,13 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
   const hasActiveFilter = Boolean(debouncedQuery || fileType || kindFilter !== "all");
   const totalFiles = data?.pagination.totalFiles ?? 0;
   const totalFolders = data?.pagination.totalFolders ?? 0;
+
+  // Register in previewStore
+  useEffect(() => {
+    if (hasActiveFilter) {
+      setActiveFiles(items, !isPending);
+    }
+  }, [data, isPending, hasActiveFilter, setActiveFiles]);
 
   const handleToggleStar = (item: FileItem) => {
     if (item.isFolder) {
@@ -266,6 +276,9 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
                 // jika yang diklik adalah folder, arahkan ke halaman folder.
                 if (file.isFolder) {
                   navigate(`/folders/${file.id.replace("folder-", "")}`);
+                  onNavigate?.();
+                } else {
+                  openPreview(file.id);
                   onNavigate?.();
                 }
               }}

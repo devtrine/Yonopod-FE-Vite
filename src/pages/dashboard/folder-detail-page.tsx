@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Folder as FolderIcon,
@@ -18,7 +18,7 @@ import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
 import { FileActions } from "@/components/files/file-actions";
-import { FilePreview } from "@/components/files/file-preview";
+import { usePreviewStore } from "@/stores/preview-store";
 import { FolderCard } from "@/components/folders/folder-card";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
@@ -92,13 +92,20 @@ export function FolderDetailPage() {
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
-  const [selectedItem, setSelectedItem] = useState<FileItem | null>(null);
+  const { setActiveFiles, openPreview } = usePreviewStore();
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
   const [pin, setPin] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [tagFileId, setTagFileId] = useState<string | null>(null);
+
+  const files: FileItem[] = (filesData?.data ?? []).map(fileToFileItem);
+
+  // Register files in previewStore for in-memory validation & hash sync
+  useEffect(() => {
+    setActiveFiles(files, !filesLoading);
+  }, [filesData, filesLoading, setActiveFiles]);
 
   if (folderLoading || subfoldersLoading || filesLoading) {
     return (
@@ -186,7 +193,6 @@ export function FolderDetailPage() {
   }
 
   const subfolders = subfoldersData?.data ?? [];
-  const files: FileItem[] = (filesData?.data ?? []).map(fileToFileItem);
 
   const handleDelete = () => {
     if (confirm(`Are you sure you want to move "${folder.name}" to trash?`)) {
@@ -205,7 +211,7 @@ export function FolderDetailPage() {
       const targetId = item.id.replace("folder-", "");
       navigate(`/folders/${targetId}`);
     } else {
-      setSelectedItem(item);
+      openPreview(item.id);
     }
   };
 
@@ -569,14 +575,6 @@ export function FolderDetailPage() {
           )}
         </div>
       </div>
-
-      {/* Right Side Panel */}
-      {selectedItem && (
-        <FilePreview
-          item={selectedItem}
-          onClose={() => setSelectedItem(null)}
-        />
-      )}
 
       {/* Delete Confirmation */}
       <ConfirmModal

@@ -20,6 +20,7 @@ import { FavoritesPage } from "@/pages/dashboard/favorites-page";
 import { RecentPage } from "@/pages/dashboard/recent-page";
 import { SharedPage } from "@/pages/dashboard/shared-page";
 import { TagsPage } from "@/pages/dashboard/tags-page";
+import { TagDetailPage } from "@/pages/dashboard/tag-detail-page";
 import { TrashPage } from "@/pages/dashboard/trash-page";
 import { VaultPage } from "@/pages/dashboard/vault-page";
 import { ActivityPage } from "@/pages/dashboard/activity-page";
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
       { path: "recent", element: <RecentPage /> },
       { path: "shared", element: <SharedPage /> },
       { path: "tags", element: <TagsPage /> },
+      { path: "tags/:tagId", element: <TagDetailPage /> },
       { path: "trash", element: <TrashPage /> },
       { path: "vault", element: <VaultPage /> },
       { path: "activity", element: <ActivityPage /> },

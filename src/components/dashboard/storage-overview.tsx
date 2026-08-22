@@ -7,12 +7,16 @@ export function StorageOverview({
   totalFiles,
   totalFolders,
   sharedItems,
+  isLoadingStats = false,
+  isLoadingShares = false,
 }: {
   usedGB: number;
   totalGB: number;
   totalFiles: string;
   totalFolders: string;
   sharedItems: string;
+  isLoadingStats?: boolean;
+  isLoadingShares?: boolean;
 }) {
   const percentUsed = Math.round((usedGB / totalGB) * 100);
 
@@ -39,14 +43,24 @@ export function StorageOverview({
       </div>
 
       {/* Stats Cards */}
-      <StatCard icon={File} title="Total Files" value={totalFiles} />
-      <StatCard icon={Folder} title="Total Folders" value={totalFolders} />
-      <StatCard icon={Users} title="Shared Items" value={sharedItems} />
+      <StatCard icon={File} title="Total Files" value={totalFiles} isLoading={isLoadingStats} />
+      <StatCard icon={Folder} title="Total Folders" value={totalFolders} isLoading={isLoadingStats} />
+      <StatCard icon={Users} title="Shared Items" value={sharedItems} isLoading={isLoadingShares} />
     </div>
   );
 }
 
-function StatCard({ icon: Icon, title, value }: { icon: React.ElementType; title: string; value: string }) {
+function StatCard({
+  icon: Icon,
+  title,
+  value,
+  isLoading = false,
+}: {
+  icon: React.ElementType;
+  title: string;
+  value: string;
+  isLoading?: boolean;
+}) {
   return (
     <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
       <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mb-4">
@@ -54,7 +68,11 @@ function StatCard({ icon: Icon, title, value }: { icon: React.ElementType; title
       </div>
       <div>
         <p className="text-sm text-[#64748b] mb-1">{title}</p>
-        <p className="text-2xl font-bold text-[#0f172a]">{value}</p>
+        {isLoading ? (
+          <div className="h-8 w-16 bg-[#f1f5f9] rounded-md animate-pulse mt-0.5" />
+        ) : (
+          <p className="text-2xl font-bold text-[#0f172a]">{value}</p>
+        )}
       </div>
     </div>
   );

@@ -12,6 +12,11 @@ export interface User {
   updated_at: string | null;
 }
 
+export interface UserStats {
+  files: number;
+  folders: number;
+}
+
 // ─── Request types ────────────────────────────────────────────────────────────
 
 export interface RegisterPayload {
