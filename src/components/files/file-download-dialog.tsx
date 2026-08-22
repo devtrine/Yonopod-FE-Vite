@@ -8,7 +8,6 @@ import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 import { toast } from "../ui/toaster";
 import { getErrorMessage } from "../../lib/api/client";
-import axios from "axios";
 
 type DownloadState = "idle" | "downloading" | "success" | "error";
 
@@ -52,27 +51,12 @@ function FileDownloadDialogContent({
     setProgress(0);
 
     try {
-      const response = await axios.get<Blob>(downloadUrl, {
-        responseType: "blob",
-        onDownloadProgress: (progressEvent) => {
-          if (!progressEvent.total) return;
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setProgress(percent);
-        },
-      });
-
-      const blob = response.data;
-      const blobUrl = URL.createObjectURL(blob);
-
       const a = document.createElement("a");
-      a.href = blobUrl;
+      a.href = downloadUrl;
       a.download = file.name || "download";
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(blobUrl);
 
       setDownloadState("success");
       toast("success", `Downloaded ${file.name}`);

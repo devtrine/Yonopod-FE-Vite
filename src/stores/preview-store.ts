@@ -88,6 +88,11 @@ export const previewStore = {
       return;
     }
 
+    // If already viewing this file, do not interrupt active preview
+    if (currentState.previewFileId === rawHash) {
+      return;
+    }
+
     // If active files list has loaded, check if the file exists in current directory ls
     if (currentState.isListLoaded) {
       const match = currentState.activeFiles.find(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { ZoomIn, ZoomOut, RotateCcw, AlertCircle } from "lucide-react";
 
 interface ImagePreviewProps {
@@ -10,7 +10,7 @@ interface ImagePreviewProps {
   onError?: () => void;
 }
 
-export function ImagePreview({ src, fileName, onError }: ImagePreviewProps) {
+export const ImagePreview = memo(function ImagePreview({ src, fileName, onError }: ImagePreviewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [scale, setScale] = useState(1);
@@ -97,4 +97,4 @@ export function ImagePreview({ src, fileName, onError }: ImagePreviewProps) {
       )}
     </div>
   );
-}
+});

@@ -44,6 +44,7 @@ export function useCheckFileStatus(
     enabled:
       Boolean(id) &&
       Boolean(checkStatusUrl),
+    staleTime: 1000 * 60 * 10, // 10 minutes - upload status is stable once checked
   });
 }
 
