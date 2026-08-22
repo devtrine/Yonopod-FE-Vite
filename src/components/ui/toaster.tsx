@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, XCircle, AlertCircle, Info, X } from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, Info, X } from "lucide-react";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -20,17 +20,10 @@ export function toast(type: ToastType, message: string) {
 }
 
 const ICONS: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircle size={16} />,
-  error: <XCircle size={16} />,
-  warning: <AlertCircle size={16} />,
-  info: <Info size={16} />,
-};
-
-const COLORS: Record<ToastType, string> = {
-  success: "bg-emerald-50 border-emerald-200 text-emerald-800",
-  error: "bg-red-50 border-red-200 text-red-800",
-  warning: "bg-amber-50 border-amber-200 text-amber-800",
-  info: "bg-blue-50 border-blue-200 text-blue-800",
+  success: <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />,
+  error: <XCircle size={18} className="text-red-400 shrink-0" />,
+  warning: <AlertCircle size={18} className="text-amber-400 shrink-0" />,
+  info: <Info size={18} className="text-blue-400 shrink-0" />,
 };
 
 function ToastItem({
@@ -47,16 +40,19 @@ function ToastItem({
 
   return (
     <div
-      className={`flex items-start gap-2.5 px-4 py-3 rounded-lg border shadow-md text-sm animate-in slide-in-from-right-4 fade-in duration-200 ${COLORS[t.type]}`}
+      role="status"
+      className="pointer-events-auto flex items-center gap-3 px-4 py-2.5 sm:py-3 rounded-xl bg-[#202124]/95 text-white border border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.35)] backdrop-blur-md text-sm animate-in slide-in-from-bottom-3 sm:slide-in-from-left-4 fade-in duration-200 min-h-[44px]"
     >
-      <span className="mt-0.5 flex-shrink-0">{ICONS[t.type]}</span>
-      <span className="flex-1">{t.message}</span>
+      {ICONS[t.type]}
+      <span className="flex-1 text-xs sm:text-sm text-neutral-100 font-medium leading-tight">
+        {t.message}
+      </span>
       <button
         onClick={() => onDismiss(t.id)}
-        className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity"
+        className="flex-shrink-0 text-neutral-400 hover:text-white hover:bg-white/10 p-1 rounded-lg transition-colors"
         aria-label="Dismiss notification"
       >
-        <X size={14} />
+        <X size={15} />
       </button>
     </div>
   );
@@ -83,7 +79,7 @@ export function Toaster() {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 w-full max-w-sm"
+      className="fixed bottom-5 left-5 sm:bottom-6 sm:left-6 z-[9999] flex flex-col gap-2 w-auto max-w-[calc(100vw-2.5rem)] sm:max-w-sm pointer-events-none"
     >
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} onDismiss={dismiss} />

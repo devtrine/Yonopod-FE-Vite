@@ -82,6 +82,7 @@ export function FilesPage() {
       const folderId = item.id.replace("folder-", "");
       navigate(`/folders/${folderId}`);
     } else {
+      setActiveFiles(files, false);
       openPreview(item.id);
     }
   };
