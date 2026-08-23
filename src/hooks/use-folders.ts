@@ -73,6 +73,8 @@ export function useSoftDeleteFolder() {
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
       queryClient.removeQueries({ queryKey: ["folders", id] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
@@ -85,6 +87,9 @@ export function useRestoreFolder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });
@@ -98,6 +103,9 @@ export function usePermanentDeleteFolder() {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
       queryClient.removeQueries({ queryKey: ["folders", id] });
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
     },
   });

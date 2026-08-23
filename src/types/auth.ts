@@ -7,7 +7,10 @@ export interface User {
   full_name: string | null;
   avatar_url: string | null;
   is_active: boolean;
-  storage_used: number;
+  storage_quota?: number | string;
+  storage_used?: number | string;
+  role?: string;
+  two_factor_enabled?: boolean;
   created_at: string;
   updated_at: string | null;
 }

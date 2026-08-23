@@ -8,10 +8,9 @@ export function StorageSettingsPage() {
   const { data: user, isPending } = useCurrentUser();
 
   const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
-  const totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB
-  const usedGB = Math.round((usedBytes / (1024 * 1024 * 1024)) * 100) / 100;
-  const totalGB = 100;
-  const percentage = Math.min(100, Math.round((usedBytes / totalBytes) * 100));
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
+  const percentage = quotaBytes > 0 ? Math.min(100, Math.round((usedBytes / quotaBytes) * 100)) : 0;
+  const availableBytes = Math.max(0, quotaBytes - usedBytes);
 
   if (isPending) {
     return (
@@ -39,25 +38,25 @@ export function StorageSettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-semibold text-[#0f172a]">Your Storage Plan</h2>
-              <p className="text-sm text-[#64748b]">100 GB Engineered Cloud Quota</p>
+              <p className="text-sm text-[#64748b]">{formatFileSize(quotaBytes)} Cloud Quota</p>
             </div>
           </div>
 
           <div>
             <div className="flex items-end justify-between mb-2">
               <span className="text-3xl font-bold text-[#0f172a]">
-                {usedGB} GB
+                {formatFileSize(usedBytes)}
               </span>
               <span className="text-sm font-medium text-[#64748b]">
-                of {totalGB} GB used ({percentage}%)
+                of {formatFileSize(quotaBytes)} used ({percentage}%)
               </span>
             </div>
-            <ProgressBar value={usedGB} max={totalGB} />
+            <ProgressBar value={usedBytes} max={quotaBytes || 1} />
           </div>
 
           <div className="text-xs text-[#64748b] pt-2 border-t border-[#f1f5f9] flex justify-between items-center">
             <span>Total Used: {formatFileSize(usedBytes)}</span>
-            <span>Available: {Math.max(0, totalGB - usedGB).toFixed(2)} GB</span>
+            <span>Available: {formatFileSize(availableBytes)}</span>
           </div>
         </div>
 

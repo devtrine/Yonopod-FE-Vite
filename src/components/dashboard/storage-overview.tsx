@@ -1,24 +1,25 @@
 import { Cloud, File, Folder, Users } from "lucide-react";
 import { ProgressBar } from "../ui/progress-bar";
+import { formatFileSize } from "@/lib/formatters";
 
 export function StorageOverview({
-  usedGB,
-  totalGB,
+  usedBytes,
+  quotaBytes,
   totalFiles,
   totalFolders,
   sharedItems,
   isLoadingStats = false,
   isLoadingShares = false,
 }: {
-  usedGB: number;
-  totalGB: number;
+  usedBytes: number;
+  quotaBytes: number;
   totalFiles: string;
   totalFolders: string;
   sharedItems: string;
   isLoadingStats?: boolean;
   isLoadingShares?: boolean;
 }) {
-  const percentUsed = Math.round((usedGB / totalGB) * 100);
+  const percentUsed = quotaBytes > 0 ? Math.round((usedBytes / quotaBytes) * 100) : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -35,10 +36,14 @@ export function StorageOverview({
         </div>
         <div className="mt-6">
           <div className="flex items-end justify-between mb-2">
-            <span className="text-2xl font-bold text-[#0f172a] leading-none">{usedGB} GB</span>
-            <span className="text-sm font-medium text-[#64748b]">/ {totalGB} GB</span>
+            <span className="text-2xl font-bold text-[#0f172a] leading-none">
+              {formatFileSize(usedBytes)}
+            </span>
+            <span className="text-sm font-medium text-[#64748b]">
+              / {formatFileSize(quotaBytes)}
+            </span>
           </div>
-          <ProgressBar value={usedGB} max={totalGB} />
+          <ProgressBar value={usedBytes} max={quotaBytes || 1} />
         </div>
       </div>
 

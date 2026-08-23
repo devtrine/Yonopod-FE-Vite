@@ -50,10 +50,8 @@ export function DashboardPage() {
     setActiveFiles(recentItems, !recentLoading);
   }, [recentData, recentLoading, setActiveFiles]);
 
-  const usedGB = user?.storage_used
-    ? Number(user.storage_used) / (1024 * 1024 * 1024)
-    : 0;
-  const totalGB = 100;
+  const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -77,8 +75,8 @@ export function DashboardPage() {
       </header>
 
       <StorageOverview
-        usedGB={Math.round(usedGB * 100) / 100}
-        totalGB={totalGB}
+        usedBytes={usedBytes}
+        quotaBytes={quotaBytes}
         totalFiles={statsData?.files != null ? String(statsData.files) : "—"}
         totalFolders={statsData?.folders != null ? String(statsData.folders) : "—"}
         sharedItems={String(sharesData?.pagination?.total ?? "—")}

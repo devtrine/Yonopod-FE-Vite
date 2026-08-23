@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Upload, X, CheckCircle2, AlertCircle, FileText } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
 import { useUIStore } from "../../stores/ui-store";
@@ -20,6 +21,7 @@ interface UploadingFile {
 }
 
 export function FileUploadDialog() {
+  const queryClient = useQueryClient();
   const { state, closeUploadModal } = useUIStore();
   const presignUpload = usePresignUpload();
   const deleteFile = useSoftDeleteFile();
@@ -107,6 +109,12 @@ export function FileUploadDialog() {
       setUploadingFile((prev) =>
         prev ? { ...prev, status: "success", progress: 100 } : prev
       );
+
+      // Invalidate queries so dashboard storage, stats, and file lists update automatically without reload
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
     } catch (err) {
       let errorMsg = getErrorMessage(err);
 

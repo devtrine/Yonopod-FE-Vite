@@ -1,6 +1,12 @@
 import { Cloud, CheckCircle, Shield } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { formatFileSize } from "@/lib/formatters";
 
 export function BillingSettingsPage() {
+  const { data: user } = useCurrentUser();
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
+  const quotaLabel = quotaBytes > 0 ? formatFileSize(quotaBytes) : "100 GB";
+
   return (
     <div className="p-6 md:p-8 max-w-2xl">
       <div className="flex flex-col gap-8">
@@ -19,7 +25,7 @@ export function BillingSettingsPage() {
               </div>
               <div>
                 <h2 className="text-base font-semibold text-[#0f172a]">Yonopod Premium</h2>
-                <p className="text-sm text-[#64748b]">100 GB Engineered Cloud Storage</p>
+                <p className="text-sm text-[#64748b]">{quotaLabel} Engineered Cloud Storage</p>
               </div>
             </div>
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-[#1c3fc4]">
@@ -30,7 +36,7 @@ export function BillingSettingsPage() {
           <div className="border-t border-[#f1f5f9] pt-4 flex flex-col gap-3">
             <div className="flex items-center gap-2 text-sm text-[#0f172a]">
               <CheckCircle size={16} className="text-emerald-500" />
-              <span>100 GB High-Speed Storage</span>
+              <span>{quotaLabel} High-Speed Storage</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-[#0f172a]">
               <CheckCircle size={16} className="text-emerald-500" />

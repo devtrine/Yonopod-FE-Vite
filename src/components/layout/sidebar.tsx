@@ -8,6 +8,7 @@ import { ProgressBar } from "../ui/progress-bar";
 import { useSidebar } from "./sidebar-context";
 import { mainNavItems } from "@/config/navigation";
 import { useCurrentUser } from "../../hooks/use-auth";
+import { formatFileSize } from "@/lib/formatters";
 
 export function Sidebar() {
   const location = useLocation();
@@ -15,10 +16,8 @@ export function Sidebar() {
   const { isOpen, setIsOpen } = useSidebar();
   const { data: user } = useCurrentUser();
 
-  const usedGB = user?.storage_used
-    ? Math.round((Number(user.storage_used) / (1024 * 1024 * 1024)) * 100) / 100
-    : 0;
-  const totalGB = 100;
+  const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
 
   return (
     <>
@@ -105,10 +104,10 @@ export function Sidebar() {
           <div className="flex items-center justify-between">
             <span className="text-xs text-[#64748b]">Storage</span>
             <span className="text-xs font-medium text-[#374151]">
-              {usedGB} GB / {totalGB} GB
+              {formatFileSize(usedBytes)} / {formatFileSize(quotaBytes)}
             </span>
           </div>
-          <ProgressBar value={usedGB} max={totalGB} size="sm" />
+          <ProgressBar value={usedBytes} max={quotaBytes || 1} size="sm" />
         </div>
       </div>
     </aside>
