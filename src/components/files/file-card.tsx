@@ -21,7 +21,7 @@ export function FileCard({
     <div
       onClick={() => onClick?.(item)}
       className={[
-        "group relative flex flex-col p-5 rounded-2xl border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all",
+        "group relative flex flex-col p-5 border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:scale-98 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all",
         onClick ? "cursor-pointer" : "",
       ].join(" ")}
     >
@@ -39,7 +39,7 @@ export function FileCard({
                 onMenuClick?.(item);
               }}
               aria-label="More options"
-              className="opacity-0 group-hover:opacity-100 w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1"
+              className="opacity-0 group-hover:opacity-100 w-8 h-8 flex items-center justify-center text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1"
             >
               <MoreHorizontal size={18} />
             </button>

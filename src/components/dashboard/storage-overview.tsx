@@ -24,7 +24,7 @@ export function StorageOverview({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Storage Usage Card */}
-      <div className="md:col-span-1 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
+      <div className="md:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 text-[#1c3fc4] mb-3">
             <Cloud size={20} />
@@ -50,7 +50,6 @@ export function StorageOverview({
       {/* Stats Cards */}
       <StatCard icon={File} title="Total Files" value={totalFiles} isLoading={isLoadingStats} />
       <StatCard icon={Folder} title="Total Folders" value={totalFolders} isLoading={isLoadingStats} />
-      <StatCard icon={Users} title="Shared Items" value={sharedItems} isLoading={isLoadingShares} />
     </div>
   );
 }

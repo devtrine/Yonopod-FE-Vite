@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FolderPlus, Upload, Folder as FolderIcon, FileText, Star, Trash2, X } from "lucide-react";
+import { FolderPlus, Upload, Folder as FolderIcon, FileText, Star, Trash2, X, ChevronDown } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
@@ -29,6 +29,7 @@ function fileToFileItem(file: ApiFile): FileItem {
     lastModified: file.updated_at
       ? new Date(file.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
       : new Date(file.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    rawDate: file.updated_at || file.created_at,
     owner: "me",
     extension: file.extension,
     tags: file.tags || [],
@@ -49,6 +50,8 @@ export function FilesPage() {
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
   const [typeFilter, setTypeFilter] = useState("");
+  const [showFolders, setShowFolders] = useState(true);
+  const [showFiles, setShowFiles] = useState(true);
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
@@ -210,7 +213,7 @@ export function FilesPage() {
       <div className="flex-1 overflow-y-auto p-6 md:p-8">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
           
-          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg bg-blue-100">
             <h1 className="text-2xl font-bold text-[#0f172a]">My Drive</h1>
             
             <div className="flex flex-wrap items-center gap-3">
@@ -323,47 +326,81 @@ export function FilesPage() {
               {/* Folders */}
               {folders.length > 0 && (
                 <section className="flex flex-col gap-4">
-                  <h2 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider">Folders</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {folders.map((folder) => (
-                      <FolderCard
-                        key={folder.id}
-                        folder={folder}
-                        onClick={(f) => navigate(`/folders/${f.id}`)}
-                      />
-                    ))}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowFolders((prev) => !prev)}
+                    className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                    aria-expanded={showFolders}
+                  >
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                        showFolders ? "" : "-rotate-90"
+                      }`}
+                    />
+                    <span>Folders</span>
+                  </button>
+
+                  {showFolders && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+                      {folders.map((folder) => (
+                        <FolderCard
+                          key={folder.id}
+                          folder={folder}
+                          onClick={(f) => navigate(`/folders/${f.id}`)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </section>
               )}
 
               {/* Files */}
               <section className="flex flex-col gap-4">
-                <h2 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider">Files</h2>
-                {files.length === 0 ? (
-                  <div className="py-8 text-center bg-white rounded-xl border border-[#e2e8f0] p-6">
-                    <FileText size={24} className="mx-auto text-[#94a3b8] mb-2" />
-                    <p className="text-sm text-[#64748b]">No files in root folder yet.</p>
-                  </div>
-                ) : viewMode === "list" ? (
-                  <FileTable
-                    files={files}
-                    showCheckbox
-                    selectedIds={selectedIds}
-                    isAllSelected={isAllSelected}
-                    onSelectAll={handleSelectAll}
-                    onSelect={handleSelect}
-                    onRowClick={handleItemClick}
-                    onToggleStar={handleToggleStar}
-                    menuActions={fileMenuActions}
-                    columns={["name", "starred", "lastModified", "owner"]}
+                <button
+                  type="button"
+                  onClick={() => setShowFiles((prev) => !prev)}
+                  className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                  aria-expanded={showFiles}
+                >
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                      showFiles ? "" : "-rotate-90"
+                    }`}
                   />
-                ) : (
-                  <FileGrid
-                    items={files}
-                    onItemClick={handleItemClick}
-                    onToggleStar={handleToggleStar}
-                    menuActions={fileMenuActions}
-                  />
+                  <span>Files</span>
+                </button>
+
+                {showFiles && (
+                  files.length === 0 ? (
+                    <div className="py-8 text-center bg-white rounded-xl border border-[#e2e8f0] p-6">
+                      <FileText size={24} className="mx-auto text-[#94a3b8] mb-2" />
+                      <p className="text-sm text-[#64748b]">No files in root folder yet.</p>
+                    </div>
+                  ) : viewMode === "list" ? (
+                    <FileTable
+                      files={files}
+                      grouped
+                      showCheckbox
+                      selectedIds={selectedIds}
+                      isAllSelected={isAllSelected}
+                      onSelectAll={handleSelectAll}
+                      onSelect={handleSelect}
+                      onRowClick={handleItemClick}
+                      onToggleStar={handleToggleStar}
+                      menuActions={fileMenuActions}
+                      columns={["name", "starred", "lastModified", "owner"]}
+                    />
+                  ) : (
+                    <FileGrid
+                      items={files}
+                      grouped
+                      onItemClick={handleItemClick}
+                      onToggleStar={handleToggleStar}
+                      menuActions={fileMenuActions}
+                    />
+                  )
                 )}
               </section>
             </>
