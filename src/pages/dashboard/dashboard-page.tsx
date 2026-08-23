@@ -56,10 +56,7 @@ export function DashboardPage() {
   const totalGB = user?.storage_quota ? user.storage_quota / 1024 / 1024 / 1024 : 0;
 
   const greeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
+    return "Welcome Abort";
   };
 
   const displayName =

@@ -13,6 +13,7 @@ import {
   Download,
   Star,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
@@ -53,6 +54,7 @@ function fileToFileItem(file: ApiFile): FileItem {
         day: "numeric",
         year: "numeric",
       }),
+    rawDate: file.updated_at || file.created_at,
     owner: "me",
     tags: file.tags || [],
     isStarred: file.is_favorite,
@@ -69,7 +71,7 @@ export function FolderDetailPage() {
   const id = folderId || "";
   const navigate = useNavigate();
 
-  const { openCreateFolderModal, openUploadModal, openRenameModal, openLockModal, openDownloadDialog } =
+  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog } =
     useUIStore();
 
   const { data: folder, isPending: folderLoading, isError, error } = useFolder(id);
@@ -92,6 +94,8 @@ export function FolderDetailPage() {
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
+  const [showFolders, setShowFolders] = useState(true);
+  const [showFiles, setShowFiles] = useState(true);
   const { setActiveFiles, openPreview } = usePreviewStore();
   const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -417,17 +421,6 @@ export function FolderDetailPage() {
 
               <Button
                 variant="outline"
-                onClick={() =>
-                  openLockModal(folder.id, folder.name, folder.is_locked)
-                }
-                className="h-9 px-3 text-sm"
-              >
-                {folder.is_locked ? <Unlock size={15} /> : <Lock size={15} />}
-                <span>{folder.is_locked ? "Unlock" : "Lock"}</span>
-              </Button>
-
-              <Button
-                variant="outline"
                 onClick={handleDelete}
                 className="h-9 px-3 text-sm text-[#ef4444] hover:bg-[#fef2f2] hover:text-[#dc2626]"
               >
@@ -522,53 +515,83 @@ export function FolderDetailPage() {
               {/* Subfolders */}
               {subfolders.length > 0 && (
                 <section className="flex flex-col gap-4">
-                  <h2 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider">
-                    Folders
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {subfolders.map((sub) => (
-                      <FolderCard
-                        key={sub.id}
-                        folder={sub}
-                        onClick={(f) => navigate(`/folders/${f.id}`)}
-                      />
-                    ))}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowFolders((prev) => !prev)}
+                    className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                    aria-expanded={showFolders}
+                  >
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                        showFolders ? "" : "-rotate-90"
+                      }`}
+                    />
+                    <span>Folders</span>
+                  </button>
+
+                  {showFolders && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {subfolders.map((sub) => (
+                        <FolderCard
+                          key={sub.id}
+                          folder={sub}
+                          onClick={(f) => navigate(`/folders/${f.id}`)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </section>
               )}
 
               {/* Files in folder */}
               <section className="flex flex-col gap-4">
-                <h2 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider">
-                  Files
-                </h2>
-                {files.length === 0 ? (
-                  <div className="py-8 text-center bg-white rounded-xl border border-[#e2e8f0] p-6">
-                    <FileText size={24} className="mx-auto text-[#94a3b8] mb-2" />
-                    <p className="text-sm text-[#64748b]">
-                      No files in this folder yet.
-                    </p>
-                  </div>
-                ) : viewMode === "list" ? (
-                  <FileTable
-                    files={files}
-                    showCheckbox
-                    selectedIds={selectedIds}
-                    isAllSelected={isAllSelected}
-                    onSelectAll={handleSelectAll}
-                    onSelect={handleSelect}
-                    onRowClick={handleItemClick}
-                    onToggleStar={handleToggleStar}
-                    menuActions={fileMenuActions}
-                    columns={["name", "starred", "lastModified", "owner", "tags"]}
+                <button
+                  type="button"
+                  onClick={() => setShowFiles((prev) => !prev)}
+                  className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                  aria-expanded={showFiles}
+                >
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                      showFiles ? "" : "-rotate-90"
+                    }`}
                   />
-                ) : (
-                  <FileGrid
-                    items={files}
-                    onItemClick={handleItemClick}
-                    onToggleStar={handleToggleStar}
-                    menuActions={fileMenuActions}
-                  />
+                  <span>Files</span>
+                </button>
+
+                {showFiles && (
+                  files.length === 0 ? (
+                    <div className="py-8 text-center bg-white rounded-xl border border-[#e2e8f0] p-6">
+                      <FileText size={24} className="mx-auto text-[#94a3b8] mb-2" />
+                      <p className="text-sm text-[#64748b]">
+                        No files in this folder yet.
+                      </p>
+                    </div>
+                  ) : viewMode === "list" ? (
+                    <FileTable
+                      files={files}
+                      grouped
+                      showCheckbox
+                      selectedIds={selectedIds}
+                      isAllSelected={isAllSelected}
+                      onSelectAll={handleSelectAll}
+                      onSelect={handleSelect}
+                      onRowClick={handleItemClick}
+                      onToggleStar={handleToggleStar}
+                      menuActions={fileMenuActions}
+                      columns={["name", "starred", "lastModified", "owner", "tags"]}
+                    />
+                  ) : (
+                    <FileGrid
+                      items={files}
+                      grouped
+                      onItemClick={handleItemClick}
+                      onToggleStar={handleToggleStar}
+                      menuActions={fileMenuActions}
+                    />
+                  )
                 )}
               </section>
             </>

@@ -57,7 +57,7 @@ export function Sidebar() {
       <div className="px-4 pb-4">
         <Link
           to="/files?new-folder=true"
-          className="flex items-center border-2 border-blue-600 justify-center gap-2 w-full h-9 rounded-lg text-blue-600 text-sm font-medium hover:bg-[#1230a0] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
+          className="flex items-center border-2 border-blue-600 justify-center gap-2 w-full h-9 rounded-lg text-blue-600 text-sm font-medium hover:text-white hover:bg-[#2c4ab6] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
         >
           <Plus size={16} />
           New Folder

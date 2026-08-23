@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
   // Root Redirect
   {
     path: "/",
-    element: <Navigate to="/dashboard" replace />,
+    element: <Navigate to="/files" replace />,
   },
 
   // Auth Routes

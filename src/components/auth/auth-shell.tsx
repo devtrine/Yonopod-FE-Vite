@@ -15,10 +15,10 @@ export function AuthShell({
       />
       <header className="relative flex w-full flex-col items-center gap-1">
         <h1 className="relative text-center text-2xl font-bold tracking-tight text-[#004ac6]">
-          YONOpod
+          Yonopod
         </h1>
         <p className="relative whitespace-nowrap text-center text-xs font-medium text-slate-500">
-          Premium Engineered Cloud
+          By devtrine suported by <a href="https://www.anext.dev/">anext.dev</a>
         </p>
       </header>
       {children}

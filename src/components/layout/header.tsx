@@ -62,17 +62,6 @@ export function Header() {
           <HelpCircle size={18} />
         </button>
 
-        {/* Upload Button */}
-        <button
-          type="button"
-          onClick={() => openUploadModal(null)}
-          className="flex items-center justify-center md:gap-2 w-9 h-9 md:w-auto md:px-4 ml-1 rounded-lg bg-[#1c3fc4] text-white text-sm font-medium hover:bg-[#1230a0] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
-          aria-label="Upload files"
-        >
-          <Upload size={15} />
-          <span className="hidden md:inline">Upload</span>
-        </button>
-
         {/* Avatar with dropdown */}
         <div className="relative ml-1" ref={menuRef}>
           <button
