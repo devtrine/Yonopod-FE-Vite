@@ -8,6 +8,7 @@ export interface User {
   avatar_url: string | null;
   is_active: boolean;
   storage_used: number;
+  storage_quota: number;
   created_at: string;
   updated_at: string | null;
 }
