@@ -22,9 +22,9 @@ export function StorageOverview({
   const percentUsed = quotaBytes > 0 ? Math.round((usedBytes / quotaBytes) * 100) : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       {/* Storage Usage Card */}
-      <div className="md:col-span-1 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
+      <div className="md:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 text-[#1c3fc4] mb-3">
             <Cloud size={20} />

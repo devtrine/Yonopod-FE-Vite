@@ -1,17 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, HelpCircle, Upload, Menu, LogOut, Settings, User } from "lucide-react";
+import { HelpCircle, Menu, LogOut, Settings, User } from "lucide-react";
 import { GlobalSearch } from "@/components/search/search-bar";
+import { NotificationPopover } from "@/components/layout/notification-popover";
 import { Link } from "react-router-dom";
 import { Avatar } from "../ui/avatar";
 import { useSidebar } from "./sidebar-context";
 import { useCurrentUser, useLogout } from "../../hooks/use-auth";
-import { useUIStore } from "../../stores/ui-store";
 
 export function Header() {
   const { toggle } = useSidebar();
   const { data: user } = useCurrentUser();
   const logout = useLogout();
-  const { openUploadModal } = useUIStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -47,12 +46,7 @@ export function Header() {
       {/* Right actions */}
       <div className="flex items-center gap-1 ml-auto">
         {/* Notification */}
-        <button
-          aria-label="Notifications"
-          className="w-9 h-9 flex items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors"
-        >
-          <Bell size={18} />
-        </button>
+        <NotificationPopover />
 
         {/* Help */}
         <button
@@ -60,17 +54,6 @@ export function Header() {
           className="hidden sm:flex w-9 h-9 items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors"
         >
           <HelpCircle size={18} />
-        </button>
-
-        {/* Upload Button */}
-        <button
-          type="button"
-          onClick={() => openUploadModal(null)}
-          className="flex items-center justify-center md:gap-2 w-9 h-9 md:w-auto md:px-4 ml-1 rounded-lg bg-[#1c3fc4] text-white text-sm font-medium hover:bg-[#1230a0] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
-          aria-label="Upload files"
-        >
-          <Upload size={15} />
-          <span className="hidden md:inline">Upload</span>
         </button>
 
         {/* Avatar with dropdown */}

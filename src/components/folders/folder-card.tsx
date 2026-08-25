@@ -97,7 +97,7 @@ export function FolderCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group relative flex flex-col p-5 rounded-2xl border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all cursor-pointer"
+      className="group relative flex flex-col p-5 border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all cursor-pointer"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="relative w-11 h-11 flex items-center justify-center rounded-xl bg-[#eff1fb] text-[#1c3fc4]">

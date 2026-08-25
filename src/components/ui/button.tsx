@@ -39,7 +39,7 @@ export function Button({
     <button
       disabled={disabled}
       className={[
-        "inline-flex items-center justify-center font-medium rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4] select-none whitespace-nowrap",
+        "inline-flex items-center justify-center font-medium rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4] select-none whitespace-nowrap",
         variantStyles[variant],
         sizeStyles[size],
         disabled ? "opacity-50 pointer-events-none" : "",

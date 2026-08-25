@@ -9,12 +9,14 @@ import { useSidebar } from "./sidebar-context";
 import { mainNavItems } from "@/config/navigation";
 import { useCurrentUser } from "../../hooks/use-auth";
 import { formatFileSize } from "@/lib/formatters";
+import { useUIStore } from "@/stores/ui-store";
 
 export function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
   const { isOpen, setIsOpen } = useSidebar();
   const { data: user } = useCurrentUser();
+  const { openCreateFolderModal } = useUIStore();
 
   const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
   const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
@@ -31,16 +33,16 @@ export function Sidebar() {
       
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-50 flex flex-col h-full w-[248px] flex-shrink-0 bg-[#eff1fb] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-r-gray-300 h-full w-[248px] flex-shrink-0 bg-[#ffffff] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         ].join(" ")}
         aria-label="Main navigation"
       >
         {/* Logo */}
-        <div className="px-5 pt-5 pb-4 flex items-center justify-between">
+        <div className="px-5 pt-5 pb-4 flex items-center justify-between border-b border-gray-300 mb-6">
           <Link to="/dashboard" className="block">
             <p className="text-xl font-bold text-[#1c3fc4] leading-none">Yonopod</p>
-            <p className="text-xs text-[#64748b] mt-0.5">Premium Storage</p>
+            {/* <p className="text-xs text-[#64748b] mt-0.5">Premium Storage</p> */}
           </Link>
           <button 
             className="md:hidden p-1 text-[#64748b] hover:bg-[#e2e8f0] rounded-md"
@@ -52,17 +54,21 @@ export function Sidebar() {
 
       {/* New Folder Button */}
       <div className="px-4 pb-4">
-        <Link
-          to="/files?new-folder=true"
-          className="flex items-center justify-center gap-2 w-full h-9 rounded-lg bg-[#1c3fc4] text-white text-sm font-medium hover:bg-[#1230a0] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
+        <button
+          type="button"
+          onClick={() => {
+            openCreateFolderModal();
+            setIsOpen(false);
+          }}
+          className="flex items-center border-2 border-blue-600 justify-center gap-2 w-full h-9 rounded-lg text-blue-600 text-sm font-medium hover:text-white hover:bg-[#2c4ab6] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
         >
           <Plus size={16} />
           New Folder
-        </Link>
+        </button>
       </div>
 
       {/* Nav Items */}
-      <nav className="flex-1 px-3 flex flex-col gap-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 flex flex-col gap-2 overflow-y-auto">
         {mainNavItems.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
           return (
@@ -72,7 +78,7 @@ export function Sidebar() {
               className={[
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
                 isActive
-                  ? "bg-[#1c3fc4] text-white font-medium"
+                  ? "bg-[#d4ddff] text-black font-medium"
                   : "text-[#374151] hover:bg-white/60 hover:text-[#0f172a]",
               ].join(" ")}
               aria-current={isActive ? "page" : undefined}

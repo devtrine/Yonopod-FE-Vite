@@ -33,6 +33,7 @@ import { StorageSettingsPage } from "@/pages/dashboard/settings/storage-settings
 import { BillingSettingsPage } from "@/pages/dashboard/settings/billing-settings-page";
 import { DevicesSettingsPage } from "@/pages/dashboard/settings/devices-settings-page";
 import { SessionsSettingsPage } from "@/pages/dashboard/settings/sessions-settings-page";
+import { NotificationsSettingsPage } from "@/pages/dashboard/settings/notifications-settings-page";
 
 // Admin Pages
 import { AdminOverviewPage } from "@/pages/admin/admin-overview-page";
@@ -50,7 +51,7 @@ export const router = createBrowserRouter([
   // Root Redirect
   {
     path: "/",
-    element: <Navigate to="/dashboard" replace />,
+    element: <Navigate to="/files" replace />,
   },
 
   // Auth Routes
@@ -94,6 +95,7 @@ export const router = createBrowserRouter([
           { path: "billing", element: <BillingSettingsPage /> },
           { path: "devices", element: <DevicesSettingsPage /> },
           { path: "sessions", element: <SessionsSettingsPage /> },
+          { path: "notifications", element: <NotificationsSettingsPage /> },
         ],
       },
     ],
