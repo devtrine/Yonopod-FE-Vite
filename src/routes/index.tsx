@@ -47,11 +47,14 @@ import { PublicSharePage } from "@/pages/share/public-share-page";
 // 404
 import { NotFoundPage } from "@/pages/not-found-page";
 
+// Landing Page
+import { LandingPage } from "@/pages/landing-page";
+
 export const router = createBrowserRouter([
-  // Root Redirect
+  // Public Landing Page
   {
     path: "/",
-    element: <Navigate to="/files" replace />,
+    element: <LandingPage />,
   },
 
   // Auth Routes
