@@ -8,19 +8,18 @@ import { ProgressBar } from "../ui/progress-bar";
 import { useSidebar } from "./sidebar-context";
 import { mainNavItems } from "@/config/navigation";
 import { useCurrentUser } from "../../hooks/use-auth";
+import { formatFileSize } from "@/lib/formatters";
+import { useUIStore } from "@/stores/ui-store";
 
 export function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
   const { isOpen, setIsOpen } = useSidebar();
   const { data: user } = useCurrentUser();
+  const { openCreateFolderModal } = useUIStore();
 
-  const usedGB = user?.storage_used
-    ? Math.round((Number(user.storage_used) / (1024 * 1024 * 1024)) * 100) / 100
-    : 0;
-  const totalGB = user?.storage_quota
-    ? Math.round((Number(user.storage_quota) / (1024 * 1024 * 1024)) * 100) / 100
-    : 0;
+  const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
+  const quotaBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
 
   return (
     <>
@@ -55,13 +54,17 @@ export function Sidebar() {
 
       {/* New Folder Button */}
       <div className="px-4 pb-4">
-        <Link
-          to="/files?new-folder=true"
+        <button
+          type="button"
+          onClick={() => {
+            openCreateFolderModal();
+            setIsOpen(false);
+          }}
           className="flex items-center border-2 border-blue-600 justify-center gap-2 w-full h-9 rounded-lg text-blue-600 text-sm font-medium hover:text-white hover:bg-[#2c4ab6] active:bg-[#0f2690] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
         >
           <Plus size={16} />
           New Folder
-        </Link>
+        </button>
       </div>
 
       {/* Nav Items */}
@@ -107,10 +110,10 @@ export function Sidebar() {
           <div className="flex items-center justify-between">
             <span className="text-xs text-[#64748b]">Storage</span>
             <span className="text-xs font-medium text-[#374151]">
-              {usedGB} GB / {totalGB} GB
+              {formatFileSize(usedBytes)} / {formatFileSize(quotaBytes)}
             </span>
           </div>
-          <ProgressBar value={usedGB} max={totalGB} size="sm" />
+          <ProgressBar value={usedBytes} max={quotaBytes || 1} size="sm" />
         </div>
       </div>
     </aside>

@@ -208,12 +208,12 @@ export function FilesPage() {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden bg-white">
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-6 md:p-8">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
           
-          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg bg-blue-100">
+          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 className="text-2xl font-bold text-[#0f172a]">My Drive</h1>
             
             <div className="flex flex-wrap items-center gap-3">
@@ -325,24 +325,28 @@ export function FilesPage() {
             <>
               {/* Folders */}
               {folders.length > 0 && (
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={() => setShowFolders((prev) => !prev)}
-                    className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                    className="flex items-center gap-1.5 w-fit text-xs font-semibold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 transition-colors focus:outline-none cursor-pointer group select-none"
                     aria-expanded={showFolders}
                   >
                     <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                      size={14}
+                      className={`transition-transform duration-200 text-neutral-500 group-hover:text-neutral-800 ${
                         showFolders ? "" : "-rotate-90"
                       }`}
+                      strokeWidth={2}
                     />
                     <span>Folders</span>
+                    <span className="text-[11px] font-normal text-neutral-400">
+                      ({folders.length})
+                    </span>
                   </button>
 
                   {showFolders && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+                    <div className="flex flex-wrap gap-2.5 sm:gap-3.5 items-start pl-1">
                       {folders.map((folder) => (
                         <FolderCard
                           key={folder.id}
@@ -356,20 +360,24 @@ export function FilesPage() {
               )}
 
               {/* Files */}
-              <section className="flex flex-col gap-4">
+              <section className="flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={() => setShowFiles((prev) => !prev)}
-                  className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                  className="flex items-center gap-1.5 w-fit text-xs font-semibold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 transition-colors focus:outline-none cursor-pointer group select-none"
                   aria-expanded={showFiles}
                 >
                   <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                    size={14}
+                    className={`transition-transform duration-200 text-neutral-500 group-hover:text-neutral-800 ${
                       showFiles ? "" : "-rotate-90"
                     }`}
+                    strokeWidth={2}
                   />
                   <span>Files</span>
+                  <span className="text-[11px] font-normal text-neutral-400">
+                    ({files.length})
+                  </span>
                 </button>
 
                 {showFiles && (

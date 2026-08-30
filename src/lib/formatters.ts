@@ -2,11 +2,12 @@
  * Format a file size in bytes to a human-readable string.
  * e.g. 1024 → "1 KB", 1048576 → "1 MB"
  */
-export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 B";
+export function formatFileSize(bytes: number | string | null | undefined): string {
+  const num = Number(bytes);
+  if (!num || isNaN(num) || num <= 0) return "0 B";
   const units = ["B", "KB", "MB", "GB", "TB"];
-  const exp = Math.floor(Math.log(bytes) / Math.log(1024));
-  const size = bytes / Math.pow(1024, exp);
+  const exp = Math.min(Math.floor(Math.log(num) / Math.log(1024)), units.length - 1);
+  const size = num / Math.pow(1024, exp);
   return `${size % 1 === 0 ? size : size.toFixed(1)} ${units[exp]}`;
 }
 

@@ -6,38 +6,39 @@ export interface FileDateGroup {
   files: FileItem[];
 }
 
-const MONTH_NAMES = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli",
-  "Agustus",
-  "September",
-  "Oktober",
-  "November",
-  "Desember",
-];
-
 /**
- * Group files by date categories:
- * - Hari Ini (Today)
- * - Kemarin (Yesterday)
- * - 7 Hari Terakhir (Last 7 Days)
- * - Bulan Ini (This Month)
- * - Per-Bulan (e.g. Juli, Juni, dll. untuk bulan sebelumnya di tahun ini)
- * - Lebih Lama (Sebelum tahun ini)
+ * Group files by Windows File Explorer date categories:
+ * - Today
+ * - Yesterday
+ * - Earlier this week
+ * - Last week
+ * - Earlier this month
+ * - Last month
+ * - Earlier this year
+ * - A long time ago
  */
 export function groupFilesByDate(files: FileItem[]): FileDateGroup[] {
   if (!files || files.length === 0) return [];
 
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const startOfYesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1).getTime();
-  const startOf7DaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7).getTime();
+  const startOfYesterday = startOfToday - 86400000;
+
+  // Start of current week (Monday)
+  const dayOfWeek = now.getDay();
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceMonday).getTime();
+
+  // Start of last week (Monday of last week)
+  const startOfLastWeek = startOfWeek - 7 * 86400000;
+
+  // Start of this month
   const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+  // Start of last month
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1).getTime();
+
+  // Start of this year
   const startOfThisYear = new Date(now.getFullYear(), 0, 1).getTime();
 
   const groupMap = new Map<string, { label: string; order: number; files: FileItem[] }>();
@@ -55,29 +56,26 @@ export function groupFilesByDate(files: FileItem[]): FileDateGroup[] {
     const timestamp = fileDate && !isNaN(fileDate.getTime()) ? fileDate.getTime() : 0;
 
     if (timestamp === 0) {
-      getOrCreateGroup("older", "Lebih Lama", 99999).files.push(file);
+      getOrCreateGroup("older", "A long time ago", 99999).files.push(file);
       continue;
     }
 
     if (timestamp >= startOfToday) {
-      getOrCreateGroup("today", "Hari Ini", 1).files.push(file);
+      getOrCreateGroup("today", "Today", 1).files.push(file);
     } else if (timestamp >= startOfYesterday) {
-      getOrCreateGroup("yesterday", "Kemarin", 2).files.push(file);
-    } else if (timestamp >= startOf7DaysAgo) {
-      getOrCreateGroup("last_7_days", "7 Hari Terakhir", 3).files.push(file);
+      getOrCreateGroup("yesterday", "Yesterday", 2).files.push(file);
+    } else if (timestamp >= startOfWeek) {
+      getOrCreateGroup("earlier_this_week", "Earlier this week", 3).files.push(file);
+    } else if (timestamp >= startOfLastWeek) {
+      getOrCreateGroup("last_week", "Last week", 4).files.push(file);
     } else if (timestamp >= startOfThisMonth) {
-      getOrCreateGroup("this_month", "Bulan Ini", 4).files.push(file);
+      getOrCreateGroup("earlier_this_month", "Earlier this month", 5).files.push(file);
+    } else if (timestamp >= startOfLastMonth) {
+      getOrCreateGroup("last_month", "Last month", 6).files.push(file);
     } else if (timestamp >= startOfThisYear) {
-      const monthIndex = fileDate!.getMonth();
-      const monthLabel = MONTH_NAMES[monthIndex];
-      const key = `month_${fileDate!.getFullYear()}_${monthIndex}`;
-      const order = 100 + (11 - monthIndex);
-      getOrCreateGroup(key, monthLabel, order).files.push(file);
+      getOrCreateGroup("earlier_this_year", "Earlier this year", 7).files.push(file);
     } else {
-      const fileYear = fileDate!.getFullYear();
-      const key = `year_${fileYear}`;
-      const order = 1000 + (now.getFullYear() - fileYear);
-      getOrCreateGroup(key, `Lebih Lama (${fileYear})`, order).files.push(file);
+      getOrCreateGroup("older", "A long time ago", 8).files.push(file);
     }
   }
 

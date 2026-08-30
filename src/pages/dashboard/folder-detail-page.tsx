@@ -514,24 +514,28 @@ export function FolderDetailPage() {
             <>
               {/* Subfolders */}
               {subfolders.length > 0 && (
-                <section className="flex flex-col gap-4">
+                <section className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={() => setShowFolders((prev) => !prev)}
-                    className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                    className="flex items-center gap-1.5 w-fit text-xs font-semibold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 transition-colors focus:outline-none cursor-pointer group select-none"
                     aria-expanded={showFolders}
                   >
                     <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                      size={14}
+                      className={`transition-transform duration-200 text-neutral-500 group-hover:text-neutral-800 ${
                         showFolders ? "" : "-rotate-90"
                       }`}
+                      strokeWidth={2}
                     />
                     <span>Folders</span>
+                    <span className="text-[11px] font-normal text-neutral-400">
+                      ({subfolders.length})
+                    </span>
                   </button>
 
                   {showFolders && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="flex flex-wrap gap-2.5 sm:gap-3.5 items-start pl-1">
                       {subfolders.map((sub) => (
                         <FolderCard
                           key={sub.id}
@@ -545,20 +549,24 @@ export function FolderDetailPage() {
               )}
 
               {/* Files in folder */}
-              <section className="flex flex-col gap-4">
+              <section className="flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={() => setShowFiles((prev) => !prev)}
-                  className="flex items-center gap-2 w-fit text-sm font-semibold text-[#64748b] uppercase tracking-wider hover:text-[#0f172a] transition-colors focus:outline-none cursor-pointer group select-none"
+                  className="flex items-center gap-1.5 w-fit text-xs font-semibold text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 transition-colors focus:outline-none cursor-pointer group select-none"
                   aria-expanded={showFiles}
                 >
                   <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
+                    size={14}
+                    className={`transition-transform duration-200 text-neutral-500 group-hover:text-neutral-800 ${
                       showFiles ? "" : "-rotate-90"
                     }`}
+                    strokeWidth={2}
                   />
                   <span>Files</span>
+                  <span className="text-[11px] font-normal text-neutral-400">
+                    ({files.length})
+                  </span>
                 </button>
 
                 {showFiles && (
