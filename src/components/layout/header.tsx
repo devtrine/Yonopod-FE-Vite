@@ -1,17 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, HelpCircle, Upload, Menu, LogOut, Settings, User } from "lucide-react";
+import { Bell, HelpCircle, Menu, LogOut, Settings, User } from "lucide-react";
 import { GlobalSearch } from "@/components/search/search-bar";
 import { Link } from "react-router-dom";
 import { Avatar } from "../ui/avatar";
 import { useSidebar } from "./sidebar-context";
 import { useCurrentUser, useLogout } from "../../hooks/use-auth";
-import { useUIStore } from "../../stores/ui-store";
 
 export function Header() {
   const { toggle } = useSidebar();
   const { data: user } = useCurrentUser();
   const logout = useLogout();
-  const { openUploadModal } = useUIStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 

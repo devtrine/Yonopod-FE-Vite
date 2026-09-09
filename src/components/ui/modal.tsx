@@ -20,7 +20,7 @@ export function Modal({
   icon?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -46,12 +46,21 @@ export function Modal({
     if (e.target === dialogRef.current) onClose();
   };
 
+  const maxWidth =
+    size === "sm"
+      ? "24rem"
+      : size === "lg"
+      ? "42rem"
+      : size === "xl"
+      ? "52rem"
+      : "32rem";
+
   return (
     <dialog
       ref={dialogRef}
       onClick={handleBackdropClick}
       className="m-auto w-full backdrop:bg-black/40 backdrop:backdrop-blur-sm bg-transparent p-0 rounded-xl overflow-visible outline-none"
-      style={{ maxWidth: size === "sm" ? "24rem" : size === "lg" ? "42rem" : "32rem" }}
+      style={{ maxWidth }}
     >
       <div className="bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] w-full overflow-hidden">
         {/* Header */}

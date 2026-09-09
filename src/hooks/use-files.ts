@@ -2,9 +2,18 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as fileService from "../services/file.service";
-import type { ListFilesParams, PresignUploadPayload, UpdateFilePayload } from "../types/file";
+import type { ListFilesParams, ConfirmUploadPayload, UpdateFilePayload } from "../types/file";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
+
+export function useS3Config(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ["files", "s3-config"],
+    queryFn: () => fileService.getS3Config(),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    ...options,
+  });
+}
 
 export function useFiles(params?: ListFilesParams) {
   return useQuery({
@@ -50,13 +59,14 @@ export function useCheckFileStatus(
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export function usePresignUpload() {
+export function useConfirmUpload() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: PresignUploadPayload) => fileService.presignUpload(payload),
+    mutationFn: (payload: ConfirmUploadPayload) => fileService.confirmUpload(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
     },
   });
 }

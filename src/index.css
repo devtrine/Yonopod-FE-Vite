@@ -99,3 +99,19 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* =============================================
+   UPPY DASHBOARD CUSTOMIZATIONS
+   ============================================= */
+.uppy-Dashboard-inner {
+  border-radius: var(--radius-lg) !important;
+  border-color: var(--border) !important;
+  font-family: var(--font-inter) !important;
+}
+.uppy-Dashboard-browseBtn {
+  color: var(--brand) !important;
+}
+.uppy-Dashboard-browseBtn:hover {
+  color: var(--brand-dark) !important;
+}
+

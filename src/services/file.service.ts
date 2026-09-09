@@ -4,8 +4,10 @@ import type {
   File,
   FileDetail,
   ListFilesParams,
-  PresignUploadPayload,
-  PresignUploadResponse,
+  S3Config,
+  S3PresignPayload,
+  S3PresignResponse,
+  ConfirmUploadPayload,
   UpdateFilePayload,
   DownloadFileResponse,
   CheckFileStatusResponse,
@@ -26,11 +28,24 @@ export async function getFile(id: string): Promise<FileDetail> {
   return data.data;
 }
 
-export async function presignUpload(payload: PresignUploadPayload): Promise<PresignUploadResponse> {
-  const { data } = await api.post<ApiResponse<PresignUploadResponse>>(
-    "/files/presign-upload",
+export async function getS3Config(): Promise<S3Config> {
+  const { data } = await api.get<ApiResponse<S3Config>>("/files/s3/config");
+  return data.data;
+}
+
+export async function signS3Request(payload: S3PresignPayload): Promise<S3PresignResponse> {
+  const { data } = await api.post<ApiResponse<S3PresignResponse> & { url?: string; key?: string }>(
+    "/files/s3/presign",
     payload
   );
+  return {
+    url: data.data?.url ?? data.url ?? "",
+    key: data.data?.key ?? data.key ?? payload.key,
+  };
+}
+
+export async function confirmUpload(payload: ConfirmUploadPayload): Promise<File> {
+  const { data } = await api.post<ApiResponse<File>>("/files/confirm-upload", payload);
   return data.data;
 }
 
