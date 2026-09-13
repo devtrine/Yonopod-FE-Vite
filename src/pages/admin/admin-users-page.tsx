@@ -23,12 +23,12 @@ export function AdminUsersPage() {
           <h1 className="text-2xl font-bold text-[#0f172a]">Kelola Pengguna</h1>
           <p className="text-[#64748b]">Manajemen akun pengguna dan alokasi penyimpanan.</p>
         </div>
-        <button className="h-10 px-4 bg-[#1c3fc4] text-white rounded-lg text-sm font-medium hover:bg-[#1230a0] transition-colors">
+        <button className="h-10 px-4 bg-[#0F0A6B] text-white rounded-lg text-sm font-medium hover:bg-[#161282] transition-colors shadow-sm">
           + Tambah Pengguna
         </button>
       </header>
 
-      <div className="bg-white border border-[#e2e8f0] rounded-2xl overflow-hidden">
+      <div className="bg-[#FDFEFF] border border-[#e2e8f0] rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
@@ -55,7 +55,7 @@ export function AdminUsersPage() {
                   <td className="px-6 py-4">
                     <div className="flex flex-col items-start gap-1.5">
                       <div className="flex items-center gap-1.5 text-[#0f172a] font-medium text-xs">
-                        {user.role === "Admin" ? <Shield size={14} className="text-[#1c3fc4]" /> : <Users size={14} className="text-[#64748b]" />}
+                        {user.role === "Admin" ? <Shield size={14} className="text-[#0F0A6B]" /> : <Users size={14} className="text-[#64748b]" />}
                         {user.role}
                       </div>
                       <Badge variant={user.status === "Aktif" ? "success" : "neutral"}>

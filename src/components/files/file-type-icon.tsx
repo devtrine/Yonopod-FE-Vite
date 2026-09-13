@@ -45,7 +45,7 @@ export function FileTypeIcon({
   className?: string;
 }) {
   if (isFolder) {
-    return <Folder size={size} className={["text-[#1c3fc4]", className].join(" ")} />;
+    return <Folder size={size} className={["text-[#0F0A6B]", className].join(" ")} />;
   }
 
   const ext = name.split(".").pop()?.toLowerCase() ?? "";

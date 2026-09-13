@@ -19,9 +19,9 @@ export function AdminServersPage() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
               <Server size={20} />
             </div>
             <h3 className="font-semibold text-[#0f172a]">Kesehatan Kluster</h3>
@@ -30,9 +30,9 @@ export function AdminServersPage() {
           <p className="text-sm text-[#64748b]">Status Optimal (24 Node Aktif)</p>
         </div>
 
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
               <Cpu size={20} />
             </div>
             <h3 className="font-semibold text-[#0f172a]">Rata-rata CPU</h3>
@@ -41,9 +41,9 @@ export function AdminServersPage() {
           <ProgressBar value={42} />
         </div>
 
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
               <Activity size={20} />
             </div>
             <h3 className="font-semibold text-[#0f172a]">Lalu Lintas Jaringan</h3>
@@ -54,10 +54,10 @@ export function AdminServersPage() {
       </div>
 
       {/* Chart Section */}
-      <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 flex flex-col">
+      <div className="rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] p-6 flex flex-col">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-lg font-semibold text-[#0f172a]">Kinerja Sistem (24 Jam Terakhir)</h2>
-          <button className="text-sm font-medium text-[#1c3fc4] hover:underline">Lihat Detail Laporan</button>
+          <button className="text-sm font-medium text-[#0F0A6B] hover:underline">Lihat Detail Laporan</button>
         </div>
         
         <div className="relative h-[240px] w-full flex items-end justify-between px-4">
@@ -73,7 +73,7 @@ export function AdminServersPage() {
           {/* Chart Bars */}
           <div className="ml-12 w-full h-full flex items-end justify-around pb-8">
             {[40, 55, 35, 80, 60, 45, 95, 70].map((h, i) => (
-              <div key={i} className="w-[8%] bg-[#a5b4fc] rounded-t-sm" style={{ height: `${h}%` }}></div>
+              <div key={i} className="w-[8%] bg-[#0F0A6B] rounded-t-sm" style={{ height: `${h}%` }}></div>
             ))}
           </div>
 

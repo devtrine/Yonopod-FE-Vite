@@ -92,7 +92,7 @@ export function LockUnlockModal() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password (min 4 characters)"
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#1c3fc4]"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#0F0A6B]"
           />
         </div>
 
@@ -110,7 +110,7 @@ export function LockUnlockModal() {
           <Button
             type="submit"
             disabled={!password.trim() || isPending}
-            className="bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+            className="bg-[#0F0A6B] text-white hover:bg-[#161282]"
           >
             {isPending
               ? isLocked

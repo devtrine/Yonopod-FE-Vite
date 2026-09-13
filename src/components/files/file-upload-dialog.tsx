@@ -119,6 +119,7 @@ export function FileUploadDialog() {
       if (result.successful && result.successful.length > 0) {
         queryClient.invalidateQueries({ queryKey: ["files"] });
         queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+        queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
         queryClient.invalidateQueries({ queryKey: ["recent"] });
         toast(
           "success",
@@ -184,7 +185,7 @@ export function FileUploadDialog() {
             value={activeFolderId ?? ""}
             onChange={(e) => setSelectedFolderId(e.target.value || null)}
             aria-label="Select destination folder"
-            className="w-full px-3 py-2 rounded-lg border border-[#e2e8f0] text-sm text-[#0f172a] bg-white focus:outline-none focus:border-[#1c3fc4]"
+            className="w-full px-3 py-2 rounded-lg border border-[#e2e8f0] text-sm text-[#0f172a] bg-white focus:outline-none focus:border-[#0F0A6B]"
           >
             <option value="">Root (My Drive)</option>
             {folders.map((folder) => (
@@ -199,7 +200,7 @@ export function FileUploadDialog() {
         <div className="w-full rounded-xl overflow-hidden min-h-[380px] bg-[#f8fafc] border border-[#e2e8f0] flex flex-col justify-center">
           {isS3ConfigLoading && (
             <div className="flex flex-col items-center justify-center p-12 gap-3 text-[#64748b]">
-              <Loader2 className="animate-spin text-[#1c3fc4]" size={28} />
+              <Loader2 className="animate-spin text-[#0F0A6B]" size={28} />
               <span className="text-sm font-medium">
                 Memuat konfigurasi upload S3...
               </span>

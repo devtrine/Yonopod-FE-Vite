@@ -10,13 +10,13 @@ import { useCreateTag, useUpdateTag } from "../../hooks/use-tags";
 import type { Tag } from "../../types/tags";
 
 const TAG_COLORS = [
+  "#0F0A6B",
+  "#B3EEF6",
   "#ef4444",
   "#f59e0b",
   "#22c55e",
-  "#3b82f6",
   "#8b5cf6",
   "#ec4899",
-  "#06b6d4",
   "#64748b",
 ];
 
@@ -33,7 +33,7 @@ export function TagFormModal({
   const createTag = useCreateTag();
   const updateTag = useUpdateTag(tag?.id ?? "");
   const [name, setName] = useState(tag?.name ?? "");
-  const [color, setColor] = useState<string>(tag?.color ?? TAG_COLORS[3]);
+  const [color, setColor] = useState<string>(tag?.color ?? TAG_COLORS[0]);
 
   const isPending = createTag.isPending || updateTag.isPending;
 
@@ -83,7 +83,7 @@ export function TagFormModal({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Work, Personal, Important"
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#1c3fc4]"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#0F0A6B]"
           />
         </div>
 
@@ -101,7 +101,7 @@ export function TagFormModal({
                 className={[
                   "w-8 h-8 rounded-full transition-transform",
                   color === c
-                    ? "ring-2 ring-offset-2 ring-[#1c3fc4] scale-110"
+                    ? "ring-2 ring-offset-2 ring-[#0F0A6B] scale-110"
                     : "hover:scale-110",
                 ].join(" ")}
                 style={{ backgroundColor: c }}
@@ -117,7 +117,7 @@ export function TagFormModal({
           <Button
             type="submit"
             disabled={!name.trim() || isPending}
-            className="bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+            className="bg-[#0F0A6B] text-white hover:bg-[#161282]"
           >
             {isPending ? "Saving…" : isEdit ? "Save Changes" : "Create Tag"}
           </Button>

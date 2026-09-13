@@ -20,7 +20,7 @@ export function ForgotPasswordPage() {
           <span className="text-slate-500">Remembered it? </span>
           <Link
             to="/login"
-            className="font-medium text-[#004ac6] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="font-medium text-[#0F0A6B] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
           >
             Back to Sign In
           </Link>
@@ -29,11 +29,11 @@ export function ForgotPasswordPage() {
     >
       {sent ? (
         <div className="flex w-full flex-col items-center gap-2.5 py-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0F0A6B]/10">
             <svg
               viewBox="0 0 24 24"
               fill="none"
-              className="h-5 w-5 text-blue-600"
+              className="h-5 w-5 text-[#0F0A6B]"
             >
               <path
                 d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
@@ -81,7 +81,7 @@ export function ForgotPasswordPage() {
             />
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 hover:bg-blue-700 active:bg-blue-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 shadow-sm"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#0F0A6B] px-5 py-2.5 hover:bg-[#161282] active:bg-[#0a0749] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B] shadow-sm"
             >
               <span className="whitespace-nowrap text-sm font-medium text-white">
                 Send Reset Link

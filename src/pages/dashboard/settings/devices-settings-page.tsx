@@ -11,10 +11,10 @@ export function DevicesSettingsPage() {
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col gap-4">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col gap-4">
           <div className="flex items-center justify-between py-2 border-b border-[#f1f5f9]">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
                 <Laptop size={20} />
               </div>
               <div>
@@ -41,7 +41,7 @@ export function DevicesSettingsPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center gap-3">
           <ShieldCheck size={20} className="flex-shrink-0" />
           <p className="text-xs">
             All connected devices are authenticated using HTTP-only session tokens.

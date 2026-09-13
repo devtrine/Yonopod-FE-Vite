@@ -66,6 +66,7 @@ export function useConfirmUpload() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
       queryClient.invalidateQueries({ queryKey: ["recent"] });
     },
   });
@@ -127,6 +128,7 @@ export function usePermanentDeleteFile() {
       queryClient.removeQueries({ queryKey: ["files", id] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
     },
   });
 }

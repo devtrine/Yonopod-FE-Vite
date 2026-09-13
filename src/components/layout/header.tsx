@@ -29,7 +29,7 @@ export function Header() {
   const displayName = user?.full_name || user?.username || "User";
 
   return (
-    <header className="h-[57px] flex items-center gap-4 px-4 md:px-6 bg-white border-b border-[#e2e8f0] flex-shrink-0">
+    <header className="h-[57px] flex items-center gap-4 px-4 md:px-6 bg-[#FDFEFF] border-b border-[#e2e8f0] flex-shrink-0">
       {/* Mobile Menu Toggle */}
       <button 
         className="md:hidden flex-shrink-0 p-2 -ml-2 text-[#64748b] hover:bg-[#f1f5f9] rounded-lg"
@@ -67,7 +67,7 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-haspopup="menu"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]"
+            className="rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
           >
             <Avatar name={displayName} size="md" />
           </button>
@@ -75,7 +75,7 @@ export function Header() {
           {menuOpen && (
             <div
               role="menu"
-              className="absolute right-0 top-11 w-56 bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#e2e8f0] py-1.5 z-50"
+              className="absolute right-0 top-11 w-56 bg-[#FDFEFF] rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-[#e2e8f0] py-1.5 z-50"
             >
               {/* User info */}
               <div className="px-4 py-2.5 border-b border-[#f1f5f9]">

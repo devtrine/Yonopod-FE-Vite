@@ -19,7 +19,7 @@ export function RecentFiles({
         {onViewAll && (
           <button
             onClick={onViewAll}
-            className="text-sm font-medium text-[#1c3fc4] hover:underline focus:outline-none cursor-pointer"
+            className="text-sm font-medium text-[#0F0A6B] hover:underline focus:outline-none cursor-pointer"
           >
             View All
           </button>

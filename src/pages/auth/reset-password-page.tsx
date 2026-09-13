@@ -19,7 +19,7 @@ export function ResetPasswordPage() {
           <span className="text-slate-500">Remembered it? </span>
           <Link
             to="/login"
-            className="font-medium text-[#004ac6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="font-medium text-[#0F0A6B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
           >
             Back to Sign In
           </Link>
@@ -66,12 +66,12 @@ export function ResetPasswordPage() {
         />
         <button
           type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#0F0A6B] px-6 py-3 hover:bg-[#161282] active:bg-[#0a0749] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
         >
-          <span className="mt-[-1px] whitespace-nowrap text-sm font-medium leading-5 tracking-[0.28px] text-[#eeefff]">
+          <span className="mt-[-1px] whitespace-nowrap text-sm font-medium leading-5 tracking-[0.28px] text-white">
             Reset Password
           </span>
-          <ArrowRightIcon className="h-4 w-4 text-[#eeefff]" />
+          <ArrowRightIcon className="h-4 w-4 text-white" />
         </button>
       </form>
     </AuthShell>
