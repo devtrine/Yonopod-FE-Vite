@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Bell, HelpCircle, Menu, LogOut, Settings, User } from "lucide-react";
 import { GlobalSearch } from "@/components/search/search-bar";
+import { NotificationPopover } from "@/components/layout/notification-popover";
 import { Link } from "react-router-dom";
 import { Avatar } from "../ui/avatar";
 import { useSidebar } from "./sidebar-context";
@@ -45,12 +46,7 @@ export function Header() {
       {/* Right actions */}
       <div className="flex items-center gap-1 ml-auto">
         {/* Notification */}
-        <button
-          aria-label="Notifications"
-          className="w-9 h-9 flex items-center justify-center rounded-lg text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a] transition-colors"
-        >
-          <Bell size={18} />
-        </button>
+        <NotificationPopover />
 
         {/* Help */}
         <button
