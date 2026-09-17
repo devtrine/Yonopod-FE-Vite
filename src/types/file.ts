@@ -72,6 +72,9 @@ export interface S3PresignPayload {
   partNumber?: number | null;
   contentType?: string | null;
   size?: number | null;
+  name?: string;
+  extension?: string;
+  folder_id?: string | null;
 }
 
 export interface S3PresignResponse {

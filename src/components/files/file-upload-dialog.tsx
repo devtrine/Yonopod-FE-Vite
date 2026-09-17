@@ -44,6 +44,7 @@ export function FileUploadDialog() {
   const activeFolderId =
     selectedFolderId !== null ? selectedFolderId : state.targetFolderId;
   const activeFolderIdRef = useRef<string | null>(activeFolderId);
+  const fileNames = new Map();
 
   useEffect(() => {
     activeFolderIdRef.current = activeFolderId;
@@ -66,8 +67,14 @@ export function FileUploadDialog() {
       id: "yonopod-uppy-uploader",
       autoProceed: false,
       restrictions: {
-        maxNumberOfFiles: 20,
+        maxNumberOfFiles: 100,
       },
+      onBeforeUpload: (files) => {
+        for (const file of Object.values(files)) {
+          fileNames.set(file.id, file.name);
+        }
+        return files  
+      }
     });
 
     instance.use(AwsS3, {
@@ -81,6 +88,8 @@ export function FileUploadDialog() {
           key: request.key,
           uploadId: "uploadId" in request ? request.uploadId : null,
           partNumber: "partNumber" in request ? request.partNumber : null,
+          name: fileNames.get(request.key),
+          folder_id: activeFolderIdRef.current
         });
       },
     });
