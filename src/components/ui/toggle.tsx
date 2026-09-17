@@ -31,8 +31,8 @@ export function Toggle({
         disabled={disabled}
         onClick={() => !disabled && onChange(!checked)}
         className={[
-          "relative inline-flex w-10 h-6 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1c3fc4]",
-          checked ? "bg-[#1c3fc4]" : "bg-[#cbd5e1]",
+          "relative inline-flex w-10 h-6 rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]",
+          checked ? "bg-[#0F0A6B]" : "bg-[#cbd5e1]",
           disabled ? "cursor-not-allowed" : "cursor-pointer",
         ]
           .filter(Boolean)

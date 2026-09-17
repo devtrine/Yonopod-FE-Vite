@@ -13,7 +13,7 @@ export function SettingsSidebar() {
   const pathname = location.pathname;
 
   return (
-    <aside className="w-64 bg-white border-r border-[#e2e8f0] p-6 flex flex-col gap-2">
+    <aside className="w-64 bg-[#FDFEFF] border-r border-[#e2e8f0] p-6 flex flex-col gap-2">
       <h2 className="text-sm font-semibold text-[#64748b] uppercase tracking-wider mb-2">
         Settings
       </h2>
@@ -28,8 +28,8 @@ export function SettingsSidebar() {
               className={[
                 "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-[#eff1fb] text-[#1c3fc4]"
-                  : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#0f172a]",
+                  ? "bg-[#0F0A6B] text-white shadow-sm"
+                  : "text-[#64748b] hover:bg-[#0F0A6B]/5 hover:text-[#0F0A6B]",
               ].join(" ")}
             >
               <Icon size={18} />

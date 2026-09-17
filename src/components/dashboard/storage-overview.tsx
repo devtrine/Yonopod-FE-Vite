@@ -1,4 +1,4 @@
-import { Cloud, File, Folder, Users } from "lucide-react";
+import { Cloud, File, Folder } from "lucide-react";
 import { ProgressBar } from "../ui/progress-bar";
 
 export function StorageOverview({
@@ -6,9 +6,9 @@ export function StorageOverview({
   totalGB,
   totalFiles,
   totalFolders,
-  sharedItems,
+  sharedItems: _sharedItems,
   isLoadingStats = false,
-  isLoadingShares = false,
+  isLoadingShares: _isLoadingShares = false,
 }: {
   usedGB: number;
   totalGB: number;
@@ -18,14 +18,14 @@ export function StorageOverview({
   isLoadingStats?: boolean;
   isLoadingShares?: boolean;
 }) {
-  const percentUsed = Math.round((usedGB / totalGB) * 100);
+  const percentUsed = totalGB > 0 ? Math.min(100, Math.round((usedGB / totalGB) * 100)) : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       {/* Storage Usage Card */}
-      <div className="md:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
+      <div className="md:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[#1c3fc4] mb-3">
+          <div className="flex items-center gap-2 text-[#0F0A6B] mb-3">
             <Cloud size={20} />
             <h3 className="font-semibold text-base text-[#0f172a]">Storage Usage</h3>
           </div>
@@ -62,8 +62,8 @@ function StatCard({
   isLoading?: boolean;
 }) {
   return (
-    <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
-      <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mb-4">
+    <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col justify-between">
+      <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center mb-4">
         <Icon size={20} />
       </div>
       <div>

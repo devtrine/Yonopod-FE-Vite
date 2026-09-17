@@ -87,7 +87,7 @@ export function AddFilesToTagModal({
           <Button
             onClick={handleAddFiles}
             disabled={selectedFileIds.length === 0 || adding}
-            className="flex items-center gap-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+            className="flex items-center gap-2 bg-[#0F0A6B] text-white hover:bg-[#161282]"
           >
             {adding ? <Loader2 size={15} className="animate-spin" /> : <Check size={15} />}
             Add Selected ({selectedFileIds.length})
@@ -127,7 +127,7 @@ export function AddFilesToTagModal({
                   type="checkbox"
                   checked={selectedFileIds.includes(file.id)}
                   onChange={() => toggleFile(file.id)}
-                  className="w-4 h-4 rounded border-[#cbd5e1] text-[#1c3fc4] cursor-pointer"
+                  className="w-4 h-4 rounded border-[#cbd5e1] text-[#0F0A6B] cursor-pointer"
                 />
                 <FileText size={16} className="text-[#64748b] flex-shrink-0" />
                 <span className="flex-1 text-sm text-[#0f172a] truncate">

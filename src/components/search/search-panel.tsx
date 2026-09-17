@@ -219,14 +219,14 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search files and folders..."
             autoFocus={hideTitle}
-            className="w-full h-11 pl-10 pr-4 rounded-xl border border-[#e2e8f0] bg-white text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#1c3fc4] focus:ring-1 focus:ring-[#1c3fc4]"
+            className="w-full h-11 pl-10 pr-4 rounded-xl border border-[#e2e8f0] bg-white text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#0F0A6B] focus:ring-1 focus:ring-[#0F0A6B]"
           />
         </div>
 
         <select
           value={kindFilter}
           onChange={(e) => setKindFilter(e.target.value as "all" | "files" | "folders")}
-          className="h-11 px-4 rounded-xl border border-[#e2e8f0] bg-white text-sm text-[#0f172a] appearance-none focus:outline-none focus:border-[#1c3fc4] focus:ring-1 focus:ring-[#1c3fc4]"
+          className="h-11 px-4 rounded-xl border border-[#e2e8f0] bg-white text-sm text-[#0f172a] appearance-none focus:outline-none focus:border-[#0F0A6B] focus:ring-1 focus:ring-[#0F0A6B]"
         >
           <option value="all">All Files & Folders</option>
           <option value="files">Files Only</option>

@@ -16,7 +16,7 @@ export function FileEmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-      <div className="w-16 h-16 bg-[#eff1fb] text-[#1c3fc4] rounded-full flex items-center justify-center mb-6">
+      <div className="w-16 h-16 bg-[#0F0A6B]/10 text-[#0F0A6B] rounded-full flex items-center justify-center mb-6">
         <Icon size={32} />
       </div>
       <h3 className="text-lg font-semibold text-[#0f172a] mb-2">{title}</h3>

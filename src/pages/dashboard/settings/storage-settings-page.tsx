@@ -8,10 +8,10 @@ export function StorageSettingsPage() {
   const { data: user, isPending } = useCurrentUser();
 
   const usedBytes = user?.storage_used ? Number(user.storage_used) : 0;
-  const totalBytes = 100 * 1024 * 1024 * 1024; // 100 GB
+  const totalBytes = user?.storage_quota ? Number(user.storage_quota) : 0;
   const usedGB = Math.round((usedBytes / (1024 * 1024 * 1024)) * 100) / 100;
-  const totalGB = 100;
-  const percentage = Math.min(100, Math.round((usedBytes / totalBytes) * 100));
+  const totalGB = Math.round((totalBytes / (1024 * 1024 * 1024)) * 100) / 100;
+  const percentage = totalBytes > 0 ? Math.min(100, Math.round((usedBytes / totalBytes) * 100)) : 0;
 
   if (isPending) {
     return (
@@ -32,14 +32,16 @@ export function StorageSettingsPage() {
         </div>
 
         {/* Storage Card */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col gap-6">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
               <Cloud size={24} />
             </div>
             <div>
               <h2 className="text-base font-semibold text-[#0f172a]">Your Storage Plan</h2>
-              <p className="text-sm text-[#64748b]">100 GB Engineered Cloud Quota</p>
+              <p className="text-sm text-[#64748b]">
+                {totalBytes > 0 ? formatFileSize(totalBytes) : "0 GB"} Engineered Cloud Quota
+              </p>
             </div>
           </div>
 
@@ -57,12 +59,12 @@ export function StorageSettingsPage() {
 
           <div className="text-xs text-[#64748b] pt-2 border-t border-[#f1f5f9] flex justify-between items-center">
             <span>Total Used: {formatFileSize(usedBytes)}</span>
-            <span>Available: {Math.max(0, totalGB - usedGB).toFixed(2)} GB</span>
+            <span>Available: {formatFileSize(Math.max(0, totalBytes - usedBytes))}</span>
           </div>
         </div>
 
         {/* Clean up recommendations */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col gap-4">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col gap-4">
           <h3 className="text-base font-semibold text-[#0f172a]">Free Up Space</h3>
           <p className="text-sm text-[#64748b]">
             Items in your trash count against your storage quota. Empty your trash to free up space instantly.

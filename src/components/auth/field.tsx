@@ -26,7 +26,7 @@ export function Field({
         {right}
       </div>
       <div className="relative w-full">
-        <div className="flex w-full items-center rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 transition-all">
+        <div className="flex w-full items-center rounded-lg border border-slate-200 bg-white py-2.5 pl-9 pr-3 focus-within:border-[#0F0A6B] focus-within:ring-1 focus-within:ring-[#0F0A6B] transition-all">
           <input
             id={id}
             className="relative grow border-none bg-transparent p-0 text-sm font-normal text-slate-800 outline-none placeholder:text-slate-400"

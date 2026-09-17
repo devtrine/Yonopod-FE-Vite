@@ -157,8 +157,8 @@ export function FolderDetailPage() {
 
     return (
       <div className="flex h-full w-full items-center justify-center bg-[#f8fafc] p-4">
-        <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
-          <div className="w-16 h-16 bg-[#eff1fb] text-[#f59e0b] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-full max-w-md p-8 bg-[#FDFEFF] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
+          <div className="w-16 h-16 bg-[#fef3c7] text-[#f59e0b] rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock size={32} />
           </div>
           <h1 className="text-2xl font-bold text-[#0f172a] mb-2">
@@ -176,7 +176,7 @@ export function FolderDetailPage() {
               onChange={(e) => setPin(e.target.value)}
               placeholder="Enter password / PIN"
               required
-              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#1c3fc4]"
+              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#0F0A6B]"
             />
             <Button
               type="submit"
@@ -362,9 +362,9 @@ export function FolderDetailPage() {
           </nav>
 
           {/* Folder Header */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FDFEFF] p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center flex-shrink-0">
+              <div className="w-14 h-14 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center flex-shrink-0">
                 <FolderIcon size={28} />
               </div>
               <div>
@@ -402,7 +402,7 @@ export function FolderDetailPage() {
 
               <Button
                 onClick={() => openUploadModal(folder.id)}
-                className="flex items-center gap-1.5 h-9 px-3 text-sm bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+                className="flex items-center gap-1.5 h-9 px-3 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
               >
                 <Upload size={16} />
                 <span>Upload File</span>
@@ -436,16 +436,16 @@ export function FolderDetailPage() {
           </header>
 
           {activeSelectedIds.length > 0 && (
-            <div className="flex items-center justify-between bg-[#eff1fb] border border-[#1c3fc4] rounded-lg p-3 px-4">
+            <div className="flex items-center justify-between bg-[#0F0A6B] text-white rounded-lg p-3 px-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedIds([])}
-                  className="text-[#1c3fc4] hover:bg-[#dce5ff] p-1 rounded-md transition-colors"
+                  className="text-white hover:bg-white/20 p-1 rounded-md transition-colors"
                   aria-label="Clear selection"
                 >
                   <X size={16} />
                 </button>
-                <span className="text-sm font-medium text-[#1c3fc4]">
+                <span className="text-sm font-medium text-white">
                   {activeSelectedIds.length} item(s) selected
                 </span>
               </div>
@@ -482,8 +482,8 @@ export function FolderDetailPage() {
           )}
 
           {subfolders.length === 0 && files.length === 0 ? (
-            <div className="py-16 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-4">
-              <div className="w-14 h-14 rounded-2xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mx-auto mb-4">
+            <div className="py-16 text-center bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center mx-auto mb-4">
                 <FolderIcon size={28} />
               </div>
               <h2 className="text-base font-bold text-[#0f172a] mb-1">
@@ -503,7 +503,7 @@ export function FolderDetailPage() {
                 </Button>
                 <Button
                   onClick={() => openUploadModal(folder.id)}
-                  className="flex items-center gap-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+                  className="flex items-center gap-2 bg-[#0F0A6B] text-white hover:bg-[#161282]"
                 >
                   <Upload size={16} />
                   Upload File

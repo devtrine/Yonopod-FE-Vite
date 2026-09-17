@@ -21,7 +21,7 @@ export function AdminOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Network Load Chart (Placeholder) */}
-        <div className="lg:col-span-2 rounded-2xl border border-[#e2e8f0] bg-white p-6">
+        <div className="lg:col-span-2 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-[#0f172a]">Beban Jaringan (24 Jam)</h2>
             <select className="text-sm border-none bg-transparent text-[#64748b] focus:outline-none cursor-pointer">
@@ -33,8 +33,8 @@ export function AdminOverviewPage() {
           <div className="h-[250px] w-full flex items-end gap-2 pb-6 px-2">
             {/* Mock Chart Bars */}
             {[40, 55, 30, 80, 60, 45, 90, 70].map((h, i) => (
-              <div key={i} className="flex-1 bg-[#1c3fc4] bg-opacity-20 rounded-t-sm" style={{ height: `${h}%` }}>
-                <div className="w-full bg-[#1c3fc4] rounded-t-sm" style={{ height: '40%' }}></div>
+              <div key={i} className="flex-1 bg-[#0F0A6B]/20 rounded-t-sm" style={{ height: `${h}%` }}>
+                <div className="w-full bg-[#0F0A6B] rounded-t-sm" style={{ height: '40%' }}></div>
               </div>
             ))}
           </div>
@@ -48,7 +48,7 @@ export function AdminOverviewPage() {
         </div>
 
         {/* System Alerts */}
-        <div className="lg:col-span-1 rounded-2xl border border-[#e2e8f0] bg-white p-6 flex flex-col">
+        <div className="lg:col-span-1 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] p-6 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-[#0f172a]">Peringatan Sistem</h2>
             <span className="bg-[#fee2e2] text-[#dc2626] text-xs font-bold px-2 py-1 rounded-full">2 Baru</span>
@@ -86,9 +86,9 @@ function StatCard({
   icon: React.ElementType, title: string, value: string, change?: string, positive?: boolean, status?: string, warning?: boolean 
 }) {
   return (
-    <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+    <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col justify-between shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
           <Icon size={20} />
         </div>
         {change && (

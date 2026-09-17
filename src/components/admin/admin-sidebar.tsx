@@ -17,68 +17,71 @@ export function AdminSidebar() {
           onClick={() => setIsOpen(false)}
         />
       )}
-      
+
       <aside
         className={[
-          "fixed inset-y-0 left-0 z-50 flex flex-col h-full w-[248px] flex-shrink-0 bg-[#eff1fb] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-[#e2e8f0] h-full w-[248px] flex-shrink-0 bg-[#FDFEFF] transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         ].join(" ")}
         aria-label="Admin navigation"
       >
         {/* Logo */}
-        <div className="px-5 pt-5 pb-6 flex items-center justify-between">
-          <Link to="/admin" className="block">
-            <p className="text-xl font-bold text-[#1c3fc4] leading-none">Yonopod</p>
-            <p className="text-xs text-[#64748b] mt-0.5">Premium Storage</p>
+        <div className="relative h-[57px] px-4 flex items-center justify-center bg-[#0F0A6B] border-b-2 border-r-2 border-black -mr-[1px] flex-shrink-0">
+          <Link to="/admin" className="flex items-center justify-center hover:opacity-90 transition-opacity">
+            <img
+              src="/logo/yonopod_logo.png"
+              alt="Yonopod"
+              className="h-7 w-auto object-contain max-w-[150px]"
+            />
           </Link>
-          <button 
-            className="md:hidden p-1 text-[#64748b] hover:bg-[#e2e8f0] rounded-md"
+          <button
+            className="md:hidden absolute right-4 p-1 text-white/80 hover:text-white hover:bg-white/10 rounded-md"
             onClick={() => setIsOpen(false)}
           >
             <X size={20} />
           </button>
         </div>
 
-      {/* Nav Items */}
-      <nav className="flex-1 px-3 flex flex-col gap-0.5 overflow-y-auto">
-        {adminNavItems.map(({ label, href, icon: Icon }) => {
-          const isActive =
-            pathname === href || (href !== "/admin" && pathname.startsWith(href));
-          return (
-            <Link
-              key={href}
-              to={href}
-              className={[
-                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
-                isActive
-                  ? "bg-[#1c3fc4] text-white font-medium"
-                  : "text-[#374151] hover:bg-white/60 hover:text-[#0f172a]",
-              ].join(" ")}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <Icon size={18} className="flex-shrink-0" />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+        {/* Nav Items */}
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
+          {adminNavItems.map(({ label, href, icon: Icon }) => {
+            const isActive =
+              pathname === href || (href !== "/admin" && pathname.startsWith(href));
+            return (
+              <Link
+                key={href}
+                to={href}
+                className={[
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                  isActive
+                    ? "bg-[#0F0A6B] text-white font-medium shadow-sm"
+                    : "text-[#374151] hover:bg-[#0F0A6B]/5 hover:text-[#0F0A6B]",
+                ].join(" ")}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon size={18} className="flex-shrink-0" />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* Bottom: Settings */}
-      <div className="px-3 py-4 border-t border-[#e2e8f0]">
-        <Link
-          to="/admin/settings"
-          className={[
-            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
-            pathname.startsWith("/admin/settings")
-              ? "bg-[#1c3fc4] text-white font-medium"
-              : "text-[#374151] hover:bg-white/60 hover:text-[#0f172a]",
-          ].join(" ")}
-        >
-          <Settings size={18} className="flex-shrink-0" />
-          <span>Settings</span>
-        </Link>
-      </div>
-    </aside>
+        {/* Bottom: Settings */}
+        <div className="px-3 py-4 border-t border-[#e2e8f0]">
+          <Link
+            to="/admin/settings"
+            className={[
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+              pathname.startsWith("/admin/settings")
+                ? "bg-[#0F0A6B] text-white font-medium shadow-sm"
+                : "text-[#374151] hover:bg-[#0F0A6B]/5 hover:text-[#0F0A6B]",
+            ].join(" ")}
+          >
+            <Settings size={18} className="flex-shrink-0" />
+            <span>Settings</span>
+          </Link>
+        </div>
+      </aside>
     </>
   );
 }
