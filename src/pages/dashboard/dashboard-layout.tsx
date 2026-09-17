@@ -5,9 +5,11 @@ import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { DashboardModals } from "@/components/dashboard/dashboard-modals";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { usePreviewHashSync } from "@/stores/preview-store";
+import { useNotificationSocket } from "@/hooks/use-notification-socket";
 
 export function DashboardLayout() {
   usePreviewHashSync();
+  useNotificationSocket();
 
   return (
     <RequireAuth>
