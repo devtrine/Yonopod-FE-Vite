@@ -50,7 +50,7 @@ export function ActivityPage() {
                 </p>
               </div>
             ) : activities.length === 0 ? (
-              <div className="py-12 text-center bg-white rounded-xl border border-[#e2e8f0]">
+              <div className="bg-[#FDFEFF] rounded-xl border border-[#e2e8f0]">
                 <Clock size={32} className="mx-auto text-[#94a3b8] mb-3" />
                 <p className="text-sm font-medium text-[#0f172a]">No recent activity</p>
                 <p className="text-xs text-[#64748b] mt-1">
@@ -58,14 +58,14 @@ export function ActivityPage() {
                 </p>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-[#e2e8f0] divide-y divide-[#f1f5f9]">
+              <div className="bg-[#FDFEFF] rounded-xl border border-[#e2e8f0] divide-y divide-[#f1f5f9]">
                 {activities.map((item) => (
                   <div
                     key={item.id}
                     className="flex items-center justify-between p-4 hover:bg-[#f8fafc] transition-colors"
                   >
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center flex-shrink-0">
                         <FileText size={18} />
                       </div>
                       <div>

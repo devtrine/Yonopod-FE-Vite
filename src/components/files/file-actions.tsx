@@ -17,7 +17,7 @@ export function FileActions({
         className={[
           "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
           viewMode === "list"
-            ? "bg-[#eff1fb] text-[#1c3fc4]"
+            ? "bg-[#0F0A6B] text-white shadow-xs"
             : "text-[#64748b] hover:bg-[#f1f5f9]",
         ].join(" ")}
       >
@@ -29,7 +29,7 @@ export function FileActions({
         className={[
           "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
           viewMode === "grid"
-            ? "bg-[#eff1fb] text-[#1c3fc4]"
+            ? "bg-[#0F0A6B] text-white shadow-xs"
             : "text-[#64748b] hover:bg-[#f1f5f9]",
         ].join(" ")}
       >

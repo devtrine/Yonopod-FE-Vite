@@ -17,7 +17,7 @@ import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { TagChip, tagColorHex, tagSoftBackground } from "@/components/tags/tag-chip";
+import { TagChip } from "@/components/tags/tag-chip";
 import { TagFormModal } from "@/components/tags/tag-form-modal";
 import { AddFilesToTagModal } from "@/components/tags/add-files-to-tag-modal";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
@@ -175,8 +175,6 @@ export function TagDetailPage() {
     onTags: (item) => setTagPickerFileId(item.id),
   };
 
-  const hex = tag ? tagColorHex(tag.color) : "#1c3fc4";
-
   if (!tagsLoading && !tag && !filesLoading) {
     return (
       <div className="flex-1 overflow-y-auto p-6 md:p-8 flex items-center justify-center">
@@ -187,7 +185,7 @@ export function TagDetailPage() {
           </p>
           <Button
             onClick={() => navigate("/tags")}
-            className="bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+            className="bg-[#0F0A6B] text-white hover:bg-[#161282]"
           >
             Back to Tags
           </Button>
@@ -204,7 +202,7 @@ export function TagDetailPage() {
           <div className="flex items-center gap-2 text-sm text-[#64748b]">
             <button
               onClick={() => navigate("/tags")}
-              className="flex items-center gap-1.5 hover:text-[#1c3fc4] transition-colors font-medium"
+              className="flex items-center gap-1.5 hover:text-[#0F0A6B] transition-colors font-medium"
             >
               <ArrowLeft size={16} />
               <span>Back to Tags</span>
@@ -215,8 +213,7 @@ export function TagDetailPage() {
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#e2e8f0]">
             <div className="flex items-center gap-3">
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: tagSoftBackground(hex), color: hex }}
+                className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 bg-[#B3EEF6] text-[#0F0A6B]"
               >
                 <TagIcon size={24} />
               </div>
@@ -239,7 +236,7 @@ export function TagDetailPage() {
                 <>
                   <Button
                     onClick={() => setAddFilesOpen(true)}
-                    className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+                    className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
                   >
                     <Plus size={16} />
                     <span>Add Files</span>
@@ -282,7 +279,7 @@ export function TagDetailPage() {
                 className={[
                   "p-1.5 rounded-lg transition-colors",
                   viewMode === "grid"
-                    ? "bg-white shadow-sm text-[#1c3fc4]"
+                    ? "bg-white shadow-sm text-[#0F0A6B]"
                     : "text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >
@@ -294,7 +291,7 @@ export function TagDetailPage() {
                 className={[
                   "p-1.5 rounded-lg transition-colors",
                   viewMode === "list"
-                    ? "bg-white shadow-sm text-[#1c3fc4]"
+                    ? "bg-white shadow-sm text-[#0F0A6B]"
                     : "text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >
@@ -311,14 +308,14 @@ export function TagDetailPage() {
               ))}
             </div>
           ) : isError ? (
-            <div className="py-12 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8">
+            <div className="py-12 text-center bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] p-8">
               <p className="text-sm text-red-600">
                 Failed to load files for this tag. Please try again.
               </p>
             </div>
           ) : files.length === 0 ? (
-            <div className="py-16 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-6">
-              <div className="w-16 h-16 rounded-2xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mx-auto mb-4">
+            <div className="py-16 text-center bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-6">
+              <div className="w-16 h-16 rounded-2xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center mx-auto mb-4">
                 <FileText size={32} />
               </div>
               <h2 className="text-lg font-bold text-[#0f172a] mb-2">No files in this tag</h2>
@@ -327,7 +324,7 @@ export function TagDetailPage() {
               </p>
               <Button
                 onClick={() => setAddFilesOpen(true)}
-                className="flex items-center gap-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0] mx-auto"
+                className="flex items-center gap-2 bg-[#0F0A6B] text-white hover:bg-[#161282] mx-auto"
               >
                 <Plus size={16} />
                 <span>Add Files to Tag</span>

@@ -213,7 +213,7 @@ export function FilesPage() {
       <div className="flex-1 overflow-y-auto p-6 md:p-8">
         <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
           
-          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg bg-blue-100">
+          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg  bg-[#FDFEFF]">
             <h1 className="text-2xl font-bold text-[#0f172a]">My Drive</h1>
             
             <div className="flex flex-wrap items-center gap-3">
@@ -228,7 +228,7 @@ export function FilesPage() {
 
               <Button
                 onClick={() => openUploadModal(null)}
-                className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+                className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
               >
                 <Upload size={16} />
                 <span>Upload File</span>
@@ -243,16 +243,16 @@ export function FilesPage() {
           </header>
 
           {activeSelectedIds.length > 0 && (
-            <div className="flex items-center justify-between bg-[#eff1fb] border border-[#1c3fc4] rounded-lg p-3 px-4">
+            <div className="flex items-center justify-between bg-[#0F0A6B] text-white rounded-lg p-3 px-4 shadow-sm">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedIds([])}
-                  className="text-[#1c3fc4] hover:bg-[#dce5ff] p-1 rounded-md transition-colors"
+                  className="text-white hover:bg-white/20 p-1 rounded-md transition-colors"
                   aria-label="Clear selection"
                 >
                   <X size={16} />
                 </button>
-                <span className="text-sm font-medium text-[#1c3fc4]">
+                <span className="text-sm font-medium text-white">
                   {activeSelectedIds.length} item(s) selected
                 </span>
               </div>
@@ -295,8 +295,8 @@ export function FilesPage() {
               </section>
             </div>
           ) : folders.length === 0 && files.length === 0 ? (
-            <div className="py-16 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-8">
-              <div className="w-16 h-16 rounded-2xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mx-auto mb-4">
+            <div className="p-12 text-center border-2 border-dashed border-[#e2e8f0] rounded-2xl bg-[#FDFEFF]">
+              <div className="w-16 h-16 rounded-2xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center mx-auto mb-4">
                 <FolderIcon size={32} />
               </div>
               <h2 className="text-lg font-bold text-[#0f172a] mb-2">Your drive is empty</h2>
@@ -314,7 +314,7 @@ export function FilesPage() {
                 </Button>
                 <Button
                   onClick={() => openUploadModal(null)}
-                  className="flex items-center gap-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+                  className="flex items-center gap-2 bg-[#0F0A6B] text-white hover:bg-[#161282]"
                 >
                   <Upload size={16} />
                   Upload File

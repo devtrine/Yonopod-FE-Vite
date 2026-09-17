@@ -21,7 +21,7 @@ export function ProgressBar({
       ? "bg-[#ef4444]"
       : variant === "warning"
         ? "bg-[#f59e0b]"
-        : "bg-[#1c3fc4]";
+        : "bg-[#0F0A6B]";
 
   const heightClass = size === "sm" ? "h-1" : "h-1.5";
 

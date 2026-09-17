@@ -23,7 +23,7 @@ export function RedirectIfAuthenticated({
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f7f9fb]">
-        <div className="h-8 w-8 rounded-full border-2 border-[#1c3fc4] border-t-transparent animate-spin" />
+        <div className="h-8 w-8 rounded-full border-2 border-[#0F0A6B] border-t-transparent animate-spin" />
       </div>
     );
   }

@@ -63,7 +63,7 @@ export function CreateFolderModal() {
             value={folderName}
             onChange={(e) => setFolderName(e.target.value)}
             placeholder="e.g. Projects, Invoices, Personal"
-            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#1c3fc4]"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-sm text-[#0f172a] focus:outline-none focus:border-[#0F0A6B]"
           />
         </div>
 
@@ -81,7 +81,7 @@ export function CreateFolderModal() {
           <Button
             type="submit"
             disabled={!folderName.trim() || createFolder.isPending}
-            className="bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+            className="bg-[#0F0A6B] text-white hover:bg-[#161282]"
           >
             {createFolder.isPending ? "Creating…" : "Create Folder"}
           </Button>

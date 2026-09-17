@@ -44,7 +44,7 @@ export function LoginPage() {
           <span className="text-slate-500">Don&apos;t have an account? </span>
           <Link
             to="/register"
-            className="font-medium text-[#004ac6] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="font-medium text-[#0F0A6B] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
           >
             Create one now
           </Link>
@@ -97,7 +97,7 @@ export function LoginPage() {
         <div className="flex w-full justify-end -mt-2">
           <Link
             to="/forgot-password"
-            className="text-xs font-medium text-[#004ac6] hover:underline"
+            className="text-xs font-medium text-[#0F0A6B] hover:underline"
           >
             Forgot password?
           </Link>
@@ -105,7 +105,7 @@ export function LoginPage() {
         <button
           type="submit"
           disabled={login.isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 hover:bg-blue-700 active:bg-blue-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#0F0A6B] px-5 py-2.5 hover:bg-[#161282] active:bg-[#0a0749] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B] shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span className="whitespace-nowrap text-sm font-medium text-white">
             {login.isPending ? "Signing in…" : "Sign In"}

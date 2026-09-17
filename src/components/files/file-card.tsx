@@ -21,12 +21,12 @@ export function FileCard({
     <div
       onClick={() => onClick?.(item)}
       className={[
-        "group relative flex flex-col p-5 border border-[#e2e8f0] bg-white hover:border-[#cbd5e1] hover:scale-98 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all",
+        "group relative flex flex-col p-5 border border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:scale-98 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all",
         onClick ? "cursor-pointer" : "",
       ].join(" ")}
     >
       <div className="flex items-start justify-between mb-4">
-        <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#eff1fb]">
+        <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#0F0A6B]/10">
           <FileTypeIcon name={item.name + "." + item.extension} isFolder={item.isFolder} size={20} />
         </div>
         <div className="flex items-center gap-1">

@@ -83,7 +83,7 @@ export function SharedPage() {
                 className={[
                   "pb-3 text-sm font-medium transition-colors border-b-2",
                   activeTab === "by-me"
-                    ? "border-[#1c3fc4] text-[#1c3fc4]"
+                    ? "border-[#0F0A6B] text-[#0F0A6B]"
                     : "border-transparent text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >
@@ -94,7 +94,7 @@ export function SharedPage() {
                 className={[
                   "flex items-center gap-1.5 pb-3 text-sm font-medium transition-colors border-b-2",
                   activeTab === "vault"
-                    ? "border-[#1c3fc4] text-[#1c3fc4]"
+                    ? "border-[#0F0A6B] text-[#0F0A6B]"
                     : "border-transparent text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >

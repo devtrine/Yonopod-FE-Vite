@@ -56,7 +56,7 @@ export function RegisterPage() {
           <span className="text-slate-500">Already have an account? </span>
           <Link
             to="/login"
-            className="font-semibold text-[#004ac6] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="font-semibold text-[#0F0A6B] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
           >
             Sign In
           </Link>
@@ -146,7 +146,7 @@ export function RegisterPage() {
         <button
           type="submit"
           disabled={register.isPending}
-          className="flex w-full items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 hover:bg-blue-700 active:bg-blue-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 shadow-sm mt-1 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="flex w-full items-center justify-center rounded-lg bg-[#0F0A6B] px-5 py-2.5 hover:bg-[#161282] active:bg-[#0a0749] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B] shadow-sm mt-1 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <span className="whitespace-nowrap text-sm font-semibold text-white">
             {register.isPending ? "Creating account…" : "Create Account"}

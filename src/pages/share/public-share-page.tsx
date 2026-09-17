@@ -25,7 +25,7 @@ function ShareContent({ share, token }: { share: Share; token: string }) {
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-md">
       {/* Icon */}
-      <div className="w-20 h-20 rounded-2xl bg-[#eff1fb] flex items-center justify-center text-[#1c3fc4]">
+      <div className="w-20 h-20 rounded-2xl bg-[#0F0A6B]/10 flex items-center justify-center text-[#0F0A6B]">
         {isFile ? <FileText size={36} /> : <Folder size={36} />}
       </div>
 
@@ -40,7 +40,7 @@ function ShareContent({ share, token }: { share: Share; token: string }) {
       </div>
 
       {/* Metadata */}
-      <div className="w-full bg-white border border-[#e2e8f0] rounded-xl p-4 flex flex-col gap-2.5">
+      <div className="w-full bg-[#FDFEFF] border border-[#e2e8f0] rounded-xl p-4 flex flex-col gap-2.5">
         {share.expires_at && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-[#64748b]">Expires</span>
@@ -70,7 +70,7 @@ function ShareContent({ share, token }: { share: Share; token: string }) {
         <button
           onClick={handleDownload}
           disabled={downloadMutation.isPending}
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#1c3fc4] text-white font-medium hover:bg-[#1636b0] transition-colors disabled:opacity-60"
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#0F0A6B] text-white font-medium hover:bg-[#161282] transition-colors disabled:opacity-60"
         >
           <Download size={18} />
           {downloadMutation.isPending ? "Preparing download…" : "Download File"}
@@ -103,7 +103,7 @@ function PasswordForm({
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-md">
-      <div className="w-20 h-20 rounded-2xl bg-[#eff1fb] flex items-center justify-center text-[#1c3fc4]">
+      <div className="w-20 h-20 rounded-2xl bg-[#0F0A6B]/10 flex items-center justify-center text-[#0F0A6B]">
         <Lock size={36} />
       </div>
       <div className="text-center">
@@ -120,12 +120,12 @@ function PasswordForm({
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter password"
           required
-          className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#1c3fc4]/20 focus:border-[#1c3fc4] text-sm"
+          className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0F0A6B]/20 focus:border-[#0F0A6B] text-sm"
         />
         <button
           type="submit"
           disabled={verify.isPending}
-          className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1c3fc4] text-white font-medium hover:bg-[#1636b0] transition-colors disabled:opacity-60"
+          className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0F0A6B] text-white font-medium hover:bg-[#161282] transition-colors disabled:opacity-60"
         >
           {verify.isPending ? "Verifying…" : "Access File"}
         </button>
@@ -173,12 +173,18 @@ export function PublicSharePage() {
     <main className="min-h-screen flex items-center justify-center bg-[#f8fafc] p-4">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <p className="text-xl font-bold text-[#1c3fc4]">Yonopod</p>
+        <div className="text-center mb-8 flex flex-col items-center gap-2">
+          <div className="bg-[#0F0A6B] px-4 py-2 rounded-xl shadow-xs flex items-center justify-center">
+            <img
+              src="/logo/yonopod_logo.png"
+              alt="Yonopod"
+              className="h-8 w-auto object-contain max-w-[160px]"
+            />
+          </div>
           <p className="text-sm text-[#64748b]">Shared with you</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 flex flex-col items-center">
+        <div className="bg-[#FDFEFF] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 flex flex-col items-center border border-[#e2e8f0]">
           {requiresPassword && !unlockedShare ? (
             <PasswordForm token={token} onSuccess={setUnlockedShare} />
           ) : (

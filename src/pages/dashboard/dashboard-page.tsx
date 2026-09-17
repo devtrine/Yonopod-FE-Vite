@@ -53,7 +53,9 @@ export function DashboardPage() {
   const usedGB = user?.storage_used
     ? Number(user.storage_used) / (1024 * 1024 * 1024)
     : 0;
-  const totalGB = user?.storage_quota ? user.storage_quota / 1024 / 1024 / 1024 : 0;
+  const totalGB = user?.storage_quota
+    ? Math.round((Number(user.storage_quota) / (1024 * 1024 * 1024)) * 100) / 100
+    : 0;
 
   const greeting = () => {
     return "Welcome Abort";
