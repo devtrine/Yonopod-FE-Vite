@@ -1,4 +1,5 @@
 import { Upload, Share2, Edit2, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export type ActivityItem = {
   id: string;
@@ -45,9 +46,12 @@ export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
         })}
       </div>
       <div className="p-4 border-t border-[#e2e8f0] bg-[#f8fafc] rounded-b-2xl">
-        <button className="w-full text-sm font-medium text-[#0F0A6B] hover:underline focus:outline-none">
+        <Link
+          to="/activity"
+          className="block text-center w-full text-sm font-medium text-[#0F0A6B] hover:underline focus:outline-none"
+        >
           See Full History
-        </button>
+        </Link>
       </div>
     </div>
   );
