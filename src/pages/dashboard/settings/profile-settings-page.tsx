@@ -91,7 +91,7 @@ export function ProfileSettingsPage() {
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Your full name"
               maxLength={150}
-              className="px-3 py-2 rounded-lg border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#1c3fc4]/20 focus:border-[#1c3fc4] text-sm text-[#0f172a]"
+              className="px-3 py-2 rounded-lg border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0F0A6B]/20 focus:border-[#0F0A6B] text-sm text-[#0f172a]"
             />
           </div>
 
@@ -107,7 +107,7 @@ export function ProfileSettingsPage() {
               onChange={(e) => setAvatarUrl(e.target.value)}
               placeholder="https://example.com/avatar.jpg"
               maxLength={255}
-              className="px-3 py-2 rounded-lg border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#1c3fc4]/20 focus:border-[#1c3fc4] text-sm text-[#0f172a]"
+              className="px-3 py-2 rounded-lg border border-[#e2e8f0] focus:outline-none focus:ring-2 focus:ring-[#0F0A6B]/20 focus:border-[#0F0A6B] text-sm text-[#0f172a]"
             />
           </div>
 
@@ -115,7 +115,7 @@ export function ProfileSettingsPage() {
             <button
               type="submit"
               disabled={updateProfile.isPending}
-              className="px-5 py-2.5 rounded-lg bg-[#1c3fc4] text-white text-sm font-medium hover:bg-[#1636b0] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 rounded-lg bg-[#0F0A6B] text-white text-sm font-medium hover:bg-[#161282] transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
             >
               {updateProfile.isPending ? "Saving…" : "Save Changes"}
             </button>

@@ -71,7 +71,7 @@ export function ShareModal({
               <select
                 value={permission}
                 onChange={(e) => setPermission(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm font-medium text-[#0f172a] focus:outline-none focus:border-[#1c3fc4]"
+                className="h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm font-medium text-[#0f172a] focus:outline-none focus:border-[#0F0A6B]"
               >
                 <option value="Viewer">Viewer</option>
                 <option value="Editor">Editor</option>
@@ -99,7 +99,7 @@ export function ShareModal({
                     type="password"
                     autoComplete="new-password"
                     defaultValue="secretpassword123"
-                    className="w-full h-10 px-3 pr-10 rounded-lg border border-[#e2e8f0] bg-white text-sm focus:outline-none focus:border-[#1c3fc4]"
+                    className="w-full h-10 px-3 pr-10 rounded-lg border border-[#e2e8f0] bg-white text-sm focus:outline-none focus:border-[#0F0A6B]"
                   />
                   <button
                     type="button"
@@ -122,7 +122,7 @@ export function ShareModal({
                 <input
                   type="date"
                   defaultValue="2024-12-31"
-                  className="w-full h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm text-[#0f172a] focus:outline-none focus:border-[#1c3fc4]"
+                  className="w-full h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm text-[#0f172a] focus:outline-none focus:border-[#0F0A6B]"
                 />
               </div>
 
@@ -134,7 +134,7 @@ export function ShareModal({
                 <input
                   type="text"
                   placeholder="Unlimited"
-                  className="w-full h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#1c3fc4]"
+                  className="w-full h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none focus:border-[#0F0A6B]"
                 />
               </div>
             </div>

@@ -2,9 +2,18 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as fileService from "../services/file.service";
-import type { ListFilesParams, PresignUploadPayload, UpdateFilePayload } from "../types/file";
+import type { ListFilesParams, ConfirmUploadPayload, UpdateFilePayload } from "../types/file";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
+
+export function useS3Config(options?: { enabled?: boolean }) {
+  return useQuery({
+    queryKey: ["files", "s3-config"],
+    queryFn: () => fileService.getS3Config(),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    ...options,
+  });
+}
 
 export function useFiles(params?: ListFilesParams) {
   return useQuery({
@@ -50,20 +59,28 @@ export function useCheckFileStatus(
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export function usePresignUpload() {
+export function useConfirmUpload() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: PresignUploadPayload) => fileService.presignUpload(payload),
+    mutationFn: (payload: ConfirmUploadPayload) => fileService.confirmUpload(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
 
 export function useDownloadFile() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => fileService.downloadFile(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+    },
   });
 }
 
@@ -75,6 +92,8 @@ export function useUpdateFile(fileId: string) {
       queryClient.invalidateQueries({ queryKey: ["files", fileId] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -90,6 +109,7 @@ export function useSoftDeleteFile() {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["recent"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -102,6 +122,8 @@ export function useRestoreFile() {
       // Menghapus cache semua query yang diawali ["files"] (termasuk ["files", "trash", ...])
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["recent"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -117,6 +139,8 @@ export function usePermanentDeleteFile() {
       queryClient.removeQueries({ queryKey: ["files", id] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }

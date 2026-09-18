@@ -1,4 +1,5 @@
 import { Upload, Share2, Edit2, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export type ActivityItem = {
   id: string;
@@ -8,15 +9,15 @@ export type ActivityItem = {
 };
 
 const iconMap = {
-  upload: { icon: Upload, bg: "bg-[#eff1fb]", color: "text-[#1c3fc4]" },
-  share: { icon: Share2, bg: "bg-[#eff1fb]", color: "text-[#1c3fc4]" },
+  upload: { icon: Upload, bg: "bg-[#0F0A6B]/10", color: "text-[#0F0A6B]" },
+  share: { icon: Share2, bg: "bg-[#0F0A6B]/10", color: "text-[#0F0A6B]" },
   edit: { icon: Edit2, bg: "bg-[#f1f5f9]", color: "text-[#64748b]" },
   delete: { icon: Trash2, bg: "bg-[#f1f5f9]", color: "text-[#64748b]" },
 };
 
 export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
   return (
-    <div className="flex flex-col rounded-2xl border border-[#e2e8f0] bg-white">
+    <div className="flex flex-col rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF]">
       <div className="flex items-center justify-between p-5 border-b border-[#e2e8f0]">
         <h2 className="text-lg font-semibold text-[#0f172a]">Recent Activity</h2>
       </div>
@@ -45,9 +46,12 @@ export function ActivityFeed({ activities }: { activities: ActivityItem[] }) {
         })}
       </div>
       <div className="p-4 border-t border-[#e2e8f0] bg-[#f8fafc] rounded-b-2xl">
-        <button className="w-full text-sm font-medium text-[#1c3fc4] hover:underline focus:outline-none">
+        <Link
+          to="/activity"
+          className="block text-center w-full text-sm font-medium text-[#0F0A6B] hover:underline focus:outline-none"
+        >
           See Full History
-        </button>
+        </Link>
       </div>
     </div>
   );

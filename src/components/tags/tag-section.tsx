@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Edit2, Trash2, ChevronRight, Tag as TagIcon, FilePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileCard } from "@/components/files/file-card";
-import { TagChip, tagColorHex, tagSoftBackground } from "@/components/tags/tag-chip";
+import { TagChip } from "@/components/tags/tag-chip";
 import { useFilesByTag, useRemoveTagFromFile } from "@/hooks/use-tags";
 import { useSoftDeleteFile } from "@/hooks/use-files";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
@@ -126,8 +126,6 @@ export function TagSection({
     onTags: () => onManageTags?.(item.id),
   });
 
-  const hex = tagColorHex(tag.color);
-
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
       {/* Header */}
@@ -137,13 +135,12 @@ export function TagSection({
           className="flex items-center gap-2.5 cursor-pointer group"
         >
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105"
-            style={{ backgroundColor: tagSoftBackground(hex), color: hex }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 bg-[#B3EEF6] text-[#0F0A6B]"
           >
             <TagIcon size={16} />
           </div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-[#0f172a] group-hover:text-[#1c3fc4] transition-colors">
+            <h2 className="text-base font-bold text-[#0f172a] group-hover:text-[#0F0A6B] transition-colors">
               {tag.name}
             </h2>
             <TagChip tag={tag} />
@@ -169,7 +166,7 @@ export function TagSection({
             variant="ghost"
             size="sm"
             onClick={() => navigate(`/tags/${tag.id}`)}
-            className="h-8 px-2.5 text-xs flex items-center gap-1 text-[#1c3fc4] hover:bg-[#eff4ff]"
+            className="h-8 px-2.5 text-xs flex items-center gap-1 text-[#0F0A6B] hover:bg-[#0F0A6B]/5"
           >
             <span>View all</span>
             <ChevronRight size={14} />

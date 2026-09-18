@@ -21,8 +21,8 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   if (isPending) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
-        <div className="h-8 w-8 rounded-full border-2 border-[#1c3fc4] border-t-transparent animate-spin" />
+      <div className="flex h-screen items-center justify-center bg-[#FDFEFF]">
+        <div className="h-8 w-8 rounded-full border-2 border-[#0F0A6B] border-t-transparent animate-spin" />
       </div>
     );
   }

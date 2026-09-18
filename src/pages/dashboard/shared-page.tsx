@@ -68,8 +68,8 @@ export function SharedPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-8">
           
           <header className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -83,7 +83,7 @@ export function SharedPage() {
                 className={[
                   "pb-3 text-sm font-medium transition-colors border-b-2",
                   activeTab === "by-me"
-                    ? "border-[#1c3fc4] text-[#1c3fc4]"
+                    ? "border-[#0F0A6B] text-[#0F0A6B]"
                     : "border-transparent text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >
@@ -94,7 +94,7 @@ export function SharedPage() {
                 className={[
                   "flex items-center gap-1.5 pb-3 text-sm font-medium transition-colors border-b-2",
                   activeTab === "vault"
-                    ? "border-[#1c3fc4] text-[#1c3fc4]"
+                    ? "border-[#0F0A6B] text-[#0F0A6B]"
                     : "border-transparent text-[#64748b] hover:text-[#0f172a]",
                 ].join(" ")}
               >

@@ -162,8 +162,8 @@ export function TrashPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-8">
           
           <header className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -185,8 +185,8 @@ export function TrashPage() {
           </header>
 
           {activeSelectedIds.length > 0 && (
-            <div className="flex items-center justify-between bg-[#eff1fb] border border-[#1c3fc4] rounded-lg p-3 px-4">
-              <span className="text-sm font-medium text-[#1c3fc4]">
+            <div className="flex items-center justify-between bg-[#0F0A6B] text-white rounded-lg p-3 px-4 shadow-sm">
+              <span className="text-sm font-medium text-white">
                 {activeSelectedIds.length} item(s) selected
               </span>
               <div className="flex items-center gap-3">

@@ -53,8 +53,8 @@ export function TagsPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-6">
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-[#0f172a]">Tags</h1>
@@ -65,7 +65,7 @@ export function TagsPage() {
 
             <Button
               onClick={openCreateTag}
-              className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#1c3fc4] text-white hover:bg-[#1636b0]"
+              className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
             >
               <Plus size={16} />
               <span>New Tag</span>
@@ -79,14 +79,14 @@ export function TagsPage() {
               ))}
             </div>
           ) : isError ? (
-            <div className="py-12 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8">
+            <div className="py-12 text-center bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] p-8">
               <p className="text-sm text-red-600">
                 Failed to load tags. Please try again.
               </p>
             </div>
           ) : tags.length === 0 ? (
-            <div className="py-16 text-center bg-white rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-8">
-              <div className="w-16 h-16 rounded-2xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center mx-auto mb-4">
+            <div className="py-16 text-center bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] p-8 max-w-md mx-auto my-8">
+              <div className="w-16 h-16 rounded-2xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center mx-auto mb-4">
                 <TagIcon size={32} />
               </div>
               <h2 className="text-lg font-bold text-[#0f172a] mb-2">No tags yet</h2>
@@ -95,7 +95,7 @@ export function TagsPage() {
               </p>
               <Button
                 onClick={openCreateTag}
-                className="flex items-center gap-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0] mx-auto"
+                className="flex items-center gap-2 bg-[#0F0A6B] text-white hover:bg-[#161282] mx-auto"
               >
                 <Plus size={16} />
                 Create your first tag

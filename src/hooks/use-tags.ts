@@ -68,6 +68,7 @@ export function useAddTagToFile() {
       queryClient.invalidateQueries({ queryKey: ["tags", tagId, "files"] });
       queryClient.invalidateQueries({ queryKey: ["files", fileId] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -82,6 +83,7 @@ export function useRemoveTagFromFile() {
       queryClient.invalidateQueries({ queryKey: ["tags", tagId, "files"] });
       queryClient.invalidateQueries({ queryKey: ["files", fileId] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
