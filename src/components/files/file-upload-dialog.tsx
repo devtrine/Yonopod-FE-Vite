@@ -130,6 +130,7 @@ export function FileUploadDialog() {
         queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
         queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
         queryClient.invalidateQueries({ queryKey: ["recent"] });
+        queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
         toast(
           "success",
           `${result.successful.length} file(s) uploaded successfully`

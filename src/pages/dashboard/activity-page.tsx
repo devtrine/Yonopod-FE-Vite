@@ -11,6 +11,7 @@ import {
   Eye,
   Activity,
   User as UserIcon,
+  RefreshCw,
 } from "lucide-react";
 import { useRecent, useClearRecentHistory } from "@/hooks/use-recent";
 import { useFileLogs, useFolderLogs } from "@/hooks/use-audit-logs";
@@ -67,23 +68,40 @@ export function ActivityPage() {
   const [filePage, setFilePage] = useState(1);
   const [folderPage, setFolderPage] = useState(1);
 
-  // Queries
+  // Queries with auto-refetch interval so logs update automatically in real-time
   const fileLogsQuery = useFileLogs(
     { page: filePage, limit: PAGE_SIZE },
-    { enabled: activeTab === "files" }
+    { enabled: activeTab === "files", refetchInterval: 5000 }
   );
 
   const folderLogsQuery = useFolderLogs(
     { page: folderPage, limit: PAGE_SIZE },
-    { enabled: activeTab === "folders" }
+    { enabled: activeTab === "folders", refetchInterval: 5000 }
   );
 
   const recentQuery = useRecent(
     { limit: 50 },
-    { enabled: activeTab === "recent" }
+    { enabled: activeTab === "recent", refetchInterval: 5000 }
   );
 
   const clearHistory = useClearRecentHistory();
+
+  const isRefreshing =
+    activeTab === "files"
+      ? fileLogsQuery.isFetching
+      : activeTab === "folders"
+        ? folderLogsQuery.isFetching
+        : recentQuery.isFetching;
+
+  const handleRefresh = () => {
+    if (activeTab === "files") {
+      fileLogsQuery.refetch();
+    } else if (activeTab === "folders") {
+      folderLogsQuery.refetch();
+    } else {
+      recentQuery.refetch();
+    }
+  };
 
   const handleClearRecent = () => {
     clearHistory.mutate(undefined, {
@@ -121,16 +139,32 @@ export function ActivityPage() {
               </p>
             </div>
 
-            {activeTab === "recent" && (recentQuery.data?.data?.length ?? 0) > 0 && (
+            <div className="flex items-center gap-2 self-start sm:self-auto">
               <button
-                onClick={handleClearRecent}
-                disabled={clearHistory.isPending}
-                className="flex items-center gap-2 text-sm text-[#ef4444] hover:text-[#dc2626] font-medium disabled:opacity-50 self-start sm:self-auto"
+                type="button"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#e2e8f0] bg-white text-xs font-medium text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] hover:border-[#cbd5e1] transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                title="Refresh activities"
               >
-                <Trash2 size={16} />
-                Clear History
+                <RefreshCw
+                  size={14}
+                  className={isRefreshing ? "animate-spin text-[#0F0A6B]" : "text-[#64748b]"}
+                />
+                <span>Refresh</span>
               </button>
-            )}
+
+              {activeTab === "recent" && (recentQuery.data?.data?.length ?? 0) > 0 && (
+                <button
+                  onClick={handleClearRecent}
+                  disabled={clearHistory.isPending}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 text-xs font-medium text-[#ef4444] hover:bg-red-100 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  <Trash2 size={14} />
+                  <span>Clear History</span>
+                </button>
+              )}
+            </div>
           </header>
 
           {/* Navigation Tabs */}

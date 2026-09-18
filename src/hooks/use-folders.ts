@@ -48,6 +48,7 @@ export function useCreateFolder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -60,6 +61,7 @@ export function useUpdateFolder(folderId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders", folderId] });
       queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -74,6 +76,7 @@ export function useSoftDeleteFolder() {
       queryClient.removeQueries({ queryKey: ["folders", id] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -86,6 +89,7 @@ export function useRestoreFolder() {
       queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -99,6 +103,7 @@ export function usePermanentDeleteFolder() {
       queryClient.invalidateQueries({ queryKey: ["folders", "trash"] });
       queryClient.removeQueries({ queryKey: ["folders", id] });
       queryClient.invalidateQueries({ queryKey: ["auth", "stats"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -111,6 +116,7 @@ export function useLockFolder(folderId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["folders", folderId] });
       queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -123,6 +129,7 @@ export function useUnlockFolder(folderId: string) {
     onSuccess: (folder) => {
       queryClient.setQueryData(["folders", folderId], folder);
       queryClient.invalidateQueries({ queryKey: ["folders"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }

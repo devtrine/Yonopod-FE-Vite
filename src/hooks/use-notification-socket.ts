@@ -93,6 +93,8 @@ function handleIncomingNotification(notification: Notification) {
     );
 
     activeQueryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY });
+    activeQueryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+    activeQueryClient.invalidateQueries({ queryKey: ["recent"] });
   }
 }
 
