@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import { MoreHorizontal } from "lucide-react";
 import { FileContextMenu } from "./file-context-menu";
 import type { FileItem } from "./file-table";
+import { useDropdownPosition } from "../../hooks/use-dropdown-position";
 
 export type FileMenuActions = {
   onDownload?: (item: FileItem) => void;
@@ -21,7 +22,6 @@ export type FileMenuActions = {
 };
 
 const MENU_WIDTH = 192;
-const MENU_HEIGHT = 320;
 
 export function FileActionsMenu({
   item,
@@ -45,54 +45,21 @@ export function FileActionsMenu({
   portalTarget?: RefObject<HTMLElement | null>;
 } & FileMenuActions) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { pos, triggerRef, menuRef } = useDropdownPosition({
+    open,
+    setOpen,
+    menuWidth: MENU_WIDTH,
+    estimatedMenuHeight: 240,
+    viewportPadding: 12,
+  });
 
-  useEffect(() => {
-    if (!open) return;
-
-    const updatePos = () => {
-      const rect = triggerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      let top = rect.bottom + 6;
-      if (top + MENU_HEIGHT > window.innerHeight) {
-        top = Math.max(8, rect.top - MENU_HEIGHT - 6);
+  const closeThen = (fn?: (item: FileItem) => void) =>
+    fn
+      ? (i: FileItem) => {
+        setOpen(false);
+        fn(i);
       }
-      const left = Math.max(
-        8,
-        Math.min(rect.right - MENU_WIDTH, window.innerWidth - MENU_WIDTH - 8)
-      );
-      setPos({ top, left });
-    };
-
-    updatePos();
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (triggerRef.current?.contains(target)) return;
-      if (menuRef.current?.contains(target)) return;
-      setOpen(false);
-    };
-
-    const handleScroll = () => setOpen(false);
-    const handleResize = () => setOpen(false);
-
-    document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, true);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll, true);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [open]);
-
-  const closeThen = (fn?: (item: FileItem) => void) => fn ? (i: FileItem) => {
-    setOpen(false);
-    fn(i);
-  } : undefined;
+      : undefined;
 
   return (
     <div className="relative inline-flex">
@@ -122,9 +89,12 @@ export function FileActionsMenu({
             role="menu"
             style={{
               position: "fixed",
-              top: pos.top,
-              left: pos.left,
+              top: pos.top !== undefined ? `${pos.top}px` : undefined,
+              bottom: pos.bottom !== undefined ? `${pos.bottom}px` : undefined,
+              left: `${pos.left}px`,
               width: MENU_WIDTH,
+              maxHeight: `${pos.maxHeight}px`,
+              overflowY: "auto",
               zIndex: 1000,
             }}
           >

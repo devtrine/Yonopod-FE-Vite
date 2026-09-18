@@ -40,7 +40,7 @@ export function Sidebar() {
         aria-label="Main navigation"
       >
         {/* Logo */}
-        <div className="relative h-[57px] px-4 flex items-center justify-center bg-[#0F0A6B] border-b-4 border-r-4 border-black -mr-[1px] flex-shrink-0">
+        <div className="relative h-[57px] px-4 flex items-center justify-center bg-[#0F0A6B] -mr-[1px] flex-shrink-0">
           <Link to="/dashboard" className="flex items-center justify-center hover:opacity-90 transition-opacity">
             <img
               src="/logo/yonopod_logo.png"

@@ -96,28 +96,25 @@ export function ActivityPage() {
     activeTab === "files"
       ? fileLogsQuery.isPending
       : activeTab === "folders"
-      ? folderLogsQuery.isPending
-      : recentQuery.isPending;
+        ? folderLogsQuery.isPending
+        : recentQuery.isPending;
 
   const isError =
     activeTab === "files"
       ? fileLogsQuery.isError
       : activeTab === "folders"
-      ? folderLogsQuery.isError
-      : recentQuery.isError;
+        ? folderLogsQuery.isError
+        : recentQuery.isError;
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-6">
           {/* Header */}
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-[#0f172a]">Activity Log</h1>
-                <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-[#0F0A6B]/10 text-[#0F0A6B]">
-                  Audit Trail
-                </span>
               </div>
               <p className="text-sm text-[#64748b] mt-1">
                 Detailed audit records of file and folder activities across your workspace.
@@ -141,21 +138,19 @@ export function ActivityPage() {
             <button
               type="button"
               onClick={() => setActiveTab("files")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                activeTab === "files"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "files"
                   ? "bg-[#0F0A6B] text-white shadow-xs"
                   : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9]"
-              }`}
+                }`}
             >
               <FileText size={16} />
               <span>File Activities</span>
               {fileLogsQuery.data?.pagination?.total != null && (
                 <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    activeTab === "files"
+                  className={`text-xs px-2 py-0.5 rounded-full ${activeTab === "files"
                       ? "bg-white/20 text-white"
                       : "bg-[#e2e8f0] text-[#475569]"
-                  }`}
+                    }`}
                 >
                   {fileLogsQuery.data.pagination.total}
                 </span>
@@ -165,21 +160,19 @@ export function ActivityPage() {
             <button
               type="button"
               onClick={() => setActiveTab("folders")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                activeTab === "folders"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "folders"
                   ? "bg-[#0F0A6B] text-white shadow-xs"
                   : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9]"
-              }`}
+                }`}
             >
               <Folder size={16} />
               <span>Folder Activities</span>
               {folderLogsQuery.data?.pagination?.total != null && (
                 <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    activeTab === "folders"
+                  className={`text-xs px-2 py-0.5 rounded-full ${activeTab === "folders"
                       ? "bg-white/20 text-white"
                       : "bg-[#e2e8f0] text-[#475569]"
-                  }`}
+                    }`}
                 >
                   {folderLogsQuery.data.pagination.total}
                 </span>
@@ -189,11 +182,10 @@ export function ActivityPage() {
             <button
               type="button"
               onClick={() => setActiveTab("recent")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                activeTab === "recent"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "recent"
                   ? "bg-[#0F0A6B] text-white shadow-xs"
                   : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9]"
-              }`}
+                }`}
             >
               <Clock size={16} />
               <span>Recent Access</span>
@@ -386,8 +378,8 @@ function RecentAccessList({
                 {item.file.size
                   ? formatFileSize(Number(item.file.size))
                   : item.file.extension
-                  ? `${item.file.extension.toUpperCase()} file`
-                  : "File"}{" "}
+                    ? `${item.file.extension.toUpperCase()} file`
+                    : "File"}{" "}
                 • {item.file.folder?.name ?? "My Drive"}
               </p>
             </div>

@@ -210,8 +210,8 @@ export function FilesPage() {
   return (
     <div className="flex h-full w-full overflow-hidden">
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-8">
           
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg  bg-[#FDFEFF]">
             <h1 className="text-2xl font-bold text-[#0f172a]">My Drive</h1>
@@ -342,7 +342,7 @@ export function FilesPage() {
                   </button>
 
                   {showFolders && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-0">
                       {folders.map((folder) => (
                         <FolderCard
                           key={folder.id}

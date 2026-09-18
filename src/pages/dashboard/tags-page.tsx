@@ -53,8 +53,8 @@ export function TagsPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-6">
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-[#0f172a]">Tags</h1>

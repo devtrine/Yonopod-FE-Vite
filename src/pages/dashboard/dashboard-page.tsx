@@ -65,7 +65,7 @@ export function DashboardPage() {
     user?.full_name || user?.username || "there";
 
   return (
-    <div className="flex flex-col gap-8 p-6 md:p-8 max-w-[1200px] mx-auto w-full">
+    <div className="flex flex-col gap-8 p-6 w-full">
       <header className="flex flex-col gap-1">
         <h1 className="text-3xl font-bold text-[#0f172a]">
           {greeting()}, {displayName}

@@ -68,8 +68,8 @@ export function SharedPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-8">
           
           <header className="flex flex-col gap-6">
             <div className="flex items-center justify-between">

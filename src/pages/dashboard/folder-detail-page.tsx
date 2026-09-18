@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Folder as FolderIcon,
@@ -14,10 +14,13 @@ import {
   Star,
   X,
   ChevronDown,
+  Clock,
+  ArrowUpDown,
+  Check,
+  MoreHorizontal,
 } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
-import { FileSort } from "@/components/files/file-sort";
 import { FileActions } from "@/components/files/file-actions";
 import { usePreviewStore } from "@/stores/preview-store";
 import { FolderCard } from "@/components/folders/folder-card";
@@ -62,17 +65,12 @@ function fileToFileItem(file: ApiFile): FileItem {
   };
 }
 
-const sortOptions = [
-  { id: "created_at", label: "Last Modified" },
-  { id: "name", label: "Name" },
-];
-
 export function FolderDetailPage() {
   const { folderId } = useParams<{ folderId: string }>();
   const id = folderId || "";
   const navigate = useNavigate();
 
-  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog } =
+  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog, openLockModal } =
     useUIStore();
 
   const { data: folder, isPending: folderLoading, isError, error } = useFolder(id);
@@ -91,10 +89,12 @@ export function FolderDetailPage() {
 
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
-  const { fileMap } = useFavoriteMaps();
+  const { fileMap, folderMap } = useFavoriteMaps();
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const [showFolders, setShowFolders] = useState(true);
   const [showFiles, setShowFiles] = useState(true);
   const { setActiveFiles, openPreview } = usePreviewStore();
@@ -106,6 +106,19 @@ export function FolderDetailPage() {
   const [tagFileId, setTagFileId] = useState<string | null>(null);
 
   const files: FileItem[] = (filesData?.data ?? []).map(fileToFileItem);
+
+  // Close options menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+        setOptionsOpen(false);
+      }
+    }
+    if (optionsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [optionsOpen]);
 
   // Register files in previewStore for in-memory validation & hash sync
   useEffect(() => {
@@ -198,6 +211,27 @@ export function FolderDetailPage() {
   }
 
   const subfolders = subfoldersData?.data ?? [];
+
+  const folderFavorite = folder ? folderMap.get(folder.id) : undefined;
+  const isFolderFavorite = Boolean(folderFavorite);
+
+  const handleToggleFolderFavorite = () => {
+    if (!folder) return;
+    if (folderFavorite) {
+      removeFavorite.mutate(folderFavorite.id, {
+        onSuccess: () => toast("success", "Removed folder from favorites"),
+        onError: (err) => toast("error", getErrorMessage(err)),
+      });
+    } else {
+      addFavorite.mutate(
+        { folder_id: folder.id },
+        {
+          onSuccess: () => toast("success", "Added folder to favorites"),
+          onError: (err) => toast("error", getErrorMessage(err)),
+        }
+      );
+    }
+  };
 
   const handleDelete = () => {
     if (confirm(`Are you sure you want to move "${folder.name}" to trash?`)) {
@@ -348,8 +382,8 @@ export function FolderDetailPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-8">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-8">
           {/* Breadcrumb Navigation */}
           <nav className="flex items-center gap-2 text-sm text-[#64748b]">
             <button
@@ -363,7 +397,7 @@ export function FolderDetailPage() {
           </nav>
 
           {/* Folder Header */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FDFEFF] p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FDFEFF] p-4 sm:p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center flex-shrink-0">
                 <FolderIcon size={28} />
@@ -421,27 +455,144 @@ export function FolderDetailPage() {
 
               <div className="h-5 w-px bg-[#e2e8f0] mx-1 hidden sm:block" />
 
-              <Button
-                variant="outline"
-                onClick={() => openRenameModal(folder.id, folder.name, true)}
-                className="h-9 px-3 text-sm"
-              >
-                <Edit2 size={15} />
-                <span>Rename</span>
-              </Button>
+              {/* Options Menu: Rename, Delete, Sort (Last Modified), Star, Lock */}
+              <div className="relative" ref={optionsRef}>
+                <button
+                  type="button"
+                  onClick={() => setOptionsOpen((prev) => !prev)}
+                  aria-expanded={optionsOpen}
+                  aria-haspopup="true"
+                  className="flex items-center gap-1.5 h-9 px-3 rounded-lg border border-[#e2e8f0] bg-white text-sm font-medium text-[#374151] hover:bg-[#f8fafc] hover:border-[#cbd5e1] hover:text-[#0f172a] transition-all focus:outline-none focus:ring-2 focus:ring-[#0F0A6B] cursor-pointer"
+                >
+                  <MoreHorizontal size={16} className="text-[#64748b]" />
+                  <span>Options</span>
+                  <ChevronDown
+                    size={14}
+                    className={`text-[#64748b] transition-transform duration-200 ${
+                      optionsOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
 
-              <Button
-                variant="outline"
-                onClick={handleDelete}
-                className="h-9 px-3 text-sm text-[#ef4444] hover:bg-[#fef2f2] hover:text-[#dc2626]"
-              >
-                <Trash2 size={15} />
-                <span>Trash</span>
-              </Button>
+                {optionsOpen && (
+                  <div
+                    role="menu"
+                    className="absolute left-0 top-full mt-1.5 w-56 rounded-xl bg-[#FDFEFF] shadow-[0_10px_38px_rgba(0,0,0,0.12),0_3px_10px_rgba(0,0,0,0.06)] border border-[#e2e8f0] p-1.5 z-50 text-sm animate-in fade-in zoom-in-95 duration-100"
+                  >
+                    {/* Sort by Section */}
+                    <div className="px-2.5 py-1 text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">
+                      Sort by
+                    </div>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setSortBy("created_at");
+                        setOptionsOpen(false);
+                      }}
+                      className="flex items-center justify-between w-full px-2.5 py-1.5 text-xs text-[#374151] hover:bg-[#f1f5f9] hover:text-[#0f172a] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Clock size={14} className="text-[#64748b]" />
+                        <span>Last Modified</span>
+                      </div>
+                      {sortBy === "created_at" && <Check size={14} className="text-[#0F0A6B]" />}
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setSortBy("name");
+                        setOptionsOpen(false);
+                      }}
+                      className="flex items-center justify-between w-full px-2.5 py-1.5 text-xs text-[#374151] hover:bg-[#f1f5f9] hover:text-[#0f172a] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ArrowUpDown size={14} className="text-[#64748b]" />
+                        <span>Name</span>
+                      </div>
+                      {sortBy === "name" && <Check size={14} className="text-[#0F0A6B]" />}
+                    </button>
 
-              <div className="h-5 w-px bg-[#e2e8f0] mx-1 hidden sm:block" />
+                    <div className="my-1 border-t border-[#e2e8f0]" />
 
-              <FileSort options={sortOptions} value={sortBy} onChange={setSortBy} />
+                    {/* Folder Management Section */}
+                    <div className="px-2.5 py-1 text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">
+                      Folder Actions
+                    </div>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setOptionsOpen(false);
+                        openRenameModal(folder.id, folder.name, true);
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-1.5 text-xs text-[#374151] hover:bg-[#f1f5f9] hover:text-[#0f172a] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Edit2 size={14} className="text-[#64748b]" />
+                      <span>Rename</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setOptionsOpen(false);
+                        handleToggleFolderFavorite();
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-1.5 text-xs text-[#374151] hover:bg-[#f1f5f9] hover:text-[#0f172a] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Star
+                        size={14}
+                        className={
+                          isFolderFavorite
+                            ? "fill-[#f59e0b] text-[#f59e0b]"
+                            : "text-[#64748b]"
+                        }
+                      />
+                      <span>{isFolderFavorite ? "Remove from Favorites" : "Add to Favorites"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setOptionsOpen(false);
+                        openLockModal(folder.id, folder.name, folder.is_locked);
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-1.5 text-xs text-[#374151] hover:bg-[#f1f5f9] hover:text-[#0f172a] rounded-lg transition-colors cursor-pointer"
+                    >
+                      {folder.is_locked ? (
+                        <>
+                          <Unlock size={14} className="text-[#64748b]" />
+                          <span>Unlock Folder</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={14} className="text-[#64748b]" />
+                          <span>Lock Folder</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className="my-1 border-t border-[#e2e8f0]" />
+
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setOptionsOpen(false);
+                        handleDelete();
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-1.5 text-xs text-[#ef4444] hover:bg-[#fef2f2] hover:text-[#dc2626] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <FileActions viewMode={viewMode} onViewModeChange={setViewMode} />
             </div>
           </header>
@@ -542,7 +693,7 @@ export function FolderDetailPage() {
                   </button>
 
                   {showFolders && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
                       {subfolders.map((sub) => (
                         <FolderCard
                           key={sub.id}

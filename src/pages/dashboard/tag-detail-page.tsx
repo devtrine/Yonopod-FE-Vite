@@ -196,8 +196,8 @@ export function TagDetailPage() {
 
   return (
     <div className="flex h-full w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto p-6 md:p-8">
-        <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="w-full flex flex-col gap-6">
           {/* Breadcrumb & Navigation */}
           <div className="flex items-center gap-2 text-sm text-[#64748b]">
             <button
@@ -302,7 +302,7 @@ export function TagDetailPage() {
 
           {/* Files List / Grid */}
           {filesLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="h-36 rounded-2xl bg-[#f1f5f9] animate-pulse" />
               ))}
