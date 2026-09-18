@@ -5,10 +5,14 @@ import * as recentService from "../services/recent.service";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export function useRecent(params?: { page?: number; limit?: number }) {
+export function useRecent(
+  params?: { page?: number; limit?: number },
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ["recent", params ?? {}],
     queryFn: () => recentService.listRecent(params),
+    enabled: options?.enabled ?? true,
   });
 }
 

@@ -2,6 +2,13 @@ import type { File } from "./file";
 
 // ─── Entity types ────────────────────────────────────────────────────────────
 
+export interface FolderSizeInfo {
+  total_bytes?: number;
+  totalBytes?: number;
+  formatted_size?: string;
+  formattedSize?: string;
+}
+
 export interface Folder {
   id: string;
   user_id: string;
@@ -12,10 +19,18 @@ export interface Folder {
   deleted_at: string | null;
   created_at: string;
   updated_at: string | null;
+  /** Included from Folder Size Analyzer */
+  size_info?: FolderSizeInfo;
+  Size_info?: FolderSizeInfo;
   /** Included on getFolder when unlocked */
   Children?: Folder[];
   /** Included on getFolder when unlocked */
   Files?: File[];
+}
+
+export function getFolderFormattedSize(folder?: Folder | null): string | undefined {
+  if (!folder) return undefined;
+  return folder.size_info?.formatted_size ?? folder.Size_info?.formattedSize;
 }
 
 // ─── Query param types ────────────────────────────────────────────────────────

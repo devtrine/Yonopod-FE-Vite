@@ -35,6 +35,7 @@ import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-
 import { useUIStore } from "@/stores/ui-store";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
+import { getFolderFormattedSize } from "@/types/folder";
 import type { File as ApiFile } from "@/types/file";
 import type { FileMenuActions } from "@/components/files/file-actions-menu";
 
@@ -379,14 +380,24 @@ export function FolderDetailPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#64748b] mt-1">
-                  Created{" "}
-                  {new Date(folder.created_at).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
+                <div className="flex items-center gap-2 text-xs text-[#64748b] mt-1">
+                  <span>
+                    Created{" "}
+                    {new Date(folder.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                  {getFolderFormattedSize(folder) && (
+                    <>
+                      <span>•</span>
+                      <span className="font-medium text-[#0F0A6B] bg-[#0F0A6B]/5 px-2 py-0.5 rounded-md">
+                        {getFolderFormattedSize(folder)}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 

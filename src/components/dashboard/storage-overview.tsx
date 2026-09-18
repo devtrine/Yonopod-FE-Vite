@@ -1,4 +1,4 @@
-import { Cloud, File, Folder } from "lucide-react";
+import { Cloud, File, Folder, Users } from "lucide-react";
 import { ProgressBar } from "../ui/progress-bar";
 
 export function StorageOverview({
@@ -6,9 +6,9 @@ export function StorageOverview({
   totalGB,
   totalFiles,
   totalFolders,
-  sharedItems: _sharedItems,
+  sharedItems,
   isLoadingStats = false,
-  isLoadingShares: _isLoadingShares = false,
+  isLoadingShares = false,
 }: {
   usedGB: number;
   totalGB: number;

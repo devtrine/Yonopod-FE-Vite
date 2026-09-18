@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell, HelpCircle, Menu, LogOut, Settings, User } from "lucide-react";
+import { HelpCircle, Menu, LogOut, Settings, User } from "lucide-react";
 import { GlobalSearch } from "@/components/search/search-bar";
 import { NotificationPopover } from "@/components/layout/notification-popover";
 import { Link } from "react-router-dom";

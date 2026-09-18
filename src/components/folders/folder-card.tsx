@@ -6,7 +6,7 @@ import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "../../hooks/
 import { useUIStore } from "../../stores/ui-store";
 import { toast } from "../ui/toaster";
 import { getErrorMessage } from "../../lib/api/client";
-import type { Folder } from "../../types/folder";
+import { getFolderFormattedSize, type Folder } from "../../types/folder";
 
 export function FolderCard({
   folder,
@@ -214,13 +214,23 @@ export function FolderCard({
         >
           {folder.name}
         </h3>
-        <p className="text-xs text-[#64748b] truncate">
-          {new Date(folder.created_at).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-        </p>
+        <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
+          <span>
+            {new Date(folder.created_at).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
+          {getFolderFormattedSize(folder) && (
+            <>
+              <span>•</span>
+              <span className="font-medium text-[#475569]">
+                {getFolderFormattedSize(folder)}
+              </span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
