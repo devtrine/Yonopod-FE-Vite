@@ -44,7 +44,7 @@ export function FileUploadDialog() {
   const activeFolderId =
     selectedFolderId !== null ? selectedFolderId : state.targetFolderId;
   const activeFolderIdRef = useRef<string | null>(activeFolderId);
-  const fileNames = new Map();
+  const fileNamesRef = useRef<Map<string, string>>(new Map());
 
   useEffect(() => {
     activeFolderIdRef.current = activeFolderId;
@@ -69,12 +69,6 @@ export function FileUploadDialog() {
       restrictions: {
         maxNumberOfFiles: 100,
       },
-      onBeforeUpload: (files) => {
-        for (const file of Object.values(files)) {
-          fileNames.set(file.id, file.name);
-        }
-        return files  
-      }
     });
 
     instance.use(AwsS3, {
@@ -82,15 +76,37 @@ export function FileUploadDialog() {
       shouldUseMultipart: (file) =>
         (file.size || 0) > s3Config.multipart_threshold_bytes,
       limit: 4,
+      generateObjectKey: (file) => {
+        const key = `${crypto.randomUUID()}-${file.name}`;
+        fileNamesRef.current.set(key, file.name);
+        return key;
+      },
       signRequest: async (request) => {
-        return await fileService.signS3Request({
+        const fileName =
+          fileNamesRef.current.get(request.key) ||
+          instance
+            .getFiles()
+            .find(
+              (f) =>
+                request.key.endsWith(`-${f.name}`) || f.name === request.key
+            )?.name;
+
+        console.log(fileName);
+        const signedResponse = await fileService.signS3Request({
           method: request.method,
           key: request.key,
           uploadId: "uploadId" in request ? request.uploadId : null,
           partNumber: "partNumber" in request ? request.partNumber : null,
-          name: fileNames.get(request.key),
-          folder_id: activeFolderIdRef.current
+          name: fileName,
+          folder_id: activeFolderIdRef.current,
         });
+
+        // Jika server mengembalikan key baru yang berbeda, simpan mapping ke nama file
+        if (signedResponse.key && signedResponse.key !== request.key && fileName) {
+          fileNamesRef.current.set(signedResponse.key, fileName);
+        }
+
+        return signedResponse;
       },
     });
 
