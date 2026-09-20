@@ -13,12 +13,24 @@ export function AuthShell({
         aria-hidden="true"
         className="pointer-events-none absolute left-px top-px h-[calc(100%_-_2px)] w-[calc(100%_-_2px)] rounded-2xl border border-solid border-white/50"
       />
-      <header className="relative flex w-full flex-col items-center gap-1">
-        <h1 className="relative text-center text-2xl font-bold tracking-tight text-[#004ac6]">
-          Yonopod
-        </h1>
+      <header className="relative flex w-full flex-col items-center gap-2 mb-1">
+        <div className="bg-[#0F0A6B] px-4 py-2 rounded-xl shadow-xs flex items-center justify-center">
+          <img
+            src="/logo/yonopod_logo.png"
+            alt="Yonopod"
+            className="h-8 w-auto object-contain max-w-[160px]"
+          />
+        </div>
         <p className="relative whitespace-nowrap text-center text-xs font-medium text-slate-500">
-          By devtrine suported by <a href="https://www.anext.dev/">anext.dev</a>
+          By devtrine supported by{" "}
+          <a
+            href="https://www.anext.dev/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#0F0A6B] hover:underline font-medium"
+          >
+            anext.dev
+          </a>
         </p>
       </header>
       {children}

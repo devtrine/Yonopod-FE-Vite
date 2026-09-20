@@ -13,8 +13,8 @@ export function ShareFileView({
   onDownload: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl border border-[#e2e8f0] max-w-lg mx-auto text-center gap-4">
-      <div className="w-16 h-16 rounded-2xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center p-8 bg-[#FDFEFF] rounded-2xl border border-[#e2e8f0] max-w-lg mx-auto text-center gap-4">
+      <div className="w-16 h-16 rounded-2xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
         <FileText size={32} />
       </div>
       <div>
@@ -24,7 +24,7 @@ export function ShareFileView({
         </p>
       </div>
       {canDownload && (
-        <Button onClick={onDownload} className="mt-2 bg-[#1c3fc4] text-white hover:bg-[#1636b0]">
+        <Button onClick={onDownload} className="mt-2 bg-[#0F0A6B] text-white hover:bg-[#161282]">
           <Download size={16} />
           Download File
         </Button>

@@ -8,11 +8,13 @@ import {
   Trash2,
   Server,
   HardDrive,
+  Activity,
 } from "lucide-react";
 
 export const mainNavItems = [
   { label: "My Drive", href: "/files", icon: FolderOpen },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Activity Log", href: "/activity", icon: Activity },
   { label: "Recent", href: "/recent", icon: Clock },
   { label: "Favorites", href: "/favorites", icon: Star },
   { label: "Tags", href: "/tags", icon: Tag },

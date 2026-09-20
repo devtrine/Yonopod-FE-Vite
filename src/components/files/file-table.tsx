@@ -108,7 +108,7 @@ export function FileTable({
               type="checkbox"
               checked={isSelected}
               onChange={(e) => onSelect?.(file.id, e.target.checked)}
-              className="w-4 h-4 rounded border-[#cbd5e1] text-[#1c3fc4] cursor-pointer"
+              className="w-4 h-4 rounded border-[#cbd5e1] text-[#0F0A6B] cursor-pointer"
               aria-label={`Select ${file.name}`}
             />
           </td>
@@ -123,10 +123,16 @@ export function FileTable({
                 <span
                   className={[
                     "font-medium truncate",
-                    isSelected ? "text-[#1c3fc4]" : "text-[#0f172a]",
+                    isSelected ? "text-[#0F0A6B]" : "text-[#0f172a]",
                   ].join(" ")}
                 >
-                  {file.name + (file.extension ? "." + file.extension : "")}
+                  {file.name +
+                    (file.extension &&
+                    !file.name
+                      .toLowerCase()
+                      .endsWith("." + file.extension.toLowerCase())
+                      ? "." + file.extension
+                      : "")}
                 </span>
               </div>
             )}
@@ -200,7 +206,7 @@ export function FileTable({
         <table className="w-full text-sm text-left whitespace-nowrap" role="table">
           {/* Header */}
           <thead>
-            <tr className="border-b border-[#e2e8f0] bg-white">
+            <tr className="border-b border-[#e2e8f0] bg-[#FDFEFF]">
               {showCheckbox && (
                 <th className="w-10 px-4 py-3">
                   <input
@@ -208,7 +214,7 @@ export function FileTable({
                     type="checkbox"
                     checked={isAllSelected}
                     onChange={(e) => onSelectAll?.(e.target.checked)}
-                    className="w-4 h-4 rounded border-[#cbd5e1] text-[#1c3fc4] cursor-pointer"
+                    className="w-4 h-4 rounded border-[#cbd5e1] text-[#0F0A6B] cursor-pointer"
                     aria-label="Select all"
                   />
                 </th>

@@ -55,7 +55,7 @@ export function Pagination({
               className={[
                 "w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-colors",
                 p === page
-                  ? "bg-[#1c3fc4] text-white"
+                  ? "bg-[#0F0A6B] text-white"
                   : "text-[#0f172a] hover:bg-[#f1f5f9]",
               ].join(" ")}
             >

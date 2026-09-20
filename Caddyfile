@@ -1,0 +1,6 @@
+:5500 {
+    root * /app/dist
+    encode gzip zstd
+    try_files {path} /index.html
+    file_server
+}

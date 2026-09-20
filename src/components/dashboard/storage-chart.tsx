@@ -8,7 +8,7 @@ export function StorageChart({
   const percentage = Math.min(100, Math.round((usedGB / totalGB) * 100));
 
   return (
-    <div className="flex flex-col gap-2 p-5 rounded-2xl border border-[#e2e8f0] bg-white">
+    <div className="flex flex-col gap-2 p-5 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF]">
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-[#0f172a]">
           Storage Usage
@@ -19,7 +19,7 @@ export function StorageChart({
       </div>
       <div className="w-full h-3 rounded-full bg-[#f1f5f9] overflow-hidden">
         <div
-          className="h-full bg-[#1c3fc4] rounded-full transition-all duration-500"
+          className="h-full bg-[#0F0A6B] rounded-full transition-all duration-500"
           style={{ width: `${percentage}%` }}
         />
       </div>

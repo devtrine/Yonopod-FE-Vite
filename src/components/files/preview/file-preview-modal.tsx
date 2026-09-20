@@ -202,7 +202,8 @@ export function FilePreviewModal() {
   const previewGroup = getPreviewGroup(effectiveExtension);
 
   const lastModified = file?.updated_at || file?.created_at || activeItem?.lastModified || null;
-  const fileSize = file?.size ?? (typeof activeItem?.size === "number" ? activeItem.size : null);
+  const rawSize = file?.size ?? activeItem?.size;
+  const fileSize = rawSize != null && !isNaN(Number(rawSize)) ? Number(rawSize) : null;
 
   const handleDownload = async () => {
     if (!effectiveDownloadUrl) {

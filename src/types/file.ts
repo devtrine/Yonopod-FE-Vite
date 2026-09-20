@@ -5,15 +5,15 @@ import type { Folder } from "./folder";
 
 export interface File {
   id: string;
-  user_id: string;
+  user_id?: string;
   folder_id: string | null;
   name: string;
   extension: string;
-  size: number | null;
-  file_path: string;
+  size: number | string | null;
+  file_path?: string;
   thumbnail_path: string | null;
   is_favorite: boolean;
-  deleted_at: string | null;
+  deleted_at?: string | null;
   created_at: string;
   updated_at: string | null;
   /** Included when using getFile / listFiles */
@@ -60,16 +60,34 @@ export interface ListFilesParams {
 
 // ─── Request types ────────────────────────────────────────────────────────────
 
-export interface PresignUploadPayload {
-  name: string;
-  extension: string;
-  folder_id?: string | null;
-  size: number;
+export interface S3Config {
+  multipart_threshold_bytes: number;
+  multipart_chunksize_bytes: number;
 }
 
-export interface PresignUploadResponse {
-  uploadUrl: string;
-  file: File;
+export interface S3PresignPayload {
+  method: string;
+  key: string;
+  uploadId?: string | null;
+  partNumber?: number | null;
+  contentType?: string | null;
+  size?: number | null;
+  name?: string;
+  extension?: string;
+  folder_id?: string | null;
+}
+
+export interface S3PresignResponse {
+  url: string;
+  key: string;
+}
+
+export interface ConfirmUploadPayload {
+  key: string;
+  name: string;
+  extension?: string;
+  size: number;
+  folder_id?: string | null;
 }
 
 export interface UpdateFilePayload {

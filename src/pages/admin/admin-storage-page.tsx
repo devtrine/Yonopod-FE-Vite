@@ -14,9 +14,9 @@ export function AdminStoragePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Kapasitas Total */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col justify-between">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-2 text-[#1c3fc4] mb-3">
+            <div className="flex items-center gap-2 text-[#0F0A6B] mb-3">
               <Cloud size={20} />
               <h3 className="font-semibold text-[#0f172a]">Kapasitas Total</h3>
             </div>
@@ -43,15 +43,15 @@ export function AdminStoragePage() {
         </div>
 
         {/* Distribusi Tipe File */}
-        <div className="lg:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
-          <div className="flex items-center gap-2 text-[#1c3fc4] mb-6">
+        <div className="lg:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
+          <div className="flex items-center gap-2 text-[#0F0A6B] mb-6">
             <PieChart size={20} />
             <h3 className="font-semibold text-[#0f172a]">Distribusi Tipe File</h3>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-8 flex-1">
             {/* Donut Chart Placeholder */}
-            <div className="relative w-40 h-40 flex-shrink-0 rounded-full border-[16px] border-[#eff1fb] border-l-[#1c3fc4] border-t-[#1c3fc4] border-r-[#3b82f6] border-b-[#93c5fd] flex items-center justify-center">
+            <div className="relative w-40 h-40 flex-shrink-0 rounded-full border-[16px] border-[#B3EEF6]/30 border-l-[#0F0A6B] border-t-[#0F0A6B] border-r-[#161282] border-b-[#B3EEF6] flex items-center justify-center">
               <div className="text-center">
                 <p className="text-xl font-bold text-[#0f172a]">4 Tipe</p>
                 <p className="text-xs text-[#64748b]">Utama</p>
@@ -62,7 +62,7 @@ export function AdminStoragePage() {
               <div className="p-4 border border-[#e2e8f0] rounded-xl">
                 <div className="flex justify-between items-center mb-1">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#0f172a]">
-                    <div className="w-2 h-2 rounded-full bg-[#1c3fc4]" /> Video & Media
+                    <div className="w-2 h-2 rounded-full bg-[#0F0A6B]" /> Video & Media
                   </div>
                 </div>
                 <div className="flex justify-between items-end">
@@ -110,9 +110,9 @@ export function AdminStoragePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tren Pertumbuhan */}
-        <div className="lg:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
+        <div className="lg:col-span-2 p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-2 text-[#1c3fc4]">
+            <div className="flex items-center gap-2 text-[#0F0A6B]">
               <Activity size={20} />
               <h3 className="font-semibold text-[#0f172a]">Tren Pertumbuhan</h3>
             </div>
@@ -123,15 +123,15 @@ export function AdminStoragePage() {
           
           <div className="h-[200px] w-full border rounded-xl border-[#e2e8f0] p-4 flex items-end justify-between gap-1 mt-auto">
             {[20, 25, 28, 30, 35, 38, 38, 45, 50, 55, 60, 65, 65].map((h, i) => (
-              <div key={i} className="flex-1 rounded-sm bg-[#dbeafe]" style={{ height: `${h}%` }}></div>
+              <div key={i} className="flex-1 rounded-sm bg-[#B3EEF6]/50" style={{ height: `${h}%` }}></div>
             ))}
-            <div className="flex-1 rounded-sm bg-[#1c3fc4]" style={{ height: '70%' }}></div>
-            <div className="flex-1 rounded-sm bg-[#1230a0]" style={{ height: '80%' }}></div>
+            <div className="flex-1 rounded-sm bg-[#0F0A6B]" style={{ height: '70%' }}></div>
+            <div className="flex-1 rounded-sm bg-[#0a0749]" style={{ height: '80%' }}></div>
           </div>
         </div>
 
         {/* Peringatan Kuota */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col">
           <div className="flex items-center gap-2 text-[#ef4444] mb-6">
             <AlertTriangle size={20} />
             <h3 className="font-semibold text-[#0f172a]">Peringatan Kuota</h3>
@@ -146,22 +146,22 @@ export function AdminStoragePage() {
               <button className="text-xs font-bold text-[#b91c1c] hover:underline">Alokasi Ulang</button>
             </div>
             
-            <div className="p-4 rounded-xl border border-[#e2e8f0] bg-[#eff1fb]">
+            <div className="p-4 rounded-xl border border-[#e2e8f0] bg-[#0F0A6B]/10">
               <div className="flex items-center gap-2 text-sm font-bold text-[#0f172a] mb-1">
                 <Cloud size={16} /> Departemen Marketing
               </div>
               <p className="text-xs text-[#64748b] mb-3">Telah mencapai 90% dari kuota grup (2 TB).</p>
-              <button className="text-xs font-bold text-[#1c3fc4] hover:underline">Tinjau Penggunaan</button>
+              <button className="text-xs font-bold text-[#0F0A6B] hover:underline">Tinjau Penggunaan</button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Status Penyimpanan Server Table */}
-      <div className="bg-white border border-[#e2e8f0] rounded-2xl overflow-hidden">
+      <div className="bg-[#FDFEFF] border border-[#e2e8f0] rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b border-[#e2e8f0]">
           <h2 className="text-lg font-semibold text-[#0f172a]">Status Penyimpanan Server</h2>
-          <button className="text-sm font-medium text-[#1c3fc4] hover:underline">Lihat Semua</button>
+          <button className="text-sm font-medium text-[#0F0A6B] hover:underline">Lihat Semua</button>
         </div>
         
         <table className="w-full text-sm text-left">

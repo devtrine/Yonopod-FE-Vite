@@ -25,10 +25,10 @@ export function SessionsSettingsPage() {
         </div>
 
         {/* Current Session Card */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex flex-col gap-6">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-[#eff1fb] text-[#1c3fc4] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center">
                 <Laptop size={24} />
               </div>
               <div>
@@ -47,14 +47,14 @@ export function SessionsSettingsPage() {
 
           <div className="border-t border-[#f1f5f9] pt-4 flex items-center justify-between text-xs text-[#64748b]">
             <div className="flex items-center gap-1.5">
-              <Shield size={14} className="text-[#1c3fc4]" />
+              <Shield size={14} className="text-[#0F0A6B]" />
               <span>Protected by Express-Session HTTP-only cookie</span>
             </div>
           </div>
         </div>
 
         {/* Logout button */}
-        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-white flex items-center justify-between">
+        <div className="p-6 rounded-2xl border border-[#e2e8f0] bg-[#FDFEFF] flex items-center justify-between">
           <div>
             <h3 className="text-base font-semibold text-[#0f172a]">Sign Out</h3>
             <p className="text-sm text-[#64748b] mt-0.5">

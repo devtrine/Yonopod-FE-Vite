@@ -102,8 +102,8 @@ export function PrivateVault() {
   if (lockedFolders.length === 0 && !isUnlocked) {
     return (
       <div className="flex h-full w-full items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
-          <div className="w-16 h-16 bg-[#eff1fb] text-[#1c3fc4] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-full max-w-md p-8 bg-[#FDFEFF] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
+          <div className="w-16 h-16 bg-[#0F0A6B]/10 text-[#0F0A6B] rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock size={32} />
           </div>
 
@@ -121,7 +121,7 @@ export function PrivateVault() {
               placeholder="Enter PIN or password (min 4 chars)"
               required
               minLength={4}
-              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#1c3fc4]"
+              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#0F0A6B]"
             />
             <Button
               type="submit"
@@ -146,8 +146,8 @@ export function PrivateVault() {
   if (!isUnlocked) {
     return (
       <div className="flex h-full w-full items-center justify-center p-4">
-        <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
-          <div className="w-16 h-16 bg-[#eff1fb] text-[#1c3fc4] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-full max-w-md p-8 bg-[#FDFEFF] rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-[#e2e8f0] text-center">
+          <div className="w-16 h-16 bg-[#0F0A6B]/10 text-[#0F0A6B] rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock size={32} />
           </div>
 
@@ -183,7 +183,7 @@ export function PrivateVault() {
               onChange={(e) => setPin(e.target.value)}
               placeholder="Enter vault PIN or password"
               required
-              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#1c3fc4]"
+              className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] text-center text-sm focus:outline-none focus:border-[#0F0A6B]"
             />
             <Button
               type="submit"

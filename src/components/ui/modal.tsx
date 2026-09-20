@@ -20,7 +20,7 @@ export function Modal({
   icon?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -46,19 +46,28 @@ export function Modal({
     if (e.target === dialogRef.current) onClose();
   };
 
+  const maxWidth =
+    size === "sm"
+      ? "24rem"
+      : size === "lg"
+      ? "42rem"
+      : size === "xl"
+      ? "52rem"
+      : "32rem";
+
   return (
     <dialog
       ref={dialogRef}
       onClick={handleBackdropClick}
       className="m-auto w-full backdrop:bg-black/40 backdrop:backdrop-blur-sm bg-transparent p-0 rounded-xl overflow-visible outline-none"
-      style={{ maxWidth: size === "sm" ? "24rem" : size === "lg" ? "42rem" : "32rem" }}
+      style={{ maxWidth }}
     >
-      <div className="bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] w-full overflow-hidden">
+      <div className="bg-[#FDFEFF] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] w-full overflow-hidden border border-[#e2e8f0]">
         {/* Header */}
         {(title || icon) && (
           <div className="flex items-start gap-3 px-6 pt-6 pb-4">
             {icon && (
-              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#eff1fb] flex items-center justify-center text-[#1c3fc4]">
+              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#0F0A6B]/10 flex items-center justify-center text-[#0F0A6B]">
                 {icon}
               </div>
             )}

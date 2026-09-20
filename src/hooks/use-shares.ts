@@ -59,6 +59,7 @@ export function useCreateShare() {
     mutationFn: (payload: CreateSharePayload) => shareService.createShare(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shares"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -71,6 +72,7 @@ export function useUpdateShare(shareId: string) {
     onSuccess: (share) => {
       queryClient.setQueryData(["shares", shareId], share);
       queryClient.invalidateQueries({ queryKey: ["shares"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
@@ -82,6 +84,7 @@ export function useDeleteShare() {
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: ["shares", id] });
       queryClient.invalidateQueries({ queryKey: ["shares"] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     },
   });
 }
