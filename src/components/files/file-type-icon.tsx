@@ -7,10 +7,15 @@ import {
   File,
   Folder,
   FileCode,
+  FileAudio,
   Presentation,
 } from "lucide-react";
 
 const EXT_MAP: Record<string, { icon: React.ElementType; color: string }> = {
+  flac: { icon: FileAudio, color: "text-[#435cde]" },
+  mp3: { icon: FileAudio, color: "text-[#435cde]" },
+  wav: { icon: FileAudio, color: "text-[#435cde]" },
+  opus: { icon: FileAudio, color: "text-[#435cde]" },
   pdf: { icon: FileText, color: "text-[#ef4444]" },
   doc: { icon: FileText, color: "text-[#2563eb]" },
   docx: { icon: FileText, color: "text-[#2563eb]" },

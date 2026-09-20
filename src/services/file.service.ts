@@ -23,6 +23,16 @@ export async function listFilesTrash(params?: { page?: number; limit?: number })
   return data;
 }
 
+export async function listRecentFiles(params?: { limit?: number }): Promise<ApiResponse<File[]>> {
+  const { data } = await api.get<ApiResponse<File[]>>("/files/recent", { params });
+  return data;
+}
+
+export async function listLargestFiles(params?: { limit?: number }): Promise<ApiResponse<File[]>> {
+  const { data } = await api.get<ApiResponse<File[]>>("/files/largest", { params });
+  return data;
+}
+
 export async function getFile(id: string): Promise<FileDetail> {
   const { data } = await api.get<ApiResponse<FileDetail>>(`/files/${id}`);
   return data.data;

@@ -3,6 +3,7 @@ import { FileTypeIcon } from "./file-type-icon";
 import { FileActionsMenu, type FileMenuActions } from "./file-actions-menu";
 import type { FileItem } from "./file-table";
 import { TagChip } from "@/components/tags/tag-chip";
+import { formatFileSize } from "@/lib/formatters";
 
 export function FileCard({
   item,
@@ -27,7 +28,7 @@ export function FileCard({
     >
       <div className="flex items-start justify-between mb-2.5 sm:mb-4">
         <div className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[#0F0A6B]/10">
-          <FileTypeIcon name={item.name + "." + item.extension} isFolder={item.isFolder} size={18} />
+          <FileTypeIcon name={item.name} isFolder={item.isFolder} size={18} />
         </div>
         <div className="flex items-center gap-1">
           {menuActions ? (
@@ -63,7 +64,7 @@ export function FileCard({
       </div>
       <div className="mt-auto">
         <h3 className="text-sm font-semibold text-[#0f172a] mb-2 truncate" title={item.name}>
-          {item.name + (item.extension ? "." + item.extension : "")}
+          {item.name}
         </h3>
         {item.tags && item.tags.length > 0 && (
           <div className="flex gap-1 flex-wrap mb-2">
@@ -78,7 +79,12 @@ export function FileCard({
           </div>
         )}
         <p className="text-xs text-[#64748b] truncate">
-          {item.lastModified ? `Updated ${item.lastModified}` : ""}
+          {[
+            item.size != null && Number(item.size) > 0 ? formatFileSize(Number(item.size)) : null,
+            item.lastModified ? `Updated ${item.lastModified}` : null,
+          ]
+            .filter(Boolean)
+            .join(" • ")}
         </p>
       </div>
     </div>

@@ -126,7 +126,13 @@ export function FileTable({
                     isSelected ? "text-[#0F0A6B]" : "text-[#0f172a]",
                   ].join(" ")}
                 >
-                  {file.name + (file.extension ? "." + file.extension : "")}
+                  {file.name +
+                    (file.extension &&
+                    !file.name
+                      .toLowerCase()
+                      .endsWith("." + file.extension.toLowerCase())
+                      ? "." + file.extension
+                      : "")}
                 </span>
               </div>
             )}

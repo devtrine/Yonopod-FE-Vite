@@ -397,7 +397,7 @@ export function FolderDetailPage() {
           </nav>
 
           {/* Folder Header */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#FDFEFF] p-4 sm:p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-2 sm:p-6 rounded-sm">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B] flex items-center justify-center flex-shrink-0">
                 <FolderIcon size={28} />
@@ -598,7 +598,7 @@ export function FolderDetailPage() {
           </header>
 
           {activeSelectedIds.length > 0 && (
-            <div className="flex items-center justify-between bg-[#0F0A6B] text-white rounded-lg p-3 px-4 shadow-sm">
+            <div className="flex items-center justify-between bg-[#0F0A6B] text-white rounded-lg p-3 px-4">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedIds([])}

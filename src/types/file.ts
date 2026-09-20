@@ -5,15 +5,15 @@ import type { Folder } from "./folder";
 
 export interface File {
   id: string;
-  user_id: string;
+  user_id?: string;
   folder_id: string | null;
   name: string;
   extension: string;
-  size: number | null;
-  file_path: string;
+  size: number | string | null;
+  file_path?: string;
   thumbnail_path: string | null;
   is_favorite: boolean;
-  deleted_at: string | null;
+  deleted_at?: string | null;
   created_at: string;
   updated_at: string | null;
   /** Included when using getFile / listFiles */

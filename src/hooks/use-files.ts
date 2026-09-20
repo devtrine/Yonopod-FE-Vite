@@ -29,6 +29,20 @@ export function useFilesTrash(params?: { page?: number; limit?: number }) {
   });
 }
 
+export function useRecentFiles(params?: { limit?: number }) {
+  return useQuery({
+    queryKey: ["files", "recent", params ?? {}],
+    queryFn: () => fileService.listRecentFiles(params),
+  });
+}
+
+export function useLargestFiles(params?: { limit?: number }) {
+  return useQuery({
+    queryKey: ["files", "largest", params ?? {}],
+    queryFn: () => fileService.listLargestFiles(params),
+  });
+}
+
 export function useFile(id: string | undefined) {
   return useQuery({
     queryKey: ["files", id],

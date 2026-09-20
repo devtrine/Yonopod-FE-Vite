@@ -212,18 +212,6 @@ export function ActivityPage() {
                 </span>
               )}
             </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab("recent")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${activeTab === "recent"
-                  ? "bg-[#0F0A6B] text-white shadow-xs"
-                  : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f1f5f9]"
-                }`}
-            >
-              <Clock size={16} />
-              <span>Recent Access</span>
-            </button>
           </div>
 
           {/* Main Content Area */}
