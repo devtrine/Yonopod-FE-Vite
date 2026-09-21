@@ -22,15 +22,15 @@ function favoriteToFileItem(fav: Favorite): FileItem {
       isFolder: false,
       lastModified: fav.file.updated_at
         ? new Date(fav.file.updated_at).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
         : new Date(fav.file.created_at || fav.created_at).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }),
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
       owner: "me",
       tags: fav.file.tags || [],
       isStarred: true,
@@ -129,6 +129,7 @@ export function FavoritesPage() {
     if (item.isFolder) {
       navigate(`/folders/${item.id.replace("folder-", "")}`);
     } else {
+      setActiveFiles(favorites, false);
       openPreview(item.id);
     }
   };
@@ -171,7 +172,7 @@ export function FavoritesPage() {
     <div className="flex h-full w-full overflow-hidden">
       <div className="flex-1 overflow-y-auto p-6">
         <div className="w-full flex flex-col gap-8">
-          
+
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h1 className="text-2xl font-bold text-[#0f172a]">Favorites</h1>
           </header>

@@ -254,6 +254,7 @@ export function FolderDetailPage() {
       const targetId = item.id.replace("folder-", "");
       navigate(`/folders/${targetId}`);
     } else {
+      setActiveFiles(files, false);
       openPreview(item.id);
     }
   };

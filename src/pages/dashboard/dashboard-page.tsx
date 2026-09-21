@@ -209,6 +209,20 @@ export function DashboardPage() {
     onDelete: handleDeleteRequest,
   };
 
+  const handleItemClick = (item: FileItem) => {
+    if (item.isFolder) {
+      const folderId = item.id.replace("folder-", "");
+      navigate(`/folders/${folderId}`);
+    } else {
+      const map = new Map<string, FileItem>();
+      recentItems.forEach((f) => map.set(f.id, f));
+      largestItems.forEach((f) => map.set(f.id, f));
+      const allFiles = Array.from(map.values());
+      setActiveFiles(allFiles, false);
+      openPreview(item.id);
+    }
+  };
+
   const activities: ActivityItem[] = useMemo(() => {
     const fileItems = (fileLogsData?.data ?? []).map((log) =>
       auditLogToActivityItem(log, false)
@@ -289,7 +303,7 @@ export function DashboardPage() {
           ) : recentItems.length > 0 ? (
             <RecentFiles
               items={recentItems}
-              onItemClick={(item) => openPreview(item.id)}
+              onItemClick={handleItemClick}
               onViewAll={() => navigate("/recent")}
               menuActions={fileMenuActions}
               onToggleStar={handleToggleStar}
@@ -328,7 +342,7 @@ export function DashboardPage() {
           ) : largestItems.length > 0 ? (
             <LargestFiles
               items={largestItems}
-              onItemClick={(item) => openPreview(item.id)}
+              onItemClick={handleItemClick}
               menuActions={fileMenuActions}
               onToggleStar={handleToggleStar}
             />

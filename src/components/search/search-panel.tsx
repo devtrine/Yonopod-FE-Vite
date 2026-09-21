@@ -284,6 +284,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
                   navigate(`/folders/${file.id.replace("folder-", "")}`);
                   onNavigate?.();
                 } else {
+                  setActiveFiles(items, false);
                   openPreview(file.id);
                   onNavigate?.();
                 }

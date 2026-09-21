@@ -112,7 +112,7 @@ export function TagSection({
     if (onFileClick) {
       onFileClick(item);
     } else {
-      setActiveFiles(fileItems, !isPending);
+      setActiveFiles(fileItems, false);
       openPreview(item.id);
     }
   };

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Clock } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
@@ -44,6 +45,7 @@ function fileToFileItem(file: ApiFile): FileItem {
 const ITEMS_PER_PAGE = 25;
 
 export function RecentPage() {
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [fileToDelete, setFileToDelete] = useState<{ id: string; name: string } | null>(null);
   const [tagFileId, setTagFileId] = useState<string | null>(null);
@@ -109,7 +111,13 @@ export function RecentPage() {
   };
 
   const handleRowClick = (item: FileItem) => {
-    openPreview(item.id);
+    if (item.isFolder) {
+      const folderId = item.id.replace("folder-", "");
+      navigate(`/folders/${folderId}`);
+    } else {
+      setActiveFiles(items, false);
+      openPreview(item.id);
+    }
   };
 
   const confirmDelete = () => {

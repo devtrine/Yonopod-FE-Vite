@@ -162,7 +162,13 @@ export function TagDetailPage() {
   };
 
   const handleItemClick = (item: FileItem) => {
-    openPreview(item.id);
+    if (item.isFolder) {
+      const folderId = item.id.replace("folder-", "");
+      navigate(`/folders/${folderId}`);
+    } else {
+      setActiveFiles(files, false);
+      openPreview(item.id);
+    }
   };
 
   const menuActions: FileMenuActions = {
