@@ -195,6 +195,19 @@ export function FilePreviewModal() {
     };
   }, [previewFileId, handleKeyDown]);
 
+  // ilangin scrollbar hama
+  useEffect(() => {
+    if (!previewFileId) return;
+    const origBodyOverflow = document.body.style.overflow;
+    const origHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = origBodyOverflow;
+      document.documentElement.style.overflow = origHtmlOverflow;
+    };
+  }, [previewFileId]);
+
   if (!previewFileId || (!activeItem && !file && !filePending)) return null;
 
   const fileName = activeItem?.name || file?.name || "File";
@@ -253,7 +266,7 @@ export function FilePreviewModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md overflow-hidden no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden animate-in fade-in duration-200"
       onClick={closePreview}
     >
       {/* Top Header */}
@@ -279,7 +292,7 @@ export function FilePreviewModal() {
 
       {/* Main Preview Reading Canvas */}
       <div
-        className="relative z-10 w-full h-full flex items-center justify-center p-4 pt-16 pb-8"
+        className="relative z-10 w-full h-full flex items-center justify-center p-4 pt-16 pb-8 overflow-hidden no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {filePending || isStatusCheckingInitial ? (
