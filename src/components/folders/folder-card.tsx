@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Folder as FolderIcon, MoreHorizontal, Lock, Unlock, Edit2, Trash2, Star } from "lucide-react";
+import {
+  Folder as FolderIcon,
+  FolderOpen,
+  ArrowDownToLine,
+  MoreHorizontal,
+  Lock,
+  Unlock,
+  Edit2,
+  Trash2,
+  Star,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSoftDeleteFolder } from "../../hooks/use-folders";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "../../hooks/use-favorites";
@@ -152,22 +162,29 @@ export function FolderCard({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={[
-        "group relative flex flex-col p-3.5 sm:p-5 border transition-all cursor-pointer",
+        "group relative flex flex-col p-3.5 sm:p-5 border transition-all duration-150 cursor-pointer select-none",
         isDragOver
-          ? "border-2 border-[#0F0A6B] bg-[#0F0A6B]/5 shadow-md scale-[1.02]"
+          ? "z-10 border-[#0F0A6B] bg-[#F6F8FF] shadow-sm ring-1 ring-inset ring-[#0F0A6B]/50"
           : "border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]",
       ].join(" ")}
     >
       {isDragOver && (
-        <div className="absolute inset-0 z-10 pointer-events-none rounded-sm border-2 border-dashed border-[#0F0A6B] bg-[#0F0A6B]/10 flex items-center justify-center">
-          <span className="text-xs font-semibold text-[#0F0A6B] bg-white px-2.5 py-1 rounded-full shadow-sm">
-            Drop to move / upload here
-          </span>
-        </div>
+        <div className="absolute inset-1.5 z-10 pointer-events-none rounded-xl border-2 border-dashed border-[#0F0A6B]/50 bg-[#0F0A6B]/[0.02]" />
       )}
       <div className="flex items-start justify-between mb-2.5 sm:mb-4">
-        <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B]">
-          <FolderIcon size={22} className="fill-[#0F0A6B]/20 sm:w-6 sm:h-6" />
+        <div
+          className={[
+            "relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl transition-all duration-200",
+            isDragOver
+              ? "bg-[#0F0A6B] text-white shadow-md shadow-[#0F0A6B]/25 scale-105"
+              : "bg-[#0F0A6B]/10 text-[#0F0A6B]",
+          ].join(" ")}
+        >
+          {isDragOver ? (
+            <FolderOpen size={22} className="fill-white/20 sm:w-6 sm:h-6 transition-transform" />
+          ) : (
+            <FolderIcon size={22} className="fill-[#0F0A6B]/20 sm:w-6 sm:h-6" />
+          )}
           {folder.is_locked && (
             <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border border-[#e2e8f0] flex items-center justify-center text-[#f59e0b] shadow-xs">
               <Lock size={11} />
@@ -177,33 +194,42 @@ export function FolderCard({
 
         {/* Action / More Menu */}
         <div className="flex items-center gap-1">
-          {/* Tampilkan indikator bintang jika folder ini favorit */}
-          {isFavorite && (
-            <button
-              type="button"
-              onClick={handleFavorite}
-              disabled={isFavoritePending}
-              title="Remove from favorites"
-              className="p-1 text-[#f59e0b] hover:scale-110 transition-transform disabled:opacity-50"
-            >
-              <Star size={16} className="fill-[#f59e0b]" />
-            </button>
-          )}
+          {isDragOver ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#0F0A6B] text-white shadow-xs animate-in fade-in zoom-in-95 duration-150 -mr-1 -mt-1">
+              <ArrowDownToLine size={12} className="animate-bounce" />
+              <span>Drop</span>
+            </span>
+          ) : (
+            <>
+              {/* Tampilkan indikator bintang jika folder ini favorit */}
+              {isFavorite && (
+                <button
+                  type="button"
+                  onClick={handleFavorite}
+                  disabled={isFavoritePending}
+                  title="Remove from favorites"
+                  className="p-1 text-[#f59e0b] hover:scale-110 transition-transform disabled:opacity-50"
+                >
+                  <Star size={16} className="fill-[#f59e0b]" />
+                </button>
+              )}
 
-          <button
-            ref={triggerRef}
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen((prev) => !prev);
-            }}
-            aria-label="Folder options"
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-          >
-            <MoreHorizontal size={18} />
-          </button>
+              <button
+                ref={triggerRef}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen((prev) => !prev);
+                }}
+                aria-label="Folder options"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+              >
+                <MoreHorizontal size={18} />
+              </button>
+            </>
+          )}
 
           {menuOpen &&
             pos &&
@@ -292,26 +318,37 @@ export function FolderCard({
 
       <div className="mt-auto">
         <h3
-          className="text-sm font-semibold text-[#0f172a] mb-1 truncate"
+          className={[
+            "text-sm font-semibold mb-1 truncate transition-colors",
+            isDragOver ? "text-[#0F0A6B]" : "text-[#0f172a]",
+          ].join(" ")}
           title={folder.name}
         >
           {folder.name}
         </h3>
-        <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
-          <span>
-            {new Date(folder.created_at).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </span>
-          {getFolderFormattedSize(folder) && (
-            <>
-              <span>•</span>
-              <span className="font-medium text-[#475569]">
-                {getFolderFormattedSize(folder)}
+        <div className="flex items-center gap-1.5 text-xs">
+          {isDragOver ? (
+            <span className="font-medium text-[#0F0A6B] flex items-center gap-1">
+              Drop file to move here
+            </span>
+          ) : (
+            <div className="flex items-center gap-1.5 text-[#64748b]">
+              <span>
+                {new Date(folder.created_at).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </span>
-            </>
+              {getFolderFormattedSize(folder) && (
+                <>
+                  <span>•</span>
+                  <span className="font-medium text-[#475569]">
+                    {getFolderFormattedSize(folder)}
+                  </span>
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>
