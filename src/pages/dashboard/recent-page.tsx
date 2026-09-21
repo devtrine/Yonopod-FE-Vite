@@ -56,7 +56,7 @@ export function RecentPage() {
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
-  const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { openRenameModal, openDownloadDialog, openMoveModal } = useUIStore();
   const { setActiveFiles, openPreview } = usePreviewStore();
 
   const items: FileItem[] = useMemo(() => {
@@ -126,10 +126,15 @@ export function RecentPage() {
     });
   };
 
+  const handleMove = (item: FileItem) => {
+    openMoveModal(item.id, item.name);
+  };
+
   const fileMenuActions: FileMenuActions = {
     onDownload: handleDownload,
     onFavorite: handleFavorite,
     onRename: handleRename,
+    onMove: handleMove,
     onTags: handleTags,
     onDelete: handleDeleteRequest,
   };

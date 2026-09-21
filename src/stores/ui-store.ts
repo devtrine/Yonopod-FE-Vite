@@ -22,24 +22,35 @@ export interface DownloadDialogState {
   fileName?: string;
 }
 
+export interface MoveModalState {
+  open: boolean;
+  fileIds: string[];
+  fileNames: string[];
+  currentFolderId?: string | null;
+}
+
 export interface UIStoreState {
   uploadModalOpen: boolean;
   targetFolderId: string | null;
+  pendingFiles: File[] | null;
   createFolderModalOpen: boolean;
   createFolderParentId: string | null;  
   renameModal: RenameModalState;
   lockModal: LockModalState;
   downloadDialog: DownloadDialogState;
+  moveModal: MoveModalState;
 }
 
 const initialState: UIStoreState = {
   uploadModalOpen: false,
   targetFolderId: null,
+  pendingFiles: null,
   createFolderModalOpen: false,
   createFolderParentId: null,
   renameModal: { open: false },
   lockModal: { open: false },
   downloadDialog: { open: false },
+  moveModal: { open: false, fileIds: [], fileNames: [] },
 };
 
 let currentState: UIStoreState = { ...initialState };
@@ -62,12 +73,21 @@ export const uiStore = {
       listeners.delete(listener);
     };
   },
-  openUploadModal: (folderId: string | null = null) => {
-    currentState = { ...currentState, uploadModalOpen: true, targetFolderId: folderId };
+  openUploadModal: (folderId: string | null = null, files?: File[]) => {
+    currentState = {
+      ...currentState,
+      uploadModalOpen: true,
+      targetFolderId: folderId,
+      pendingFiles: files && files.length > 0 ? files : null,
+    };
     notify();
   },
   closeUploadModal: () => {
-    currentState = { ...currentState, uploadModalOpen: false };
+    currentState = { ...currentState, uploadModalOpen: false, pendingFiles: null };
+    notify();
+  },
+  clearPendingFiles: () => {
+    currentState = { ...currentState, pendingFiles: null };
     notify();
   },
   openCreateFolderModal: (parentId: string | null = null) => {
@@ -102,6 +122,31 @@ export const uiStore = {
     currentState = { ...currentState, downloadDialog: { open: false } };
     notify();
   },
+  openMoveModal: (
+    fileIds: string | string[],
+    fileNames: string | string[],
+    currentFolderId: string | null = null
+  ) => {
+    const ids = Array.isArray(fileIds) ? fileIds : [fileIds];
+    const names = Array.isArray(fileNames) ? fileNames : [fileNames];
+    currentState = {
+      ...currentState,
+      moveModal: {
+        open: true,
+        fileIds: ids,
+        fileNames: names,
+        currentFolderId,
+      },
+    };
+    notify();
+  },
+  closeMoveModal: () => {
+    currentState = {
+      ...currentState,
+      moveModal: { open: false, fileIds: [], fileNames: [] },
+    };
+    notify();
+  },
 };
 
 export function useUIStore() {
@@ -115,6 +160,7 @@ export function useUIStore() {
     state,
     openUploadModal: uiStore.openUploadModal,
     closeUploadModal: uiStore.closeUploadModal,
+    clearPendingFiles: uiStore.clearPendingFiles,
     openCreateFolderModal: uiStore.openCreateFolderModal,
     closeCreateFolderModal: uiStore.closeCreateFolderModal,
     openRenameModal: uiStore.openRenameModal,
@@ -123,5 +169,7 @@ export function useUIStore() {
     closeLockModal: uiStore.closeLockModal,
     openDownloadDialog: uiStore.openDownloadDialog,
     closeDownloadDialog: uiStore.closeDownloadDialog,
+    openMoveModal: uiStore.openMoveModal,
+    closeMoveModal: uiStore.closeMoveModal,
   };
 }

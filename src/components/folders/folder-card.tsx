@@ -10,6 +10,9 @@ import { getErrorMessage } from "../../lib/api/client";
 import { getFolderFormattedSize, type Folder } from "../../types/folder";
 import { useDropdownPosition } from "../../hooks/use-dropdown-position";
 
+import { useQueryClient } from "@tanstack/react-query";
+import * as fileService from "../../services/file.service";
+
 export function FolderCard({
   folder,
   onClick,
@@ -18,11 +21,14 @@ export function FolderCard({
   onClick?: (folder: Folder) => void;
 }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const deleteFolder = useSoftDeleteFolder();
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const { folderMap } = useFavoriteMaps();
-  const { openRenameModal, openLockModal } = useUIStore();
+  const { openRenameModal, openLockModal, openUploadModal } = useUIStore();
+
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const favorite = folderMap.get(folder.id);
   const isFavorite = Boolean(favorite);
@@ -41,6 +47,55 @@ export function FolderCard({
       onClick(folder);
     } else {
       navigate(`/folders/${folder.id}`);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    const types = Array.from(e.dataTransfer.types || []);
+    if (types.includes("Files") || types.includes("application/yonopod-file-id")) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const types = Array.from(e.dataTransfer.types || []);
+
+    // Drop file dari desktop OS
+    if (types.includes("Files") && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      openUploadModal(folder.id, files);
+      return;
+    }
+
+    // Drop file internal Yonopod (Move)
+    if (types.includes("application/yonopod-file-id")) {
+      const fileId = e.dataTransfer.getData("application/yonopod-file-id");
+      const fileName = e.dataTransfer.getData("application/yonopod-file-name") || "file";
+      if (!fileId) return;
+
+      try {
+        await fileService.updateFile(fileId, { folder_id: folder.id });
+        queryClient.invalidateQueries({ queryKey: ["files"] });
+        queryClient.invalidateQueries({ queryKey: ["folders"] });
+        queryClient.invalidateQueries({ queryKey: ["recent"] });
+        queryClient.invalidateQueries({ queryKey: ["favorites"] });
+        queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+        toast("success", `Moved "${fileName}" to ${folder.name}`);
+      } catch (err) {
+        toast("error", getErrorMessage(err));
+      }
     }
   };
 
@@ -93,8 +148,23 @@ export function FolderCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group relative flex flex-col p-3.5 sm:p-5 border border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all cursor-pointer"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={[
+        "group relative flex flex-col p-3.5 sm:p-5 border transition-all cursor-pointer",
+        isDragOver
+          ? "border-2 border-[#0F0A6B] bg-[#0F0A6B]/5 shadow-md scale-[1.02]"
+          : "border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]",
+      ].join(" ")}
     >
+      {isDragOver && (
+        <div className="absolute inset-0 z-10 pointer-events-none rounded-sm border-2 border-dashed border-[#0F0A6B] bg-[#0F0A6B]/10 flex items-center justify-center">
+          <span className="text-xs font-semibold text-[#0F0A6B] bg-white px-2.5 py-1 rounded-full shadow-sm">
+            Drop to move / upload here
+          </span>
+        </div>
+      )}
       <div className="flex items-start justify-between mb-2.5 sm:mb-4">
         <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B]">
           <FolderIcon size={22} className="fill-[#0F0A6B]/20 sm:w-6 sm:h-6" />

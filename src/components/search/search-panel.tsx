@@ -70,7 +70,7 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
   const [kindFilter, setKindFilter] = useState<"all" | "files" | "folders">("all");
   const debouncedQuery = useDebounce(query, 400);
 
-  const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { openRenameModal, openDownloadDialog, openMoveModal } = useUIStore();
   const { setActiveFiles, openPreview } = usePreviewStore();
   const deleteFile = useSoftDeleteFile();
   const deleteFolder = useSoftDeleteFolder();
@@ -192,9 +192,15 @@ export function SearchPanel({ initialQuery = "", hideTitle = false, onNavigate }
     }
   };
 
+  const handleMove = (item: FileItem) => {
+    if (item.isFolder) return;
+    openMoveModal(item.id, item.name);
+  };
+
   const fileMenuActions = {
     onFavorite: handleToggleStar,
     onRename: handleRename,
+    onMove: handleMove,
     onTags: handleTags,
     onDelete: handleDeleteRequest,
     onDownload: handleDownload

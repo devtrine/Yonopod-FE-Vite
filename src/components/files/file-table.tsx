@@ -92,6 +92,13 @@ export function FileTable({
     return (
       <tr
         key={file.id}
+        draggable={!file.isFolder}
+        onDragStart={(e) => {
+          if (file.isFolder) return;
+          e.dataTransfer.setData("application/yonopod-file-id", file.id);
+          e.dataTransfer.setData("application/yonopod-file-name", file.name);
+          e.dataTransfer.effectAllowed = "move";
+        }}
         onMouseEnter={() => setHoveredId(file.id)}
         onMouseLeave={() => setHoveredId(null)}
         onClick={() => onRowClick?.(file)}

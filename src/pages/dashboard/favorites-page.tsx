@@ -67,7 +67,7 @@ export function FavoritesPage() {
   const removeFavorite = useRemoveFavorite();
   const deleteFile = useSoftDeleteFile();
   const deleteFolder = useSoftDeleteFolder();
-  const { openRenameModal, openDownloadDialog } = useUIStore();
+  const { openRenameModal, openDownloadDialog, openMoveModal } = useUIStore();
   const { setActiveFiles, openPreview } = usePreviewStore();
 
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
@@ -149,10 +149,18 @@ export function FavoritesPage() {
     });
   };
 
+  const handleMove = (item: FileItem) => {
+    if (item.isFolder) return;
+    const fav = favoriteByEntityId.get(item.id);
+    if (!fav?.file) return;
+    openMoveModal(fav.file.id, fav.file.name);
+  };
+
   const fileMenuActions = {
     onDownload: handleDownload,
     onFavorite: handleUnfavorite,
     onRename: handleRename,
+    onMove: handleMove,
     onTags: handleTags,
     onDelete: handleDeleteRequest,
   };
