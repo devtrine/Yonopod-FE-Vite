@@ -12,7 +12,7 @@ import {
   useAddTagToFile,
   useRemoveTagFromFile,
 } from "../../hooks/use-tags";
-import { useFiles, useSoftDeleteFile } from "../../hooks/use-files";
+import { useRecentFiles, useSoftDeleteFile } from "../../hooks/use-files";
 import {
   useAddFavorite,
   useRemoveFavorite,
@@ -49,7 +49,7 @@ export function TagFilesModal({
   const listRef = useRef<HTMLDivElement>(null);
 
   const { data, isPending, isError } = useFilesByTag(tag?.id, { limit: 50 });
-  const { data: allFilesData, isPending: allFilesLoading } = useFiles({ limit: 100 });
+  const { data: allFilesData, isPending: allFilesLoading } = useRecentFiles({ limit: 50 });
   const addTagToFile = useAddTagToFile();
   const removeTagFromFile = useRemoveTagFromFile();
   const deleteFile = useSoftDeleteFile();

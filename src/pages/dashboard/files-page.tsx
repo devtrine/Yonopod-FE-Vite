@@ -252,7 +252,7 @@ export function FilesPage() {
                 className="flex items-center gap-2 h-9 px-3.5 text-sm"
               >
                 <FolderPlus size={16} />
-                <span>New Folder</span>
+                <span className="hidden sm:block">New Folder</span>
               </Button>
 
               <Button
@@ -260,7 +260,7 @@ export function FilesPage() {
                 className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
               >
                 <Upload size={16} />
-                <span>Upload File</span>
+                <span className="hidden sm:block">Upload File</span>
               </Button>
 
               <div className="h-6 w-px bg-[#e2e8f0] mx-1 hidden sm:block" />
