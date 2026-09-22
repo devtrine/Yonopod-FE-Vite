@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { toast } from "../ui/toaster";
 import { getErrorMessage } from "../../lib/api/client";
 import { useAddTagToFile, useFilesByTag } from "../../hooks/use-tags";
-import { useFiles } from "../../hooks/use-files";
+import { useRecentFiles } from "../../hooks/use-files";
 import { tagColorHex, tagSoftBackground } from "./tag-chip";
 import type { Tag } from "../../types/tags";
 
@@ -23,14 +23,14 @@ export function AddFilesToTagModal({
   const [selectedFileIds, setSelectedFileIds] = useState<string[]>([]);
 
   const { data: tagFilesData } = useFilesByTag(open && tag ? tag.id : undefined, { limit: 100 });
-  const { data: allFilesData, isPending: allFilesLoading } = useFiles({ limit: 100 });
+  const { data: recentFilesData, isPending: recentFilesLoading } = useRecentFiles({ limit: 50 });
   const addTagToFile = useAddTagToFile();
 
   const tagFiles = useMemo(() => tagFilesData?.data ?? [], [tagFilesData]);
   const tagFileIds = useMemo(() => new Set(tagFiles.map((f) => f.id)), [tagFiles]);
   const availableFiles = useMemo(
-    () => (allFilesData?.data ?? []).filter((f) => !tagFileIds.has(f.id)),
-    [allFilesData, tagFileIds]
+    () => (recentFilesData?.data ?? []).filter((f) => !tagFileIds.has(f.id)),
+    [recentFilesData, tagFileIds]
   );
 
   if (!tag) return null;
@@ -106,7 +106,7 @@ export function AddFilesToTagModal({
         </div>
 
         <div className="max-h-72 overflow-y-auto border border-[#e2e8f0] rounded-xl divide-y divide-[#f1f5f9]">
-          {allFilesLoading ? (
+          {recentFilesLoading ? (
             <div className="p-4 text-center text-sm text-[#64748b]">
               Loading files…
             </div>

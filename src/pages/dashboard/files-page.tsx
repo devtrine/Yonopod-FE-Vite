@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FolderPlus, Upload, Folder as FolderIcon, FileText, Star, Trash2, X, ChevronDown } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { FolderPlus, Upload, Folder as FolderIcon, FileText, Star, Trash2, X, ChevronDown, FolderInput } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
 import { FileSort } from "@/components/files/file-sort";
@@ -17,6 +17,8 @@ import { useUIStore } from "@/stores/ui-store";
 import { usePreviewStore } from "@/stores/preview-store";
 import { toast } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/lib/api/client";
+import { useFileDrop } from "@/hooks/use-file-drop";
+import { FileDropOverlay } from "@/components/files/file-drop-overlay";
 import type { File as ApiFile } from "@/types/file";
 import type { Folder } from "@/types/folder";
 import type { FileMenuActions } from "@/components/files/file-actions-menu";
@@ -44,8 +46,10 @@ const sortOptions = [
 
 export function FilesPage() {
   const navigate = useNavigate();
-  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog } = useUIStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog, openMoveModal } = useUIStore();
   const { setActiveFiles, openPreview } = usePreviewStore();
+  const { isDragging, dropProps } = useFileDrop(null);
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
   const [sortBy, setSortBy] = useState("created_at");
@@ -56,6 +60,15 @@ export function FilesPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
   const [tagFileId, setTagFileId] = useState<string | null>(null);
+
+  // Check new-folder query param
+  useEffect(() => {
+    if (searchParams.get("new-folder") === "true") {
+      openCreateFolderModal(null);
+      searchParams.delete("new-folder");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, openCreateFolderModal, setSearchParams]);
 
   const { data: filesData, isPending: filesLoading } = useFiles({
     sort_by: sortBy as "name" | "created_at",
@@ -143,10 +156,16 @@ export function FilesPage() {
     });
   };
 
+  const handleMove = (item: FileItem) => {
+    if (item.isFolder) return;
+    openMoveModal(item.id, item.name, null);
+  };
+
   const fileMenuActions = {
     onDownload: handleDownload,
     onFavorite: handleToggleStar,
     onRename: handleRename,
+    onMove: handleMove,
     onTags: handleTags,
     onDelete: handleDeleteRequest,
   };
@@ -189,6 +208,15 @@ export function FilesPage() {
     setSelectedIds([]);
   };
 
+  const handleBulkMove = () => {
+    if (activeSelectedIds.length === 0) return;
+    const selectedNames = files
+      .filter((f) => activeSelectedIds.includes(f.id))
+      .map((f) => f.name);
+    openMoveModal(activeSelectedIds, selectedNames, null);
+    setSelectedIds([]);
+  };
+
   const confirmBulkDeleteAction = () => {
     if (activeSelectedIds.length === 0) return;
     const promises = activeSelectedIds.map((id) =>
@@ -208,14 +236,15 @@ export function FilesPage() {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden relative" {...dropProps}>
+      <FileDropOverlay isDragging={isDragging} folderName="My Drive" />
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-6">
         <div className="w-full flex flex-col gap-8">
-          
+
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pl-6 p-3 border-gray-300 border rounded-lg  bg-[#FDFEFF]">
             <h1 className="text-2xl font-bold text-[#0f172a]">My Drive</h1>
-            
+
             <div className="flex flex-wrap items-center gap-3">
               <Button
                 variant="outline"
@@ -223,7 +252,7 @@ export function FilesPage() {
                 className="flex items-center gap-2 h-9 px-3.5 text-sm"
               >
                 <FolderPlus size={16} />
-                <span>New Folder</span>
+                <span className="hidden sm:block">New Folder</span>
               </Button>
 
               <Button
@@ -231,7 +260,7 @@ export function FilesPage() {
                 className="flex items-center gap-2 h-9 px-3.5 text-sm bg-[#0F0A6B] text-white hover:bg-[#161282]"
               >
                 <Upload size={16} />
-                <span>Upload File</span>
+                <span className="hidden sm:block">Upload File</span>
               </Button>
 
               <div className="h-6 w-px bg-[#e2e8f0] mx-1 hidden sm:block" />
@@ -257,6 +286,15 @@ export function FilesPage() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white flex items-center gap-1.5"
+                  onClick={handleBulkMove}
+                >
+                  <FolderInput size={14} />
+                  Move
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -334,9 +372,8 @@ export function FilesPage() {
                   >
                     <ChevronDown
                       size={16}
-                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
-                        showFolders ? "" : "-rotate-90"
-                      }`}
+                      className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${showFolders ? "" : "-rotate-90"
+                        }`}
                     />
                     <span>Folders</span>
                   </button>
@@ -365,9 +402,8 @@ export function FilesPage() {
                 >
                   <ChevronDown
                     size={16}
-                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${
-                      showFiles ? "" : "-rotate-90"
-                    }`}
+                    className={`transition-transform duration-200 text-[#94a3b8] group-hover:text-[#0f172a] ${showFiles ? "" : "-rotate-90"
+                      }`}
                   />
                   <span>Files</span>
                 </button>

@@ -18,6 +18,7 @@ import {
   ArrowUpDown,
   Check,
   MoreHorizontal,
+  FolderInput,
 } from "lucide-react";
 import { FileTable, type FileItem } from "@/components/files/file-table";
 import { FileGrid } from "@/components/files/file-grid";
@@ -27,6 +28,8 @@ import { FolderCard } from "@/components/folders/folder-card";
 import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 import { Button } from "@/components/ui/button";
+import { useFileDrop } from "@/hooks/use-file-drop";
+import { FileDropOverlay } from "@/components/files/file-drop-overlay";
 import {
   useFolder,
   useFolders,
@@ -70,8 +73,9 @@ export function FolderDetailPage() {
   const id = folderId || "";
   const navigate = useNavigate();
 
-  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog, openLockModal } =
+  const { openCreateFolderModal, openUploadModal, openRenameModal, openDownloadDialog, openLockModal, openMoveModal } =
     useUIStore();
+  const { isDragging, dropProps } = useFileDrop(id);
 
   const { data: folder, isPending: folderLoading, isError, error } = useFolder(id);
   const { data: subfoldersData, isPending: subfoldersLoading } = useFolders({
@@ -250,6 +254,7 @@ export function FolderDetailPage() {
       const targetId = item.id.replace("folder-", "");
       navigate(`/folders/${targetId}`);
     } else {
+      setActiveFiles(files, false);
       openPreview(item.id);
     }
   };
@@ -307,10 +312,16 @@ export function FolderDetailPage() {
     });
   };
 
+  const handleFileMove = (item: FileItem) => {
+    if (item.isFolder) return;
+    openMoveModal(item.id, item.name, id);
+  };
+
   const fileMenuActions = {
     onDownload: handleDownload,
     onFavorite: handleToggleStar,
     onRename: handleFileRename,
+    onMove: handleFileMove,
     onTags: handleFileTags,
     onDelete: handleFileDeleteRequest,
   };
@@ -344,6 +355,15 @@ export function FolderDetailPage() {
         openDownloadDialog(item.id, item.name);
       }
     });
+  };
+
+  const handleBulkMove = () => {
+    if (activeSelectedIds.length === 0) return;
+    const selectedNames = files
+      .filter((f) => activeSelectedIds.includes(f.id))
+      .map((f) => f.name);
+    openMoveModal(activeSelectedIds, selectedNames, id);
+    setSelectedIds([]);
   };
 
   const handleBulkFavorite = () => {
@@ -381,7 +401,8 @@ export function FolderDetailPage() {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden relative" {...dropProps}>
+      <FileDropOverlay isDragging={isDragging} folderName={folder.name} />
       <div className="flex-1 overflow-y-auto p-6">
         <div className="w-full flex flex-col gap-8">
           {/* Breadcrumb Navigation */}
@@ -612,6 +633,15 @@ export function FolderDetailPage() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white flex items-center gap-1.5"
+                  onClick={handleBulkMove}
+                >
+                  <FolderInput size={14} />
+                  Move
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"

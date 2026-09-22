@@ -12,7 +12,7 @@ import "@uppy/dashboard/css/style.min.css";
 
 import { Modal } from "../ui/modal";
 import { Button } from "../ui/button";
-import { useUIStore } from "../../stores/ui-store";
+import { useUIStore, uiStore } from "../../stores/ui-store";
 import { useFolders } from "../../hooks/use-folders";
 import { useS3Config } from "../../hooks/use-files";
 import * as fileService from "../../services/file.service";
@@ -166,6 +166,27 @@ export function FileUploadDialog() {
     });
 
     setUppy(instance);
+
+    // Auto-queue and upload dropped files
+    if (state.pendingFiles && state.pendingFiles.length > 0) {
+      state.pendingFiles.forEach((file) => {
+        try {
+          instance.addFile({
+            name: file.name,
+            type: file.type,
+            data: file,
+            source: "LocalDrop",
+            isRemote: false,
+          });
+        } catch (err) {
+          console.error("Failed to add dropped file:", err);
+        }
+      });
+      uiStore.clearPendingFiles();
+      setTimeout(() => {
+        instance.upload();
+      }, 50);
+    }
 
     return () => {
       instance.destroy();

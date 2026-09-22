@@ -11,6 +11,7 @@ export type FileMenuActions = {
   onDownload?: (item: FileItem) => void;
   onFavorite?: (item: FileItem) => void;
   onRename?: (item: FileItem) => void;
+  onMove?: (item: FileItem) => void;
   onShare?: (item: FileItem) => void;
   onCopyLink?: (item: FileItem) => void;
   onRestore?: (item: FileItem) => void;
@@ -30,6 +31,7 @@ export function FileActionsMenu({
   onDownload,
   onFavorite,
   onRename,
+  onMove,
   onShare,
   onCopyLink,
   onRestore,
@@ -103,6 +105,7 @@ export function FileActionsMenu({
               onDownload={closeThen(onDownload)}
               onFavorite={closeThen(onFavorite)}
               onRename={closeThen(onRename)}
+              onMove={closeThen(onMove)}
               onShare={closeThen(onShare)}
               onCopyLink={closeThen(onCopyLink)}
               onRestore={closeThen(onRestore)}

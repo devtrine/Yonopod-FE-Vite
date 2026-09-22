@@ -12,7 +12,7 @@ import {
   useAddTagToFile,
   useRemoveTagFromFile,
 } from "../../hooks/use-tags";
-import { useFiles, useSoftDeleteFile } from "../../hooks/use-files";
+import { useRecentFiles, useSoftDeleteFile } from "../../hooks/use-files";
 import {
   useAddFavorite,
   useRemoveFavorite,
@@ -49,7 +49,7 @@ export function TagFilesModal({
   const listRef = useRef<HTMLDivElement>(null);
 
   const { data, isPending, isError } = useFilesByTag(tag?.id, { limit: 50 });
-  const { data: allFilesData, isPending: allFilesLoading } = useFiles({ limit: 100 });
+  const { data: allFilesData, isPending: allFilesLoading } = useRecentFiles({ limit: 50 });
   const addTagToFile = useAddTagToFile();
   const removeTagFromFile = useRemoveTagFromFile();
   const deleteFile = useSoftDeleteFile();
@@ -57,7 +57,7 @@ export function TagFilesModal({
   const removeFavorite = useRemoveFavorite();
   const { fileMap } = useFavoriteMaps();
   const { openRenameModal } = useUIStore();
-  const { openPreview } = usePreviewStore();
+  const { openPreview, setActiveFiles } = usePreviewStore();
   const queryClient = useQueryClient();
 
   const tagFiles = useMemo(() => data?.data ?? [], [data]);
@@ -275,7 +275,10 @@ export function TagFilesModal({
           {tagFiles.map((file) => (
             <div
               key={file.id}
-              onClick={() => openPreview(file.id)}
+              onClick={() => {
+                setActiveFiles(tagFiles.map((f) => fileToFileItem(f, Boolean(fileMap.get(f.id)))), false);
+                openPreview(file.id);
+              }}
               className="group flex items-center gap-3 px-4 py-2.5 hover:bg-[#f8fafc] transition-colors cursor-pointer"
             >
               <FileText size={16} className="text-[#64748b] flex-shrink-0" />

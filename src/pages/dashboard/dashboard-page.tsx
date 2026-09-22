@@ -1,16 +1,23 @@
-import { useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { StorageOverview } from "@/components/dashboard/storage-overview";
 import { ActivityFeed, type ActivityItem } from "@/components/dashboard/activity-feed";
 import { RecentFiles } from "@/components/dashboard/recent-files";
 import { LargestFiles } from "@/components/dashboard/largest-files";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { TagPickerModal } from "@/components/tags/tag-picker-modal";
 import { useCurrentUser, useUserStats } from "@/hooks/use-auth";
-import { useRecentFiles, useLargestFiles } from "@/hooks/use-files";
+import { useRecentFiles, useLargestFiles, useSoftDeleteFile } from "@/hooks/use-files";
+import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "@/hooks/use-favorites";
 import { useFileLogs, useFolderLogs } from "@/hooks/use-audit-logs";
 import { useShares } from "@/hooks/use-shares";
+import { useUIStore } from "@/stores/ui-store";
 import { usePreviewStore } from "@/stores/preview-store";
+import { toast } from "@/components/ui/toaster";
+import { getErrorMessage } from "@/lib/api/client";
 import { formatDate } from "@/lib/formatters";
 import type { FileItem } from "@/components/files/file-table";
+import type { FileMenuActions } from "@/components/files/file-actions-menu";
 import type { File as ApiFile } from "@/types/file";
 import type { AuditLogItem } from "@/types/audit";
 
@@ -109,15 +116,112 @@ export function DashboardPage() {
     { refetchInterval: 5000 }
   );
   const { setActiveFiles, openPreview } = usePreviewStore();
+  const { openRenameModal, openDownloadDialog, openMoveModal } = useUIStore();
+  const deleteFile = useSoftDeleteFile();
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
+  const { fileMap } = useFavoriteMaps();
+
+  const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
+  const [tagFileId, setTagFileId] = useState<string | null>(null);
 
   const recentItems: FileItem[] = useMemo(
-    () => (recentData?.data ?? []).map(fileToFileItem),
-    [recentData?.data]
+    () =>
+      (recentData?.data ?? []).map((file) => {
+        const item = fileToFileItem(file);
+        return {
+          ...item,
+          isStarred: fileMap.has(item.id) || item.isStarred,
+        };
+      }),
+    [recentData?.data, fileMap]
   );
   const largestItems: FileItem[] = useMemo(
-    () => (largestData?.data ?? []).map(fileToFileItem),
-    [largestData?.data]
+    () =>
+      (largestData?.data ?? []).map((file) => {
+        const item = fileToFileItem(file);
+        return {
+          ...item,
+          isStarred: fileMap.has(item.id) || item.isStarred,
+        };
+      }),
+    [largestData?.data, fileMap]
   );
+
+  const handleDownload = (item: FileItem) => {
+    openDownloadDialog(item.id, item.name);
+  };
+
+  const handleToggleStar = (item: FileItem) => {
+    const favorite = fileMap.get(item.id);
+    if (favorite) {
+      removeFavorite.mutate(favorite.id, {
+        onSuccess: () => toast("success", "Removed from favorites"),
+        onError: (err) => toast("error", getErrorMessage(err)),
+      });
+    } else {
+      addFavorite.mutate(
+        { file_id: item.id },
+        {
+          onSuccess: () => toast("success", "Added to favorites"),
+          onError: (err) => toast("error", getErrorMessage(err)),
+        }
+      );
+    }
+  };
+
+  const handleRename = (item: FileItem) => {
+    openRenameModal(item.id, item.name, false);
+  };
+
+  const handleMove = (item: FileItem) => {
+    openMoveModal(item.id, item.name);
+  };
+
+  const handleTags = (item: FileItem) => {
+    setTagFileId(item.id);
+  };
+
+  const handleDeleteRequest = (item: FileItem) => {
+    setFileToDelete(item);
+  };
+
+  const confirmDelete = () => {
+    if (!fileToDelete) return;
+    deleteFile.mutate(fileToDelete.id, {
+      onSuccess: () => {
+        toast("success", "File moved to trash");
+        setFileToDelete(null);
+      },
+      onError: (err) => {
+        toast("error", getErrorMessage(err));
+        setFileToDelete(null);
+      },
+    });
+  };
+
+  const fileMenuActions: FileMenuActions = {
+    onDownload: handleDownload,
+    onFavorite: handleToggleStar,
+    onRename: handleRename,
+    onMove: handleMove,
+    onTags: handleTags,
+    onDelete: handleDeleteRequest,
+  };
+
+  const handleItemClick = (item: FileItem) => {
+    if (item.isFolder) {
+      const folderId = item.id.replace("folder-", "");
+      navigate(`/folders/${folderId}`);
+    } else {
+      const map = new Map<string, FileItem>();
+      recentItems.forEach((f) => map.set(f.id, f));
+      largestItems.forEach((f) => map.set(f.id, f));
+      const allFiles = Array.from(map.values());
+      setActiveFiles(allFiles, false);
+      openPreview(item.id);
+    }
+  };
 
   const activities: ActivityItem[] = useMemo(() => {
     const fileItems = (fileLogsData?.data ?? []).map((log) =>
@@ -199,8 +303,10 @@ export function DashboardPage() {
           ) : recentItems.length > 0 ? (
             <RecentFiles
               items={recentItems}
-              onItemClick={(item) => openPreview(item.id)}
+              onItemClick={handleItemClick}
               onViewAll={() => navigate("/recent")}
+              menuActions={fileMenuActions}
+              onToggleStar={handleToggleStar}
             />
           ) : (
             <div className="flex flex-col gap-4">
@@ -236,7 +342,9 @@ export function DashboardPage() {
           ) : largestItems.length > 0 ? (
             <LargestFiles
               items={largestItems}
-              onItemClick={(item) => openPreview(item.id)}
+              onItemClick={handleItemClick}
+              menuActions={fileMenuActions}
+              onToggleStar={handleToggleStar}
             />
           ) : (
             <div className="flex flex-col gap-4">
@@ -259,6 +367,24 @@ export function DashboardPage() {
           />
         </div>
       </div>
+
+      {/* Delete Confirmation */}
+      <ConfirmModal
+        open={!!fileToDelete}
+        onClose={() => setFileToDelete(null)}
+        title="Move file to trash?"
+        description={`"${fileToDelete?.name ?? ""}" will be moved to trash. You can restore it later.`}
+        confirmLabel="Move to Trash"
+        isPending={deleteFile.isPending}
+        onConfirm={confirmDelete}
+      />
+
+      {/* Tags Modal */}
+      <TagPickerModal
+        open={tagFileId !== null}
+        fileId={tagFileId ?? ""}
+        onClose={() => setTagFileId(null)}
+      />
     </div>
   );
 }

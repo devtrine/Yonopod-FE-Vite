@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Folder as FolderIcon, MoreHorizontal, Lock, Unlock, Edit2, Trash2, Star } from "lucide-react";
+import {
+  Folder as FolderIcon,
+  FolderOpen,
+  ArrowDownToLine,
+  MoreHorizontal,
+  Lock,
+  Unlock,
+  Edit2,
+  Trash2,
+  Star,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSoftDeleteFolder } from "../../hooks/use-folders";
 import { useAddFavorite, useRemoveFavorite, useFavoriteMaps } from "../../hooks/use-favorites";
@@ -10,6 +20,9 @@ import { getErrorMessage } from "../../lib/api/client";
 import { getFolderFormattedSize, type Folder } from "../../types/folder";
 import { useDropdownPosition } from "../../hooks/use-dropdown-position";
 
+import { useQueryClient } from "@tanstack/react-query";
+import * as fileService from "../../services/file.service";
+
 export function FolderCard({
   folder,
   onClick,
@@ -18,11 +31,14 @@ export function FolderCard({
   onClick?: (folder: Folder) => void;
 }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const deleteFolder = useSoftDeleteFolder();
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const { folderMap } = useFavoriteMaps();
-  const { openRenameModal, openLockModal } = useUIStore();
+  const { openRenameModal, openLockModal, openUploadModal } = useUIStore();
+
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const favorite = folderMap.get(folder.id);
   const isFavorite = Boolean(favorite);
@@ -41,6 +57,55 @@ export function FolderCard({
       onClick(folder);
     } else {
       navigate(`/folders/${folder.id}`);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    const types = Array.from(e.dataTransfer.types || []);
+    if (types.includes("Files") || types.includes("application/yonopod-file-id")) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const types = Array.from(e.dataTransfer.types || []);
+
+    // Drop file dari desktop OS
+    if (types.includes("Files") && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      openUploadModal(folder.id, files);
+      return;
+    }
+
+    // Drop file internal Yonopod (Move)
+    if (types.includes("application/yonopod-file-id")) {
+      const fileId = e.dataTransfer.getData("application/yonopod-file-id");
+      const fileName = e.dataTransfer.getData("application/yonopod-file-name") || "file";
+      if (!fileId) return;
+
+      try {
+        await fileService.updateFile(fileId, { folder_id: folder.id });
+        queryClient.invalidateQueries({ queryKey: ["files"] });
+        queryClient.invalidateQueries({ queryKey: ["folders"] });
+        queryClient.invalidateQueries({ queryKey: ["recent"] });
+        queryClient.invalidateQueries({ queryKey: ["favorites"] });
+        queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+        toast("success", `Moved "${fileName}" to ${folder.name}`);
+      } catch (err) {
+        toast("error", getErrorMessage(err));
+      }
     }
   };
 
@@ -93,11 +158,33 @@ export function FolderCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group relative flex flex-col p-3.5 sm:p-5 border border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all cursor-pointer"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={[
+        "group relative flex flex-col p-3.5 sm:p-5 border transition-all duration-150 cursor-pointer select-none",
+        isDragOver
+          ? "z-10 border-[#0F0A6B] bg-[#F6F8FF] shadow-sm ring-1 ring-inset ring-[#0F0A6B]/50"
+          : "border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]",
+      ].join(" ")}
     >
+      {isDragOver && (
+        <div className="absolute inset-1.5 z-10 pointer-events-none rounded-xl border-2 border-dashed border-[#0F0A6B]/50 bg-[#0F0A6B]/[0.02]" />
+      )}
       <div className="flex items-start justify-between mb-2.5 sm:mb-4">
-        <div className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl bg-[#0F0A6B]/10 text-[#0F0A6B]">
-          <FolderIcon size={22} className="fill-[#0F0A6B]/20 sm:w-6 sm:h-6" />
+        <div
+          className={[
+            "relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-xl transition-all duration-200",
+            isDragOver
+              ? "bg-[#0F0A6B] text-white shadow-md shadow-[#0F0A6B]/25 scale-105"
+              : "bg-[#0F0A6B]/10 text-[#0F0A6B]",
+          ].join(" ")}
+        >
+          {isDragOver ? (
+            <FolderOpen size={22} className="fill-white/20 sm:w-6 sm:h-6 transition-transform" />
+          ) : (
+            <FolderIcon size={22} className="fill-[#0F0A6B]/20 sm:w-6 sm:h-6" />
+          )}
           {folder.is_locked && (
             <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white border border-[#e2e8f0] flex items-center justify-center text-[#f59e0b] shadow-xs">
               <Lock size={11} />
@@ -107,33 +194,42 @@ export function FolderCard({
 
         {/* Action / More Menu */}
         <div className="flex items-center gap-1">
-          {/* Tampilkan indikator bintang jika folder ini favorit */}
-          {isFavorite && (
-            <button
-              type="button"
-              onClick={handleFavorite}
-              disabled={isFavoritePending}
-              title="Remove from favorites"
-              className="p-1 text-[#f59e0b] hover:scale-110 transition-transform disabled:opacity-50"
-            >
-              <Star size={16} className="fill-[#f59e0b]" />
-            </button>
-          )}
+          {isDragOver ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#0F0A6B] text-white shadow-xs animate-in fade-in zoom-in-95 duration-150 -mr-1 -mt-1">
+              <ArrowDownToLine size={12} className="animate-bounce" />
+              <span>Drop</span>
+            </span>
+          ) : (
+            <>
+              {/* Tampilkan indikator bintang jika folder ini favorit */}
+              {isFavorite && (
+                <button
+                  type="button"
+                  onClick={handleFavorite}
+                  disabled={isFavoritePending}
+                  title="Remove from favorites"
+                  className="p-1 text-[#f59e0b] hover:scale-110 transition-transform disabled:opacity-50"
+                >
+                  <Star size={16} className="fill-[#f59e0b]" />
+                </button>
+              )}
 
-          <button
-            ref={triggerRef}
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuOpen((prev) => !prev);
-            }}
-            aria-label="Folder options"
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-          >
-            <MoreHorizontal size={18} />
-          </button>
+              <button
+                ref={triggerRef}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen((prev) => !prev);
+                }}
+                aria-label="Folder options"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b] transition-all -mr-1 -mt-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+              >
+                <MoreHorizontal size={18} />
+              </button>
+            </>
+          )}
 
           {menuOpen &&
             pos &&
@@ -222,26 +318,37 @@ export function FolderCard({
 
       <div className="mt-auto">
         <h3
-          className="text-sm font-semibold text-[#0f172a] mb-1 truncate"
+          className={[
+            "text-sm font-semibold mb-1 truncate transition-colors",
+            isDragOver ? "text-[#0F0A6B]" : "text-[#0f172a]",
+          ].join(" ")}
           title={folder.name}
         >
           {folder.name}
         </h3>
-        <div className="flex items-center gap-1.5 text-xs text-[#64748b]">
-          <span>
-            {new Date(folder.created_at).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </span>
-          {getFolderFormattedSize(folder) && (
-            <>
-              <span>•</span>
-              <span className="font-medium text-[#475569]">
-                {getFolderFormattedSize(folder)}
+        <div className="flex items-center gap-1.5 text-xs">
+          {isDragOver ? (
+            <span className="font-medium text-[#0F0A6B] flex items-center gap-1">
+              Drop file to move here
+            </span>
+          ) : (
+            <div className="flex items-center gap-1.5 text-[#64748b]">
+              <span>
+                {new Date(folder.created_at).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </span>
-            </>
+              {getFolderFormattedSize(folder) && (
+                <>
+                  <span>•</span>
+                  <span className="font-medium text-[#475569]">
+                    {getFolderFormattedSize(folder)}
+                  </span>
+                </>
+              )}
+            </div>
           )}
         </div>
       </div>
