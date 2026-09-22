@@ -185,8 +185,8 @@ export function TrashPage() {
           </header>
 
           {activeSelectedIds.length > 0 && (
-            <div className="flex items-center justify-between bg-[var(--brand)] text-white rounded-lg p-3 px-4 shadow-sm">
-              <span className="text-sm font-medium text-white">
+            <div className="flex items-center justify-between bg-[var(--primary)] border-1 border-[var(--border)] text-white rounded-lg p-3 px-4 shadow-sm">
+              <span className="text-sm font-medium text-black">
                 {activeSelectedIds.length} item(s) selected
               </span>
               <div className="flex items-center gap-3">
