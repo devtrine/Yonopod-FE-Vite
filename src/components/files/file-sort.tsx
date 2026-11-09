@@ -12,12 +12,15 @@ export function FileSort({
   options,
   value,
   onChange,
+  align = "left",
 }: {
   options: SortOption[];
   value: string;
   onChange: (value: string) => void;
+  align?: "left" | "right";
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [computedAlign, setComputedAlign] = useState<"left" | "right">(align);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,6 +32,20 @@ export function FileSort({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const menuWidth = 192; // w-48
+      if (rect.left + menuWidth > window.innerWidth - 16) {
+        setComputedAlign("right");
+      } else if (rect.right - menuWidth < 16) {
+        setComputedAlign("left");
+      } else {
+        setComputedAlign(align);
+      }
+    }
+  }, [isOpen, align]);
 
   const selectedOption = options.find((o) => o.id === value) || options[0];
 
@@ -43,7 +60,11 @@ export function FileSort({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-48 rounded-lg bg-[#FDFEFF] shadow-lg border border-[#e2e8f0] py-1 z-10">
+        <div
+          className={`absolute ${
+            computedAlign === "right" ? "right-0" : "left-0"
+          } mt-1 w-48 rounded-lg bg-[#FDFEFF] shadow-lg border border-[#e2e8f0] py-1 z-30 animate-in fade-in zoom-in-95 duration-100`}
+        >
           {options.map((option) => (
             <button
               key={option.id}

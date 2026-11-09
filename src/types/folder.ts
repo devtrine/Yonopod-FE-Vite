@@ -21,6 +21,7 @@ export interface Folder {
   updated_at: string | null;
   /** Included from Folder Size Analyzer */
   size_info?: FolderSizeInfo;
+  Size_info?: FolderSizeInfo;
   /** Included on getFolder when unlocked */
   Children?: Folder[];
   /** Included on getFolder when unlocked */
@@ -29,9 +30,13 @@ export interface Folder {
 
 export function getFolderFormattedSize(folder?: Folder | null): string | undefined {
   if (!folder) return undefined;
-  return folder.size_info?.formatted_size;
+  return (
+    folder.Size_info?.formattedSize ??
+    folder.Size_info?.formatted_size ??
+    folder.size_info?.formattedSize ??
+    folder.size_info?.formatted_size
+  );
 }
-
 // ─── Query param types ────────────────────────────────────────────────────────
 
 export interface ListFoldersParams {

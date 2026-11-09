@@ -6,6 +6,7 @@ import { CreateFolderModal } from "../folders/create-folder-modal";
 import { RenameModal } from "../folders/rename-modal";
 import { LockUnlockModal } from "../folders/lock-unlock-modal";
 import { FilePreviewModal } from "../files/preview/file-preview-modal";
+import { MoveFileModal } from "../files/move-file-modal";
 
 export function DashboardModals() {
   return (
@@ -16,6 +17,7 @@ export function DashboardModals() {
       <RenameModal />
       <LockUnlockModal />
       <FilePreviewModal />
+      <MoveFileModal />
     </>
   );
 }

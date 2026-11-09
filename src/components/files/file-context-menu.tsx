@@ -1,4 +1,4 @@
-import { Download, Star, Trash2, Share2, Edit2, RotateCcw, Link2, X, Tag as TagIcon } from "lucide-react";
+import { Download, Star, Trash2, Share2, Edit2, RotateCcw, Link2, X, Tag as TagIcon, FolderInput } from "lucide-react";
 import type { FileItem } from "./file-table";
 
 export interface FileContextMenuProps {
@@ -6,6 +6,7 @@ export interface FileContextMenuProps {
   onDownload?: (item: FileItem) => void;
   onFavorite?: (item: FileItem) => void;
   onRename?: (item: FileItem) => void;
+  onMove?: (item: FileItem) => void;
   onShare?: (item: FileItem) => void;
   onCopyLink?: (item: FileItem) => void;
   onRestore?: (item: FileItem) => void;
@@ -21,6 +22,7 @@ export function FileContextMenu({
   onDownload,
   onFavorite,
   onRename,
+  onMove,
   onShare,
   onCopyLink,
   onRestore,
@@ -30,7 +32,7 @@ export function FileContextMenu({
   onRemoveFromTag,
   onDelete,
 }: FileContextMenuProps) {
-  const hasPrimaryActions = onDownload || onFavorite || onRename || onShare || onCopyLink || onRestore || onTags;
+  const hasPrimaryActions = onDownload || onFavorite || onRename || onMove || onShare || onCopyLink || onRestore || onTags;
   const hasDestructiveActions = onDeletePermanent || onRevoke || onDelete || onRemoveFromTag;
 
   return (
@@ -67,6 +69,16 @@ export function FileContextMenu({
         >
           <Edit2 size={15} className="text-[#94a3b8]" />
           Rename
+        </button>
+      )}
+      {onMove && !item.isFolder && (
+        <button
+          type="button"
+          onClick={() => onMove(item)}
+          className="flex items-center gap-2.5 w-full px-3.5 py-2 text-left text-[#374151] hover:bg-[#f8fafc]"
+        >
+          <FolderInput size={15} className="text-[#94a3b8]" />
+          Move
         </button>
       )}
       {onShare && (

@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Settings,
   Plus,
@@ -8,12 +8,21 @@ import { ProgressBar } from "../ui/progress-bar";
 import { useSidebar } from "./sidebar-context";
 import { mainNavItems } from "@/config/navigation";
 import { useCurrentUser } from "../../hooks/use-auth";
+import { useUIStore } from "../../stores/ui-store";
 
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location.pathname;
   const { isOpen, setIsOpen } = useSidebar();
   const { data: user } = useCurrentUser();
+  const { openCreateFolderModal } = useUIStore();
+
+  const handleNewFolder = () => {
+    navigate("/files");
+    openCreateFolderModal(null);
+    setIsOpen(false);
+  };
 
   const usedGB = user?.storage_used
     ? Math.round((Number(user.storage_used) / (1024 * 1024 * 1024)) * 100) / 100
@@ -58,13 +67,14 @@ export function Sidebar() {
 
         {/* New Folder Button */}
         <div className="px-4 py-4">
-          <Link
-            to="/files?new-folder=true"
-            className="flex items-center justify-center gap-2 w-full h-9 rounded-[10px] border-2 border-[#0F0A6B] bg-transparent text-[#0F0A6B] text-sm font-medium hover:bg-[#0F0A6B]/5 active:bg-[#0F0A6B]/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B]"
+          <button
+            type="button"
+            onClick={handleNewFolder}
+            className="flex items-center justify-center gap-2 w-full h-9 rounded-[10px] border-2 border-[#0F0A6B] bg-transparent text-[#0F0A6B] text-sm font-medium hover:bg-[#0F0A6B]/5 active:bg-[#0F0A6B]/10 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0F0A6B] cursor-pointer"
           >
             <Plus size={16} />
             New Folder
-          </Link>
+          </button>
         </div>
 
         {/* Nav Items */}

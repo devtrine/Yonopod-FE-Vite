@@ -38,7 +38,7 @@ export const ImagePreview = memo(function ImagePreview({ src, fileName, onError 
           </p>
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center overflow-auto">
+        <div className="w-full h-full flex items-center justify-center overflow-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <img
             src={src}
             alt={fileName}
@@ -49,7 +49,7 @@ export const ImagePreview = memo(function ImagePreview({ src, fileName, onError 
               onError?.();
             }}
             style={{ transform: `scale(${scale})` }}
-            className={`max-w-full max-h-[82vh] object-contain transition-all duration-200 rounded shadow-2xl drop-shadow-2xl ${
+            className={`max-w-full max-h-full object-contain transition-all duration-200 rounded shadow-2xl drop-shadow-2xl ${
               loading ? "opacity-0 scale-95" : "opacity-100"
             }`}
           />

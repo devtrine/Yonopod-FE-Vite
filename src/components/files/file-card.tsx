@@ -21,6 +21,13 @@ export function FileCard({
   return (
     <div
       onClick={() => onClick?.(item)}
+      draggable={!item.isFolder}
+      onDragStart={(e) => {
+        if (item.isFolder) return;
+        e.dataTransfer.setData("application/yonopod-file-id", item.id);
+        e.dataTransfer.setData("application/yonopod-file-name", item.name);
+        e.dataTransfer.effectAllowed = "move";
+      }}
       className={[
         "group relative flex flex-col p-3.5 sm:p-5 border border-[#e2e8f0] bg-[#FDFEFF] hover:border-[#cbd5e1] hover:scale-98 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all",
         onClick ? "cursor-pointer" : "",

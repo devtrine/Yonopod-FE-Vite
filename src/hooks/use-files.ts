@@ -105,6 +105,7 @@ export function useUpdateFile(fileId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files", fileId] });
       queryClient.invalidateQueries({ queryKey: ["files"] });
+      queryClient.invalidateQueries({ queryKey: ["folders"] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["recent"] });
       queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
